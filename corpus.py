@@ -1,6 +1,6 @@
 import re
 
-def generaCorpus():
+def generaDiccionarios():
     '''En esta funcion se genera el corpus, es decir, toda la estructura de datos necesaria para posteriormente poder
     calular las probabilidades para la prediccion de palabras y letras tanto unigram como bigram'''
     
