@@ -36,13 +36,7 @@ def generaDiccionarios():
     corpusLetras = {}
     corpusPalabras = {}
     
-    '''
-    for line in open("psicologia_revolucionaria.txt", 'r'):
-        sp=line.split(".")
-        for  word in sp:
-            sp1 = word.split(" ")
-            print(sp1, end='')
-    '''
+
     
     textoLista = []
     texto = ''
@@ -65,28 +59,35 @@ def generaDiccionarios():
     palabraAnterior = ''
     
     for frase in textoLista:
+        
+        
         palabras = frase.split(" ")
         palabras = eliminaElementosLongitudMenor1(palabras)
-        #print(palabras)
+        
         count = 0
         while (count < len(palabras)):
             palabra = palabras[count]
             
-            if count == 0:
-                palabra = palabras[0]
-                #numerosClave = codificar(palabra,diccionarioLetrasNumeros)
-                #insertaPalabra(corpusPalabras, numerosClave)
-                
-            else:
-                palabra = palabras[count]
+            #Cogemos la palabra anterior
+            palabraAnterior = ''
             
+            if count > 0:
+                palabraAnterior = palabras[count - 1]
+            else:
+                palabraAnterior = ''
+            
+            #Insertamos las palabras en el diccionario
+            corpusPalabras = insertaPalabra(corpusPalabras, diccionarioLetrasNumeros, palabra, palabraAnterior)
+            
+                
             
             count = count + 1
     
-    hola = ValorPalabra(3,"cosa","34", "si",3)
-    corpusPalabras = insertaPalabra(corpusPalabras,'5742',hola)
+    
+    
+    
     print(corpusPalabras)
-                
+    
    
     
 
@@ -102,8 +103,41 @@ def eliminaElementosLongitudMenor1(lista):
         
     return listaMayor1   
     
-def insertaPalabra(corpusPalabras, clave, palabraAnterior):
-    corpusPalabras[clave] = palabraAnterior
+def insertaPalabra(corpusPalabras,diccionarioLetrasNumeros, palabra, palabraAnterior):
+    
+    palabraCodificada = codificar(palabra,diccionarioLetrasNumeros)
+    palabraAnteriorCodificada = codificar(palabraAnterior,diccionarioLetrasNumeros)
+    
+    #En caso de que la palabra ya esta insertada
+    if palabraCodificada in corpusPalabras:
+        entradaCorpus = corpusPalabras[palabraCodificada]
+        
+        claveNumOcurrencias = entradaCorpus.get_claveNumOcurrencias().get_numOcurrenciasClave()
+        
+        claveNumOcurrenciasIncrementado = ClaveNumOcurrencias(entradaCorpus.get_claveNumOcurrencias().get_claveSinCodificar(),claveNumOcurrencias + 1)
+        entradaCorpus.set_claveNumOcurrencias(claveNumOcurrenciasIncrementado)
+        
+    #Palabra no esta insertada 
+    else:
+        claveNumOc = ClaveNumOcurrencias(palabra,1)
+        eg = EstructuraGuardado(claveNumOc,{})
+        corpusPalabras[palabraCodificada] = eg
+        
+    # Contemplamos el caso de que tuviera palabra anterior
+    if palabraAnterior != '':
+        entradaCorpus = corpusPalabras[palabraCodificada]
+        palabrasAnteriores = entradaCorpus.get_diccionarioPalabrasAnteriores()
+        
+        #En caso de que la palabra anterior ya esta insertada
+        
+        if palabraAnteriorCodificada in palabrasAnteriores:
+            claveNumOcurrencias = palabrasAnteriores[palabraAnteriorCodificada]
+            claveNumOcurrencias.set_numOcurrenciasClave(claveNumOcurrencias.get_numOcurrenciasClave() + 1)      
+        # Palabra anterior no insertada 
+        else:
+            palabrasAnteriores[palabraAnteriorCodificada] = ClaveNumOcurrencias(palabraAnterior,1)
+            
+        
     return corpusPalabras
  
     
@@ -115,18 +149,53 @@ def codificar(palabra,diccionarioCodificacion):
                cadenaCodificada = cadenaCodificada + elem 
                
     return cadenaCodificada
+
+       
+    
     
 
-class ValorPalabra:
-    def __init__(self, numOcurrenciasClave, claveSinCodificar, palabraAnteriorCodificada, palabraAnteriorSinCodificar, numOcurrenciasPalabraAnterior):
-        self.numOcurrenciasClave = numOcurrenciasClave
-        self.claveSinCodificar = claveSinCodificar
-        self.palabraAnteriorCodificada = palabraAnteriorCodificada
-        self.palabraAnteriorSinCodificar = palabraAnteriorSinCodificar
-        self.numOcurrenciasPalabraAnterior = numOcurrenciasPalabraAnterior
+class EstructuraGuardado:
+    def __init__(self, claveNumOcurrencias, diccionarioPalabrasAnteriores):
+        self.claveNumOcurrencias = claveNumOcurrencias
+        self.diccionarioPalabrasAnteriores = diccionarioPalabrasAnteriores
+        
+    def get_claveNumOcurrencias(self):
+        return self.claveNumOcurrencias
+    
+    def get_diccionarioPalabrasAnteriores(self):
+        return self.diccionarioPalabrasAnteriores
+    
+    def set_claveNumOcurrencias(self, claveNumOcurrencias):
+        self.claveNumOcurrencias = claveNumOcurrencias
+    
+    def set_diccionarioPalabrasAnteriores(self, diccionarioPalabrasAnteriores):
+        self.diccionarioPalabrasAnteriores = diccionarioPalabrasAnteriores
         
     def __str__(self):
-        return str(self.numOcurrenciasClave) + "-" + str(self.claveSinCodificar) + "-" + str(self.palabraAnteriorCodificada) + "-" + str(self.palabraAnteriorSinCodificar) + "-" + str(self.numOcurrenciasPalabraAnterior)
+        return str(self.claveNumOcurrencias) + "-" + str(self.diccionarioPalabrasAnteriores)
 
     def __repr__(self):
-        return str(self.numOcurrenciasClave) + "-" + str(self.claveSinCodificar) + "-" + str(self.palabraAnteriorCodificada) + "-" + str(self.palabraAnteriorSinCodificar) + "-" + str(self.numOcurrenciasPalabraAnterior)
+        return str(self.claveNumOcurrencias) + "-" + str(self.diccionarioPalabrasAnteriores)
+    
+class ClaveNumOcurrencias:
+    def __init__(self, claveSinCodificar, numOcurrenciasClave ):
+        self.claveSinCodificar = claveSinCodificar
+        self.numOcurrenciasClave = numOcurrenciasClave
+        
+    def get_claveSinCodificar(self):
+        return self.claveSinCodificar
+    
+    def get_numOcurrenciasClave(self):
+        return self.numOcurrenciasClave
+    
+    def set_claveSinCodificar(self, claveSinCodificar):
+        self.claveSinCodificar = claveSinCodificar
+    
+    def set_numOcurrenciasClave(self, numOcurrenciasClave):
+        self.numOcurrenciasClave = numOcurrenciasClave
+        
+    def __str__(self):
+        return str(self.claveSinCodificar) + "-" + str(self.numOcurrenciasClave)
+
+    def __repr__(self):
+        return str(self.claveSinCodificar) + "-" + str(self.numOcurrenciasClave)
