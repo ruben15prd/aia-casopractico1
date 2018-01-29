@@ -33,8 +33,8 @@ def generaDiccionarios():
     
     # Definimos el diccionario para el corpus de letras
     
-    corpusLetras = {}
-    corpusPalabras = {}
+    diccionarioLetras = {}
+    diccionarioPalabras = {}
     
 
     
@@ -56,12 +56,52 @@ def generaDiccionarios():
     #Dividimos el texto por los puntos
     textoLista = textoSinCaracteresEspeciales.split(".");
     
-    corpusPalabras = generaDiccionarioPalabras(corpusPalabras, diccionarioLetrasNumeros, textoLista)
+    diccionarioPalabras = generaDiccionarioPalabras(diccionarioPalabras, diccionarioLetrasNumeros, textoLista)
+    diccionarioLetras = generaDiccionarioLetras(diccionarioLetras, diccionarioLetrasNumeros, textoLista)
+    print("Palabras: ")
+    print(diccionarioPalabras)
+    print("Letras: ")
+    print(diccionarioLetras)
+
+def insertaPalabra(diccionarioPalabras,diccionarioLetrasNumeros, palabra, palabraAnterior):
     
+    palabraCodificada = codificar(palabra,diccionarioLetrasNumeros)
+    palabraAnteriorCodificada = codificar(palabraAnterior,diccionarioLetrasNumeros)
     
-   
-    
-def generaDiccionarioPalabras(corpusPalabras,diccionarioLetrasNumeros, textoLista):
+    #En caso de que la palabra ya esta insertada
+    clave = palabraCodificada + "-" + palabra
+    claveAnterior =palabraAnteriorCodificada + "-" + palabraAnterior
+    if clave in diccionarioPalabras:
+        entradaCorpus = diccionarioPalabras[clave]
+        
+        claveNumOcurrencias = entradaCorpus.get_numOcurrencias()
+         
+        entradaCorpus.set_numOcurrencias(claveNumOcurrencias + 1)
+        
+    #Palabra no esta insertada 
+    else:
+        eg = EstructuraGuardado(1,{})
+        clave = palabraCodificada + "-" + palabra
+        diccionarioPalabras[clave] = eg
+        
+    # Contemplamos el caso de que tuviera palabra anterior
+    if palabraAnterior != '':
+        entradaCorpus = diccionarioPalabras[clave]
+        palabrasAnteriores = entradaCorpus.get_diccionarioPalabrasAnteriores()
+        
+        #En caso de que la palabra anterior ya esta insertada
+        
+        if claveAnterior in palabrasAnteriores:
+            numOcurrencias = palabrasAnteriores[claveAnterior]
+            palabrasAnteriores[claveAnterior] = numOcurrencias + 1      
+        # Palabra anterior no insertada 
+        else:
+            palabrasAnteriores[claveAnterior] = 1
+            
+              
+    return diccionarioPalabras
+
+def generaDiccionarioPalabras(diccionarioPalabras,diccionarioLetrasNumeros, textoLista):
     palabraAnterior = ''
     
     for frase in textoLista:
@@ -83,18 +123,80 @@ def generaDiccionarioPalabras(corpusPalabras,diccionarioLetrasNumeros, textoList
                 palabraAnterior = ''
             
             #Insertamos las palabras en el diccionario
-            corpusPalabras = insertaPalabra(corpusPalabras, diccionarioLetrasNumeros, palabra, palabraAnterior)
-            
-                
+            diccionarioPalabras = insertaPalabra(diccionarioPalabras, diccionarioLetrasNumeros, palabra, palabraAnterior)
             
             count = count + 1
     
     
-    print(corpusPalabras)
-    return corpusPalabras
+    return diccionarioPalabras
+  
+   
+def generaDiccionarioLetras(diccionarioLetras,diccionarioLetrasNumeros, textoLista):
+    letraAnterior = ''
+    
+    for frase in textoLista:
+        
+        palabras = frase.split(" ")
+        palabras = eliminaElementosLongitudMenor1(palabras)
+        
+        for palabra in palabras:
+            count = 0
+            
+            while (count < len(palabra)):
+                letra = palabra[count]
+                if count > 0:
+                    letraAnterior = palabra[count - 1]
+                else:
+                    letraAnterior = ''
+                diccionarioLetras = insertaLetra(diccionarioLetras, diccionarioLetrasNumeros, letra, letraAnterior)
+                
+                
+                count = count + 1
+       
+
+    return diccionarioLetras
+    
     
 
-
+   
+def insertaLetra(diccionarioLetras,diccionarioLetrasNumeros, letra, letraAnterior):
+    
+    letraCodificada = codificar(letra,diccionarioLetrasNumeros)
+    letraAnteriorCodificada = codificar(letraAnterior,diccionarioLetrasNumeros)
+    
+    #En caso de que la letra ya esta insertada
+    clave = letraCodificada + "-" + letra
+    claveAnterior = letraAnteriorCodificada + "-" + letraAnterior
+    if clave in diccionarioLetras:
+        entradaCorpus = diccionarioLetras[clave]
+        
+        claveNumOcurrencias = entradaCorpus.get_numOcurrencias()
+         
+        entradaCorpus.set_numOcurrencias(claveNumOcurrencias + 1)
+        
+    #Palabra no esta insertada 
+    else:
+        eg = EstructuraGuardado(1,{})
+        clave = letraCodificada + "-" + letra
+        diccionarioLetras[clave] = eg
+        
+    # Contemplamos el caso de que tuviera palabra anterior
+    if letraAnterior != '':
+        entradaCorpus = diccionarioLetras[clave]
+        letrasAnteriores = entradaCorpus.get_diccionarioPalabrasAnteriores()
+        
+        #En caso de que la palabra anterior ya esta insertada
+        
+        if claveAnterior in letrasAnteriores:
+            numOcurrencias = letrasAnteriores[claveAnterior]
+            letrasAnteriores[claveAnterior] = numOcurrencias + 1      
+        # Palabra anterior no insertada 
+        else:
+            letrasAnteriores[claveAnterior] = 1
+            
+               
+    return diccionarioLetras
+   
 
             
 def eliminaElementosLongitudMenor1(lista):
@@ -105,42 +207,7 @@ def eliminaElementosLongitudMenor1(lista):
         
     return listaMayor1   
     
-def insertaPalabra(corpusPalabras,diccionarioLetrasNumeros, palabra, palabraAnterior):
-    
-    palabraCodificada = codificar(palabra,diccionarioLetrasNumeros)
-    palabraAnteriorCodificada = codificar(palabraAnterior,diccionarioLetrasNumeros)
-    
-    #En caso de que la palabra ya esta insertada
-    if palabraCodificada in corpusPalabras:
-        entradaCorpus = corpusPalabras[palabraCodificada]
-        
-        claveNumOcurrencias = entradaCorpus.get_claveNumOcurrencias().get_numOcurrenciasClave()
-        
-        claveNumOcurrenciasIncrementado = ClaveNumOcurrencias(entradaCorpus.get_claveNumOcurrencias().get_claveSinCodificar(),claveNumOcurrencias + 1)
-        entradaCorpus.set_claveNumOcurrencias(claveNumOcurrenciasIncrementado)
-        
-    #Palabra no esta insertada 
-    else:
-        claveNumOc = ClaveNumOcurrencias(palabra,1)
-        eg = EstructuraGuardado(claveNumOc,{})
-        corpusPalabras[palabraCodificada] = eg
-        
-    # Contemplamos el caso de que tuviera palabra anterior
-    if palabraAnterior != '':
-        entradaCorpus = corpusPalabras[palabraCodificada]
-        palabrasAnteriores = entradaCorpus.get_diccionarioPalabrasAnteriores()
-        
-        #En caso de que la palabra anterior ya esta insertada
-        
-        if palabraAnteriorCodificada in palabrasAnteriores:
-            claveNumOcurrencias = palabrasAnteriores[palabraAnteriorCodificada]
-            claveNumOcurrencias.set_numOcurrenciasClave(claveNumOcurrencias.get_numOcurrenciasClave() + 1)      
-        # Palabra anterior no insertada 
-        else:
-            palabrasAnteriores[palabraAnteriorCodificada] = ClaveNumOcurrencias(palabraAnterior,1)
-            
-        
-    return corpusPalabras
+
  
     
 def codificar(palabra,diccionarioCodificacion):
@@ -157,47 +224,26 @@ def codificar(palabra,diccionarioCodificacion):
     
 
 class EstructuraGuardado:
-    def __init__(self, claveNumOcurrencias, diccionarioPalabrasAnteriores):
-        self.claveNumOcurrencias = claveNumOcurrencias
+    def __init__(self, numOcurrencias, diccionarioPalabrasAnteriores):
+        self.numOcurrencias = numOcurrencias
         self.diccionarioPalabrasAnteriores = diccionarioPalabrasAnteriores
         
-    def get_claveNumOcurrencias(self):
-        return self.claveNumOcurrencias
+    def get_numOcurrencias(self):
+        return self.numOcurrencias
     
     def get_diccionarioPalabrasAnteriores(self):
         return self.diccionarioPalabrasAnteriores
     
-    def set_claveNumOcurrencias(self, claveNumOcurrencias):
-        self.claveNumOcurrencias = claveNumOcurrencias
+    def set_numOcurrencias(self, numOcurrencias):
+        self.numOcurrencias = numOcurrencias
     
     def set_diccionarioPalabrasAnteriores(self, diccionarioPalabrasAnteriores):
         self.diccionarioPalabrasAnteriores = diccionarioPalabrasAnteriores
         
     def __str__(self):
-        return str(self.claveNumOcurrencias) + "-" + str(self.diccionarioPalabrasAnteriores)
+        return str(self.numOcurrencias) + "-" + str(self.diccionarioPalabrasAnteriores)
 
     def __repr__(self):
-        return str(self.claveNumOcurrencias) + "-" + str(self.diccionarioPalabrasAnteriores)
-    
-class ClaveNumOcurrencias:
-    def __init__(self, claveSinCodificar, numOcurrenciasClave ):
-        self.claveSinCodificar = claveSinCodificar
-        self.numOcurrenciasClave = numOcurrenciasClave
-        
-    def get_claveSinCodificar(self):
-        return self.claveSinCodificar
-    
-    def get_numOcurrenciasClave(self):
-        return self.numOcurrenciasClave
-    
-    def set_claveSinCodificar(self, claveSinCodificar):
-        self.claveSinCodificar = claveSinCodificar
-    
-    def set_numOcurrenciasClave(self, numOcurrenciasClave):
-        self.numOcurrenciasClave = numOcurrenciasClave
-        
-    def __str__(self):
-        return str(self.claveSinCodificar) + "-" + str(self.numOcurrenciasClave)
+        return str(self.numOcurrencias) + "-" + str(self.diccionarioPalabrasAnteriores)
 
-    def __repr__(self):
-        return str(self.claveSinCodificar) + "-" + str(self.numOcurrenciasClave)
+
