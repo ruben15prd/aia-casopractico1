@@ -56,6 +56,12 @@ def generaDiccionarios():
     #Dividimos el texto por los puntos
     textoLista = textoSinCaracteresEspeciales.split(".");
     
+    corpusPalabras = generaDiccionarioPalabras(corpusPalabras, diccionarioLetrasNumeros, textoLista)
+    
+    
+   
+    
+def generaDiccionarioPalabras(corpusPalabras,diccionarioLetrasNumeros, textoLista):
     palabraAnterior = ''
     
     for frase in textoLista:
@@ -84,13 +90,9 @@ def generaDiccionarios():
             count = count + 1
     
     
-    
-    
     print(corpusPalabras)
+    return corpusPalabras
     
-   
-    
-
 
 
 
