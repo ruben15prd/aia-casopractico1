@@ -58,14 +58,44 @@ def generaDiccionarios():
     
     diccionarioPalabras = generaDiccionarioPalabras(diccionarioPalabras, diccionarioLetrasNumeros, textoLista)
     diccionarioLetras = generaDiccionarioLetras(diccionarioLetras, diccionarioLetrasNumeros, textoLista)
-    #print("Palabras: ")
+    print("Palabras: ")
     print(diccionarioPalabras)
-    #print("Letras: ")
-    #print(diccionarioLetras)
-    #uniL = uniLetras('1', diccionarioLetras)
-    #biL = biLetras('a', '1', diccionarioLetras)
-    uniP = uniPalabras('3541', diccionarioPalabras)
+    print("Letras: ")
+    print(diccionarioLetras)
+    
+    numLetra = input ("Escriba un número: ")
+    letraAnterior = input ("Escriba una letra anterior: ")
+    
+    
+    numPalabra = input ("Escriba varios número: ")
+    palabraAnterior = input ("Escriba una palabra anterior: ")
+    
+    uniL = uniLetras(numLetra, diccionarioLetras)
+    biL = biLetras(letraAnterior, numLetra, diccionarioLetras)
+    uniP = uniPalabras(numPalabra, diccionarioPalabras)
+    biP = biPalabras(palabraAnterior, numPalabra, diccionarioPalabras)
+    print(uniL)
+    print(biL)
     print(uniP)
+    print(biP)
+    
+def biPalabras (palabraAnterior, numerosPalabra, diccionarioPalabras): 
+    maxPrediccion = ''
+    maxOcPrediccion = 0
+    
+    
+    for clave in diccionarioPalabras.keys():
+        if clave.split('-')[0] == numerosPalabra:
+            diccionarioPalabrasAnt = diccionarioPalabras[clave].get_diccionarioPalabrasAnteriores()
+            
+            for clavePalabrasAnt in diccionarioPalabrasAnt.keys():
+                if clavePalabrasAnt.split('-')[1] == palabraAnterior:
+                    if diccionarioPalabrasAnt[clavePalabrasAnt] > maxOcPrediccion:
+                        maxPrediccion = clave.split("-")[1]
+                        maxOcPrediccion = diccionarioPalabrasAnt[clavePalabrasAnt]
+
+                
+    return maxPrediccion
 
 def insertaPalabra(diccionarioPalabras,diccionarioLetrasNumeros, palabra, palabraAnterior):
     
@@ -152,8 +182,7 @@ def generaDiccionarioLetras(diccionarioLetras,diccionarioLetrasNumeros, textoLis
                     letraAnterior = palabra[count - 1]
                 else:
                     letraAnterior = ''
-                diccionarioLetras = insertaLetra(diccionarioLetras, diccionarioLetrasNumeros, letra, letraAnterior)
-                
+                diccionarioLetras = insertaLetra(diccionarioLetras, diccionarioLetrasNumeros, letra, letraAnterior)    
                 
                 count = count + 1
        
@@ -228,64 +257,68 @@ def uniPalabras (numerosPalabra, diccionarioPalabras):
     for clave in diccionarioPalabras.keys():
         if clave.split('-')[0] == numerosPalabra:
             clavesSeleccionadas.append(clave)
-    print(clavesSeleccionadas)
-
-    return clavesSeleccionadas
-
-'''
-def uniLetras (numLetra, diccionarioLetras): #letra = número
-    clavesSeleccionadas = []
-    for clave in diccionarioLetras.keys():
-        if clave.split('-')[0] == numLetra:
-            clavesSeleccionadas.append(clave)
     
     maxOcurrencias = 0
     maxClave = ''
-    cont = 0
-    for clave1 in clavesSeleccionadas:
-        if cont == 0:
-            maxOcurrencias = diccionarioLetras[clave1].get_numOcurrencias()
-            maxClave = clave1.split('-')[1]
-        else:
-            if diccionarioLetras[clave1].get_numOcurrencias() > maxOcurrencias:
-                maxOcurrencias = diccionarioLetras[clave1].get_numOcurrencias()
-                maxClave = clave1.split('-')[1]
-        cont += 1
-
-    return maxClave
     
+    for clave in clavesSeleccionadas:
+        if diccionarioPalabras[clave].get_numOcurrencias() > maxOcurrencias:
+            maxOcurrencias = diccionarioPalabras[clave].get_numOcurrencias()
+            maxClave = clave.split('-')[1]
+            
+    return maxClave
+
+def uniLetras (numLetra, diccionarioLetras): #letra = número
+   clavesSeleccionadas = []
+   for clave in diccionarioLetras.keys():
+       if clave.split('-')[0] == numLetra:
+           clavesSeleccionadas.append(clave)
+   
+   maxClave = ''
+   maxOcurrencias = 0
+   for clave1 in clavesSeleccionadas:
+           if diccionarioLetras[clave1].get_numOcurrencias() > maxOcurrencias:
+               maxOcurrencias = diccionarioLetras[clave1].get_numOcurrencias()
+               maxClave = clave1.split('-')[1]
+
+   return maxClave
+
 
 def biLetras (letraAnterior, numLetra, diccionarioLetras): #letra = número
-    clavesSeleccionadas = []
-    for clave in diccionarioLetras.keys():
-        if clave.split('-')[0] == numLetra:
-            clavesSeleccionadas.append(clave)
-    
-    maxOcurrencias = 0
-    maxClave = ''
-    cont = 0
-    for clave1 in clavesSeleccionadas:
-        if cont == 0:
-            # Hay que mirar las claves del diccionario de letras, recorrer el diccionario de letras anteriores incluido en los valores y
-            # quedarnos con la letras que más aparece
-            for elemento in diccionarioLetras[clave1].get_diccionarioPalabrasAnteriores():
-                if elemento.key().split('-')[1] == letraAnterior:
-                    maxOcurrencias = diccionarioLetras[clave1].get_numOcurrencias()
-                    maxClave = clave1.split['-'][1]
+   maxClave = ''
+   maxOcurrencias = 0
+   
+   for clave in diccionarioLetras.keys():
+       if clave.split('-')[0] == numLetra:
+           print("-------------------")
+           print ("dentro del if igual letra:" + clave.split('-')[0])
+           diccionarioLetrasAnt = diccionarioLetras[clave].get_diccionarioPalabrasAnteriores()
+           print (clave)
+           print (diccionarioLetrasAnt)
+           
+           for claveLetrasAnt in diccionarioLetrasAnt.keys():
+               print (claveLetrasAnt)
+               if claveLetrasAnt.split('-')[1] == letraAnterior:
+                   print (claveLetrasAnt.split('-')[1])
+                   if diccionarioLetrasAnt[claveLetrasAnt] > maxOcurrencias:
+                       print ("mayor")
+                       maxClave = clave.split('-')[1]
+                       print ("maxClave:" + maxClave)
+                       maxOcurrencias = diccionarioLetrasAnt[claveLetrasAnt]
+                       #print ("cont:" + str(cont))
+                       print ("maxOcurrencias:" + str(maxOcurrencias))
+                   else:
+                       print ("menor")
+           print("-------------------")
+   
+   if len(maxClave) != 0:
+       print ("maxClave: " + maxClave)
+       print ("maxOcurrencias: " + str(maxOcurrencias))
+   else:
+       print ("igual a 0")
+   return maxClave
 
-        else:
-            for letraAnt in diccionarioLetras[clave1].get_diccionarioPalabrasAnteriores():
-                if letraAnt.split('-')[1] == letraAnterior && :
-            
-            
-            
-            if diccionarioLetras[clave1].get_numOcurrencias() > maxOcurrencias:
-                maxOcurrencias = diccionarioLetras[clave1].get_numOcurrencias()
-                maxClave = clave1.split('-')[1]
-        cont += 1
 
-    return maxClave   
-'''
 class EstructuraGuardado:
     def __init__(self, numOcurrencias, diccionarioPalabrasAnteriores):
         self.numOcurrencias = numOcurrencias
