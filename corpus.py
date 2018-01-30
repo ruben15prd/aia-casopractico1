@@ -41,7 +41,7 @@ def generaDiccionarios():
     textoLista = []
     texto = ''
     
-    for line in open("psicologia_revolucionaria.txt", 'r'):
+    for line in open("prueba.txt", 'r'):
         texto = texto + line
     
     #Eliminamos los caracteres especiales y no utiles y lo formateamos
@@ -59,9 +59,10 @@ def generaDiccionarios():
     diccionarioPalabras = generaDiccionarioPalabras(diccionarioPalabras, diccionarioLetrasNumeros, textoLista)
     diccionarioLetras = generaDiccionarioLetras(diccionarioLetras, diccionarioLetrasNumeros, textoLista)
     print("Palabras: ")
-    print(diccionarioPalabras)
+    #print(diccionarioPalabras)
     print("Letras: ")
     print(diccionarioLetras)
+    uniL = uniLetras('1', diccionarioLetras)
 
 def insertaPalabra(diccionarioPalabras,diccionarioLetrasNumeros, palabra, palabraAnterior):
     
@@ -219,7 +220,30 @@ def codificar(palabra,diccionarioCodificacion):
                
     return cadenaCodificada
 
-       
+
+
+def uniLetras (letra, diccionarioLetras): #letra = número
+    clavesSeleccionadas = []
+    for elem in diccionarioLetras.keys():
+        if elem.split('-')[0] == letra:
+            clavesSeleccionadas.append(elem)
+    
+    maxOcurrencias = 0
+    maxClave = ''
+    cont = 0
+    for elem1 in clavesSeleccionadas:
+        if cont == 0:
+            maxOcurrencias = diccionarioLetras[elem1].get_numOcurrencias()
+            maxClave = elem1.split('-')[1]
+        else:
+            if diccionarioLetras[elem1].get_numOcurrencias() > maxOcurrencias:
+                maxOcurrencias = diccionarioLetras[elem1].get_numOcurrencias()
+                maxClave = elem1.split('-')[1]
+        cont += 1
+    
+    print(maxOcurrencias)
+    print(maxClave)
+    return maxClave
     
     
 
