@@ -1,5 +1,6 @@
 import re
 
+
 def generaDiccionarios():
     '''En esta funcion se genera una tupla de dos diccionarios: Unigram y bigram de letras y unigram y bigram de palabras'''
     
@@ -26,7 +27,9 @@ def generaDiccionarios():
     diccionarioLetrasNumeros['8'] = ['w','x','y','z']
     
     # Definimos los diccionarios de letras y palabras
-    
+    #print(codificar('estamos',diccionarioLetrasNumeros))
+    #print(codificar('haciendo',diccionarioLetrasNumeros))
+    #print(codificar('un',diccionarioLetrasNumeros))
     diccionarioLetras = {}
     diccionarioPalabras = {}
     
@@ -71,11 +74,11 @@ def generaDiccionarios():
     #print(uniP)
     #print(biP)
     
-    return (diccionarioLetras, diccionarioLetrasNumeros)
+    return (diccionarioLetras, diccionarioPalabras)
 
 
 
-def prioridad(cadenaNumeros,diccionarioLetras, diccionarioPalabras):
+def prioridadBigramPalabras(cadenaNumeros,diccionarioLetras, diccionarioPalabras):
     listaPredicciones = []
     cadenaSplit = cadenaNumeros.split(" ")
     cadenaPredicciones = ''
@@ -122,7 +125,7 @@ def realizaBigramUnigramPalabras(palabra, cadenaNumeros, diccionarioPalabras):
         prediccion = biPalabras(palabra, cadenaNumeros, diccionarioPalabras)
         if prediccion == '':
             prediccion = uniPalabras(cadenaNumeros, diccionarioPalabras)
-
+            
     return prediccion
 
 
@@ -194,8 +197,8 @@ def uniPalabras (numerosPalabra, diccionarioPalabras):
     clavesSeleccionadas = []
     maxOcurrencias = 0
     maxClave = ''
-    
     for clave in diccionarioPalabras.keys():
+        
         if clave.split('-')[0] == numerosPalabra:
             clavesSeleccionadas.append(clave)
         
@@ -212,11 +215,9 @@ def biPalabras (palabraAnterior, numerosPalabra, diccionarioPalabras):
     '''En este método se realiza el bigram de palabras'''
     maxPrediccion = ''
     maxOcPrediccion = 0
-    
     for clave in diccionarioPalabras.keys():
         if clave.split('-')[0] == numerosPalabra:
             diccionarioPalabrasAnt = diccionarioPalabras[clave].get_diccionarioPalabrasAnteriores()
-            
             for clavePalabrasAnt in diccionarioPalabrasAnt.keys():
                 if clavePalabrasAnt.split('-')[1] == palabraAnterior:
                     if diccionarioPalabrasAnt[clavePalabrasAnt] > maxOcPrediccion:
@@ -365,7 +366,7 @@ def codificar(palabra,diccionarioCodificacion):
         for elem in diccionarioCodificacion:
             if letra in diccionarioCodificacion[elem]:
                cadenaCodificada = cadenaCodificada + elem 
-               
+              
     return cadenaCodificada
 
 
@@ -399,5 +400,16 @@ class EstructuraGuardado:
 def main():
     diccionarios = generaDiccionarios()
     #TKinter
-    textoSalida = prioridad('2671556 31132525 75 7611145 8 14 53655 732565 31141525',diccionarios[0], diccionarios[1])
+    # '2671556 31132525 75'
+    
+    
+   
+    
+    textoSalida = prioridadBigramPalabras('716316 67222 673261',diccionarios[0], diccionarios[1])
+    print(textoSalida)
+    
+    #ola = biPalabras('hola', '1111',diccionarios[1])
+    #ola1 = uniPalabras('1111',diccionarios[1])
+    #print(ola1)
+    
     #TKinter
