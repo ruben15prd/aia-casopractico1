@@ -79,6 +79,8 @@ def generaDiccionarios():
 
 
 def prioridadBigramPalabras(cadenaNumeros,diccionarioLetras, diccionarioPalabras):
+    '''En este método se predice una cadena intentando primero el bigram de palabras, sino a unigram de palabras, sino a bigram de letras y
+    sino a unigram de letras'''
     listaPredicciones = []
     cadenaSplit = cadenaNumeros.split(" ")
     cadenaPredicciones = ''
@@ -117,6 +119,85 @@ def prioridadBigramPalabras(cadenaNumeros,diccionarioLetras, diccionarioPalabras
 
 
 
+
+
+def prioridadUnigramPalabras(cadenaNumeros,diccionarioLetras, diccionarioPalabras):
+    '''En este método se predice una cadena intentando primero el unigram de palabras, sino a bigram de letras y
+    sino a unigram de letras'''
+    listaPredicciones = []
+    cadenaSplit = cadenaNumeros.split(" ")
+    cadenaPredicciones = ''
+    
+    count = 0
+    for cadena in cadenaSplit:
+        prediccion = ''
+        #Es la primera
+        if count == 0:
+            #Longitud mayor que 1
+            if len(cadena) > 1:
+                prediccion = uniPalabras(cadena, diccionarioPalabras)
+                if prediccion == '':
+                    prediccion = realizaBigramUnigramLetras(cadena,diccionarioLetras)
+                
+            else:
+                prediccion = realizaBigramUnigramLetras(cadena,diccionarioLetras)
+            
+        #No es la primera 
+        else:
+            if len(cadena) > 1:
+                prediccion = uniPalabras(cadena, diccionarioPalabras)
+                if prediccion == '':
+                    prediccion = realizaBigramUnigramLetras(cadena,diccionarioLetras)
+                
+            else:
+                prediccion = realizaBigramUnigramLetras(cadena,diccionarioLetras)
+        listaPredicciones.append(prediccion)    
+        count = count +1
+    
+    #Obtenemos la cadena de predicciones
+    for c in listaPredicciones:
+        cadenaPredicciones = cadenaPredicciones + " " + c
+    
+    return cadenaPredicciones
+
+
+def prioridadBigramLetras(cadenaNumeros,diccionarioLetras, diccionarioPalabras):
+    '''En este método se predice una cadena intentando primero el bigram de letras y sino a unigram de letras'''
+    listaPredicciones = []
+    cadenaSplit = cadenaNumeros.split(" ")
+    cadenaPredicciones = ''
+    
+    for cadena in cadenaSplit:
+        prediccion = realizaBigramUnigramLetras(cadena,diccionarioLetras)
+                
+        listaPredicciones.append(prediccion)    
+        
+    
+    #Obtenemos la cadena de predicciones
+    for c in listaPredicciones:
+        cadenaPredicciones = cadenaPredicciones + " " + c
+    
+    return cadenaPredicciones
+
+def prioridadUnigramLetras(cadenaNumeros,diccionarioLetras, diccionarioPalabras):
+    '''En este método se predice una cadena intentando el unigram de letras'''
+    listaPredicciones = []
+    cadenaSplit = cadenaNumeros.split(" ")
+    cadenaPredicciones = ''
+    
+    for cadena in cadenaSplit:
+        prediccion = realizaUnigramLetras(cadena,diccionarioLetras)
+        listaPredicciones.append(prediccion)        
+    
+    #Obtenemos la cadena de predicciones
+    for c in listaPredicciones:
+        cadenaPredicciones = cadenaPredicciones + " " + c
+    
+    return cadenaPredicciones
+
+
+
+
 def realizaBigramUnigramPalabras(palabra, cadenaNumeros, diccionarioPalabras):
     '''En este método se realiza el cambio de bigram a unigram de palabras según la predicción que se obtenga'''
     if palabra == '':
@@ -149,6 +230,16 @@ def realizaBigramUnigramLetras(cadenaNumeros, diccionarioLetras):
                 prediccionActual = uniLetras(numero, diccionarioLetras) 
                 prediccion = prediccion + prediccionActual 
                 anterior = prediccionActual
+                
+    return prediccion
+
+
+def realizaUnigramLetras(cadenaNumeros, diccionarioLetras):
+    '''En este método se realiza el unigram de letras'''
+    prediccion = ''
+    
+    for numero in cadenaNumeros:
+        prediccion = prediccion + uniLetras(numero, diccionarioLetras)
                 
     return prediccion
 
