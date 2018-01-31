@@ -1,23 +1,17 @@
 import re
 
 def generaDiccionarios():
-    '''En esta funcion se genera el corpus, es decir, toda la estructura de datos necesaria para posteriormente poder
-    calular las probabilidades para la prediccion de palabras y letras tanto unigram como bigram'''
+    '''En esta funcion se genera una tupla de dos diccionarios: Unigram y bigram de letras y unigram y bigram de palabras'''
     
-    # Devolver una lista con 2 diccionarios, en una tenemos el corpus generado para las letras y en otro para las palabras
-    # Para guardar las palabras, si hay un punto que la precede, entonces generaremos una lista con ceros
+    #Cuando encontremos un punto en el texto entendemos que no hay relación con la palabra anterior
     
     
-    #Diccionario clave: numero - valores : letras
+    #La estructura de ambos diccionarios es la siguiente: {'claveUnigram': NumOcurrenciasUnigram-{claveBigram: NumOcurrenciasBigram}}
+    #Cada clave está formada por el número correspondiente a la palabra y la palabra en sí de separadas por -. Ejemplo: 3541-hola
+    #Cada valor está compuesto por Número de ocurrencias usadas para el unigram y un diccionario
+    #Este diccionario usado para el bigram está compuesto por la misma estructura de la clave que antes y como valor tiene asociado el 
+    #número de veces que aparece esta última clave antes de la primera clave mencionada
     
-    #Estructura palabras: clave: nºocurrencias,numeros correspondientes a la clave - lista: [la palabra anterior, los numeros de esa palabra,  nº de veces que aparece]  
-    #Clave : 385723 Valor: [4,casa,[42,la,9]]
-    
-    #El número de caracteres se calcularia a demanda mediante el .length
-    # Cuando tengamos un bigram de palabras cuando estemos consultando la segunda palabra, la primera ya no son números
-    # Cuando no obtengamos resultado haciendo un bigram, hay que usar el modelo anterior.
-    
-    #Estructura letras: clave: letra, nºveces que aparece, posicion en la que se encuentra,[la letra anterior,  nº de veces que aparece]  
     
     # Definimos el diccionario que nos permitira realizar el mapeo entre numeros y letras
     diccionarioLetrasNumeros = {}
@@ -31,7 +25,7 @@ def generaDiccionarios():
     diccionarioLetrasNumeros['7'] = ['t','u','ú','v']
     diccionarioLetrasNumeros['8'] = ['w','x','y','z']
     
-    # Definimos el diccionario para el corpus de letras
+    # Definimos los diccionarios de letras y palabras
     
     diccionarioLetras = {}
     diccionarioPalabras = {}
@@ -41,6 +35,7 @@ def generaDiccionarios():
     textoLista = []
     texto = ''
     
+    #Abrimos el fichero de texto
     for line in open("prueba.txt", 'r'):
         texto = texto + line
     
@@ -50,8 +45,6 @@ def generaDiccionarios():
     textoSinCaracteresEspeciales = re.sub('[ +]', '-', textoSinCaracteresEspeciales)
     textoSinCaracteresEspeciales = re.sub('-{2,}', '', textoSinCaracteresEspeciales)
     textoSinCaracteresEspeciales = re.sub('-', ' ', textoSinCaracteresEspeciales)
-    #print(textoSinCaracteresEspeciales)
-    
     
     #Dividimos el texto por los puntos
     textoLista = textoSinCaracteresEspeciales.split(".");
@@ -59,10 +52,8 @@ def generaDiccionarios():
     
     diccionarioPalabras = generaDiccionarioPalabras(diccionarioPalabras, diccionarioLetrasNumeros, textoLista)
     diccionarioLetras = generaDiccionarioLetras(diccionarioLetras, diccionarioLetrasNumeros, textoLista)
-    print("Palabras: ")
-    print(diccionarioPalabras)
-    print("Letras: ")
-    print(diccionarioLetras)
+    #print(diccionarioPalabras)
+    #print(diccionarioLetras)
     
     #numLetra = input ("Escriba un número: ")
     #letraAnterior = input ("Escriba una letra anterior: ")
@@ -80,8 +71,10 @@ def generaDiccionarios():
     #print(uniP)
     #print(biP)
     
-    
     return (diccionarioLetras, diccionarioLetrasNumeros)
+
+
+
 def prioridad(cadenaNumeros,diccionarioLetras, diccionarioPalabras):
     listaPredicciones = []
     cadenaSplit = cadenaNumeros.split(" ")
@@ -113,14 +106,16 @@ def prioridad(cadenaNumeros,diccionarioLetras, diccionarioPalabras):
         listaPredicciones.append(prediccion)    
         count = count +1
     
-    
     #Obtenemos la cadena de predicciones
     for c in listaPredicciones:
         cadenaPredicciones = cadenaPredicciones + " " + c
     
     return cadenaPredicciones
 
+
+
 def realizaBigramUnigramPalabras(palabra, cadenaNumeros, diccionarioPalabras):
+    '''En este método se realiza el cambio de bigram a unigram de palabras según la predicción que se obtenga'''
     if palabra == '':
         prediccion = uniPalabras(cadenaNumeros, diccionarioPalabras)
     else:
@@ -131,7 +126,9 @@ def realizaBigramUnigramPalabras(palabra, cadenaNumeros, diccionarioPalabras):
     return prediccion
 
 
+
 def realizaBigramUnigramLetras(cadenaNumeros, diccionarioLetras):
+    '''En este método se realiza el cambio de bigram a unigram de letras según la predicción que se obtenga'''
     prediccion = ''
     anterior = ''
     prediccionActual = ''
@@ -150,18 +147,20 @@ def realizaBigramUnigramLetras(cadenaNumeros, diccionarioLetras):
                 prediccion = prediccion + prediccionActual 
                 anterior = prediccionActual
                 
-    
     return prediccion
 
 
-def uniLetras (numLetra, diccionarioLetras): #letra = número
+
+def uniLetras (numLetra, diccionarioLetras):
+   '''En este método se realiza el unigram de letras'''
    clavesSeleccionadas = []
+   maxClave = ''
+   maxOcurrencias = 0
+   
    for clave in diccionarioLetras.keys():
        if clave.split('-')[0] == numLetra:
            clavesSeleccionadas.append(clave)
    
-   maxClave = ''
-   maxOcurrencias = 0
    for clave1 in clavesSeleccionadas:
            if diccionarioLetras[clave1].get_numOcurrencias() > maxOcurrencias:
                maxOcurrencias = diccionarioLetras[clave1].get_numOcurrencias()
@@ -170,7 +169,9 @@ def uniLetras (numLetra, diccionarioLetras): #letra = número
    return maxClave
 
 
-def biLetras (letraAnterior, numLetra, diccionarioLetras): #letra = número
+
+def biLetras (letraAnterior, numLetra, diccionarioLetras):
+   '''En este método se realiza el bigram de letras'''
    maxClave = ''
    maxOcurrencias = 0
    
@@ -187,15 +188,17 @@ def biLetras (letraAnterior, numLetra, diccionarioLetras): #letra = número
    return maxClave
 
 
-def uniPalabras (numerosPalabra, diccionarioPalabras): 
+
+def uniPalabras (numerosPalabra, diccionarioPalabras):
+    '''En este método se realiza el unigram de palabras'''
     clavesSeleccionadas = []
-    for clave in diccionarioPalabras.keys():
-        if clave.split('-')[0] == numerosPalabra:
-            clavesSeleccionadas.append(clave)
-    
     maxOcurrencias = 0
     maxClave = ''
     
+    for clave in diccionarioPalabras.keys():
+        if clave.split('-')[0] == numerosPalabra:
+            clavesSeleccionadas.append(clave)
+        
     for clave in clavesSeleccionadas:
         if diccionarioPalabras[clave].get_numOcurrencias() > maxOcurrencias:
             maxOcurrencias = diccionarioPalabras[clave].get_numOcurrencias()
@@ -203,12 +206,12 @@ def uniPalabras (numerosPalabra, diccionarioPalabras):
             
     return maxClave
 
-
  
+    
 def biPalabras (palabraAnterior, numerosPalabra, diccionarioPalabras): 
+    '''En este método se realiza el bigram de palabras'''
     maxPrediccion = ''
     maxOcPrediccion = 0
-    
     
     for clave in diccionarioPalabras.keys():
         if clave.split('-')[0] == numerosPalabra:
@@ -219,25 +222,23 @@ def biPalabras (palabraAnterior, numerosPalabra, diccionarioPalabras):
                     if diccionarioPalabrasAnt[clavePalabrasAnt] > maxOcPrediccion:
                         maxPrediccion = clave.split("-")[1]
                         maxOcPrediccion = diccionarioPalabrasAnt[clavePalabrasAnt]
-
-                
+    
     return maxPrediccion
 
-def insertaPalabra(diccionarioPalabras,diccionarioLetrasNumeros, palabra, palabraAnterior):
-    
+
+
+def insertaPalabra(diccionarioPalabras, diccionarioLetrasNumeros, palabra, palabraAnterior):
+    '''En este método se realiza la inserción de un par clave-valor en un diccionario de palabras'''
     palabraCodificada = codificar(palabra,diccionarioLetrasNumeros)
     palabraAnteriorCodificada = codificar(palabraAnterior,diccionarioLetrasNumeros)
-    
     #En caso de que la palabra ya esta insertada
     clave = palabraCodificada + "-" + palabra
-    claveAnterior =palabraAnteriorCodificada + "-" + palabraAnterior
+    claveAnterior = palabraAnteriorCodificada + "-" + palabraAnterior
+    
     if clave in diccionarioPalabras:
         entradaCorpus = diccionarioPalabras[clave]
-        
         claveNumOcurrencias = entradaCorpus.get_numOcurrencias()
-         
         entradaCorpus.set_numOcurrencias(claveNumOcurrencias + 1)
-        
     #Palabra no esta insertada 
     else:
         eg = EstructuraGuardado(1,{})
@@ -248,35 +249,31 @@ def insertaPalabra(diccionarioPalabras,diccionarioLetrasNumeros, palabra, palabr
     if palabraAnterior != '':
         entradaCorpus = diccionarioPalabras[clave]
         palabrasAnteriores = entradaCorpus.get_diccionarioPalabrasAnteriores()
-        
         #En caso de que la palabra anterior ya esta insertada
-        
         if claveAnterior in palabrasAnteriores:
             numOcurrencias = palabrasAnteriores[claveAnterior]
             palabrasAnteriores[claveAnterior] = numOcurrencias + 1      
         # Palabra anterior no insertada 
         else:
-            palabrasAnteriores[claveAnterior] = 1
-            
+            palabrasAnteriores[claveAnterior] = 1    
               
     return diccionarioPalabras
 
-def generaDiccionarioPalabras(diccionarioPalabras,diccionarioLetrasNumeros, textoLista):
+
+
+def generaDiccionarioPalabras(diccionarioPalabras, diccionarioLetrasNumeros, textoLista):
+    '''En este método se crea el diccionario de las palabras a partir del corpus'''
     palabraAnterior = ''
     
     for frase in textoLista:
-        
-        
         palabras = frase.split(" ")
         palabras = eliminaElementosLongitudMenor1(palabras)
         
         count = 0
         while (count < len(palabras)):
             palabra = palabras[count]
-            
             #Cogemos la palabra anterior
             palabraAnterior = ''
-            
             if count > 0:
                 palabraAnterior = palabras[count - 1]
             else:
@@ -284,18 +281,17 @@ def generaDiccionarioPalabras(diccionarioPalabras,diccionarioLetrasNumeros, text
             
             #Insertamos las palabras en el diccionario
             diccionarioPalabras = insertaPalabra(diccionarioPalabras, diccionarioLetrasNumeros, palabra, palabraAnterior)
-            
             count = count + 1
-    
     
     return diccionarioPalabras
   
    
-def generaDiccionarioLetras(diccionarioLetras,diccionarioLetrasNumeros, textoLista):
+    
+def generaDiccionarioLetras(diccionarioLetras, diccionarioLetrasNumeros, textoLista):
+    '''En este método se crea el diccionario de las letras a partir del corpus'''
     letraAnterior = ''
     
     for frase in textoLista:
-        
         palabras = frase.split(" ")
         palabras = eliminaElementosLongitudMenor1(palabras)
         
@@ -309,32 +305,25 @@ def generaDiccionarioLetras(diccionarioLetras,diccionarioLetrasNumeros, textoLis
                 else:
                     letraAnterior = ''
                 diccionarioLetras = insertaLetra(diccionarioLetras, diccionarioLetrasNumeros, letra, letraAnterior)    
-                
                 count = count + 1
-       
 
     return diccionarioLetras
-    
     
 
    
 def insertaLetra(diccionarioLetras,diccionarioLetrasNumeros, letra, letraAnterior):
-    
+    '''En este método se realiza la inserción de un par clave-valor en un diccionario de letras'''
     letraCodificada = codificar(letra,diccionarioLetrasNumeros)
     letraAnteriorCodificada = codificar(letraAnterior,diccionarioLetrasNumeros)
-    
     #En caso de que la letra ya esta insertada
     clave = letraCodificada + "-" + letra
     claveAnterior = letraAnteriorCodificada + "-" + letraAnterior
+    
     if clave in diccionarioLetras:
         entradaCorpus = diccionarioLetras[clave]
-        
         claveNumOcurrencias = entradaCorpus.get_numOcurrencias()
-         
         entradaCorpus.set_numOcurrencias(claveNumOcurrencias + 1)
-        
-    #Palabra no esta insertada 
-    else:
+    else: #Palabra no esta insertada
         eg = EstructuraGuardado(1,{})
         clave = letraCodificada + "-" + letra
         diccionarioLetras[clave] = eg
@@ -345,32 +334,33 @@ def insertaLetra(diccionarioLetras,diccionarioLetrasNumeros, letra, letraAnterio
         letrasAnteriores = entradaCorpus.get_diccionarioPalabrasAnteriores()
         
         #En caso de que la palabra anterior ya esta insertada
-        
         if claveAnterior in letrasAnteriores:
             numOcurrencias = letrasAnteriores[claveAnterior]
             letrasAnteriores[claveAnterior] = numOcurrencias + 1      
         # Palabra anterior no insertada 
         else:
             letrasAnteriores[claveAnterior] = 1
-            
                
     return diccionarioLetras
    
 
             
 def eliminaElementosLongitudMenor1(lista):
+    '''En este método se realiza para eliminar de una lista los caracteres en blanco'''
     listaMayor1 = []
+    
     for elem in lista:
         if len(elem) >= 1:
             listaMayor1.append(elem)
         
     return listaMayor1   
     
-
  
     
 def codificar(palabra,diccionarioCodificacion):
+    '''Este método codifica una palabra a sus correspondientes números, teniendo en cuenta en diccionario pasado como parámetro'''
     cadenaCodificada = ''
+    
     for letra in palabra:
         for elem in diccionarioCodificacion:
             if letra in diccionarioCodificacion[elem]:
@@ -379,7 +369,9 @@ def codificar(palabra,diccionarioCodificacion):
     return cadenaCodificada
 
 
+
 class EstructuraGuardado:
+    '''Estructura para la manipulación de los distintos diccionarios'''
     def __init__(self, numOcurrencias, diccionarioPalabrasAnteriores):
         self.numOcurrencias = numOcurrencias
         self.diccionarioPalabrasAnteriores = diccionarioPalabrasAnteriores
@@ -401,6 +393,7 @@ class EstructuraGuardado:
 
     def __repr__(self):
         return str(self.numOcurrencias) + "-" + str(self.diccionarioPalabrasAnteriores)
+
 
 
 def main():
