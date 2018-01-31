@@ -55,7 +55,6 @@ def generaDiccionarios():
     
     #Dividimos el texto por los puntos
     textoLista = textoSinCaracteresEspeciales.split(".");
-    print(len(textoLista))
     
     
     diccionarioPalabras = generaDiccionarioPalabras(diccionarioPalabras, diccionarioLetrasNumeros, textoLista)
@@ -80,9 +79,9 @@ def generaDiccionarios():
     #print(biL)
     #print(uniP)
     #print(biP)
-    ole = prioridad('1111 222 1 111',diccionarioLetras, diccionarioPalabras)
-    print(ole)
     
+    
+    return (diccionarioLetras, diccionarioLetrasNumeros)
 def prioridad(cadenaNumeros,diccionarioLetras, diccionarioPalabras):
     listaPredicciones = []
     cadenaSplit = cadenaNumeros.split(" ")
@@ -105,7 +104,7 @@ def prioridad(cadenaNumeros,diccionarioLetras, diccionarioPalabras):
         #No es la primera 
         else:
             if len(cadena) > 1:
-                prediccion = realizaBigramUnigramPalabras(listaPredicciones[count],cadena, diccionarioPalabras)
+                prediccion = realizaBigramUnigramPalabras(listaPredicciones[count - 1],cadena, diccionarioPalabras)
                 if prediccion == '':
                     prediccion = realizaBigramUnigramLetras(cadena,diccionarioLetras)
                 
@@ -117,7 +116,7 @@ def prioridad(cadenaNumeros,diccionarioLetras, diccionarioPalabras):
     
     #Obtenemos la cadena de predicciones
     for c in listaPredicciones:
-        cadenaPredicciones = cadenaPredicciones + c
+        cadenaPredicciones = cadenaPredicciones + " " + c
     
     return cadenaPredicciones
 
@@ -134,18 +133,23 @@ def realizaBigramUnigramPalabras(palabra, cadenaNumeros, diccionarioPalabras):
 
 def realizaBigramUnigramLetras(cadenaNumeros, diccionarioLetras):
     prediccion = ''
-    
     anterior = ''
-    for cad in cadenaNumeros:
+    prediccionActual = ''
+    
+    for numero in cadenaNumeros:
         if anterior == '':
-            prediccion = prediccion + uniLetras(cad, diccionarioLetras)
-            anterior = uniLetras(cad, diccionarioLetras)
+            prediccionActual = uniLetras(numero, diccionarioLetras)
+            prediccion = prediccion + prediccionActual
+            anterior = prediccionActual
         else:
-            prediccion = prediccion + biLetras(anterior, cad, diccionarioLetras)
-            anterior = biLetras(anterior, cad, diccionarioLetras)
-            if prediccion == '':
-               prediccion = prediccion + uniLetras(cad, diccionarioLetras) 
-               anterior = uniLetras(cad, diccionarioLetras) 
+            prediccionActual = biLetras(anterior, numero, diccionarioLetras)
+            prediccion = prediccion + prediccionActual
+            anterior = prediccionActual
+            if prediccionActual == '':
+                prediccionActual = uniLetras(numero, diccionarioLetras) 
+                prediccion = prediccion + prediccionActual 
+                anterior = prediccionActual
+                
     
     return prediccion
 
@@ -172,32 +176,14 @@ def biLetras (letraAnterior, numLetra, diccionarioLetras): #letra = número
    
    for clave in diccionarioLetras.keys():
        if clave.split('-')[0] == numLetra:
-           print("-------------------")
-           print ("dentro del if igual letra:" + clave.split('-')[0])
            diccionarioLetrasAnt = diccionarioLetras[clave].get_diccionarioPalabrasAnteriores()
-           print (clave)
-           print (diccionarioLetrasAnt)
            
            for claveLetrasAnt in diccionarioLetrasAnt.keys():
-               print (claveLetrasAnt)
                if claveLetrasAnt.split('-')[1] == letraAnterior:
-                   print (claveLetrasAnt.split('-')[1])
                    if diccionarioLetrasAnt[claveLetrasAnt] > maxOcurrencias:
-                       print ("mayor")
                        maxClave = clave.split('-')[1]
-                       print ("maxClave:" + maxClave)
                        maxOcurrencias = diccionarioLetrasAnt[claveLetrasAnt]
-                       #print ("cont:" + str(cont))
-                       print ("maxOcurrencias:" + str(maxOcurrencias))
-                   else:
-                       print ("menor")
-           print("-------------------")
-   
-   if len(maxClave) != 0:
-       print ("maxClave: " + maxClave)
-       print ("maxOcurrencias: " + str(maxOcurrencias))
-   else:
-       print ("igual a 0")
+                   
    return maxClave
 
 
@@ -393,10 +379,6 @@ def codificar(palabra,diccionarioCodificacion):
     return cadenaCodificada
 
 
-
-
-
-
 class EstructuraGuardado:
     def __init__(self, numOcurrencias, diccionarioPalabrasAnteriores):
         self.numOcurrencias = numOcurrencias
@@ -421,3 +403,8 @@ class EstructuraGuardado:
         return str(self.numOcurrencias) + "-" + str(self.diccionarioPalabrasAnteriores)
 
 
+def main():
+    diccionarios = generaDiccionarios()
+    #TKinter
+    textoSalida = prioridad('2671556 31132525 75 7611145 8 14 53655 732565 31141525',diccionarios[0], diccionarios[1])
+    #TKinter
