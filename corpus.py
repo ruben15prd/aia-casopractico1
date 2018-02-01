@@ -497,7 +497,14 @@ def main():
    
     
     textoSalida = prioridadBigramPalabras('716316 67222 673261',diccionarios[0], diccionarios[1])
+    textoSalida2 = prioridadUnigramPalabras('716316 67222 673261',diccionarios[0], diccionarios[1])
+    textoSalida3 = prioridadBigramLetras('716316 67222 673261',diccionarios[0], diccionarios[1])
+    textoSalida4 = prioridadUnigramLetras('716316 67222 673261',diccionarios[0], diccionarios[1])
     print(textoSalida)
+    print(textoSalida2)
+    print(textoSalida3)
+    print(textoSalida4)
+    
     
     #ola = biPalabras('hola', '1111',diccionarios[1])
     #ola1 = uniPalabras('1111',diccionarios[1])
