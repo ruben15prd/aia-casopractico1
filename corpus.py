@@ -1,15 +1,15 @@
 import re
 import tkinter
 
+
+
 def interfaz():
     ventana_principal = tkinter.Tk()
     ventana_principal.title("Prediccion de Texto")
     ventana_principal.geometry("500x500")
    
-    #NumPad(ventana_principal).place(x=20, y=200)
-   
-   
-   
+    NumPad(ventana_principal).place(x=20, y=200)
+    
     ventana_principal.mainloop()
    
 class NumPad(tkinter.Frame):
@@ -18,15 +18,11 @@ class NumPad(tkinter.Frame):
         label = tkinter.Label(root, text='Introduzca los numeros segun: ')
         label.place(x=20, y=10)
        
-       
-       
         textE = tkinter.StringVar()
-       
-        letras = "1: a, á, b, c " + "\n" + "2: d, e, é, f " + "\n" + "3: g, h, i, í" + "\n" + "4: j, k, l " + "\n" + "5: m, n, ñ, o, ó " + "\n" + "6: p, q, r, s " + "\n" +  "7: t, u, ú, v " + "\n" + "8: w, x, y, z "
+        letras = "1: a, á, b, c" + "\n" + "2: d, e, é, f" + "\n" + "3: g, h, i, í" + "\n" + "4: j, k, l" + "\n" + "5: m, n, ñ, o, ó" + "\n" + "6: p, q, r, s" + "\n" +  "7: t, u, ú, v" + "\n" + "8: w, x, y, z"
         textE.set(letras)
         tkinter.Message(root, textvariable=textE, relief=tkinter.RAISED, bd=2, width=450).place(x=20, y=40)
-       
-       
+        
         textoEnt = tkinter.StringVar()
         tkinter.Message(root, textvariable=textoEnt, relief=tkinter.RAISED, bd=2, width=450).place(x=20, y=330)
        
@@ -49,12 +45,17 @@ class NumPad(tkinter.Frame):
             if c > 2:
                 c = 0
                 r += 1
-               
-               
-        textoEntRes = tkinter.StringVar()
-        tkinter.Message(root, textvariable=textoEntRes, relief=tkinter.RAISED, bd=2, width=450).place(x=20, y=400)
        
         def rellenaCampos():
+            otra_ventana = tkinter.Toplevel(root)
+            otra_ventana.title('Resultados')
+            otra_ventana.geometry("500x500")
+            
+            tkinter.Label(otra_ventana, text='Presiona X, borra e inserta otros valores', bg="yellow").place(x=20, y=10)
+            
+            textoEntRes = tkinter.StringVar()
+            tkinter.Message(otra_ventana, textvariable=textoEntRes, relief=tkinter.RAISED, bd=2, width=450).place(x=20, y=50)
+            
             resultados = calcula(textoEnt.get())
            
             nueva = 'Bigram de palabras: ' + resultados[0] + "\n"
@@ -65,13 +66,18 @@ class NumPad(tkinter.Frame):
             textoEntRes.set(nueva)
             nueva = textoEntRes.get() + 'Unigram de letras: ' + resultados[3]
             textoEntRes.set(nueva)
+            
            
         def borraCampos():
             textoEnt.set("")
-            textoEntRes.set("")
+        
+        def borraUltimo():
+            textoEnt.set(textoEnt.get() [:-1])
             
         tkinter.Button(root, text ="Aceptar", width=6, command=rellenaCampos).place(x=200, y=200)
         tkinter.Button(root, text ="Borrar", width=6, command=borraCampos).place(x=200, y=230)
+        tkinter.Button(root, text ="Borrar Ultimo", width=10, command=borraUltimo).place(x=200, y=260)
+        
 
                
        
@@ -80,13 +86,11 @@ def generaDiccionarios():
     
     #Cuando encontremos un punto en el texto entendemos que no hay relación con la palabra anterior
     
-    
     #La estructura de ambos diccionarios es la siguiente: {'claveUnigram': NumOcurrenciasUnigram-{claveBigram: NumOcurrenciasBigram}}
     #Cada clave está formada por el número correspondiente a la palabra y la palabra en sí de separadas por -. Ejemplo: 3541-hola
     #Cada valor está compuesto por Número de ocurrencias usadas para el unigram y un diccionario
     #Este diccionario usado para el bigram está compuesto por la misma estructura de la clave que antes y como valor tiene asociado el 
     #número de veces que aparece esta última clave antes de la primera clave mencionada
-    
     
     # Definimos el diccionario que nos permitira realizar el mapeo entre numeros y letras
     diccionarioLetrasNumeros = {}
@@ -113,7 +117,7 @@ def generaDiccionarios():
     texto = ''
     
     #Abrimos el fichero de texto
-    for line in open("prueba.txt", 'r'):
+    for line in open("psicologia_revolucionaria.txt", 'r'):
         texto = texto + line
     
     #Eliminamos los caracteres especiales y no utiles y lo formateamos
@@ -565,15 +569,16 @@ class EstructuraGuardado:
 def calcula(cadena):
   diccionarios = generaDiccionarios()
   
-  #resultadoBigramPalabras = prioridadBigramPalabras('716316 67222 673261',diccionarios[0], diccionarios[1])
-  #resultadoUnigramPalabras = prioridadUnigramPalabras('716316 67222 673261',diccionarios[0], diccionarios[1])
-  #resultadoBigramLetras = prioridadBigramLetras('716316 67222 673261',diccionarios[0], diccionarios[1])
-  #resultadoUnigramLetras = prioridadUnigramLetras('716316 67222 673261',diccionarios[0], diccionarios[1])
-  
+  #Para ver el correcto funcionamiento de cada método descomentar y ejecutar
+  #cadena = '171525 456 22221756 572625' #cuando los defectos mueren
   resultadoBigramPalabras = prioridadBigramPalabras(cadena,diccionarios[0], diccionarios[1])
+  #print('RESULTADO BigramPalabras: ' + resultadoBigramPalabras)
   resultadoUnigramPalabras = prioridadUnigramPalabras(cadena,diccionarios[0], diccionarios[1])
+  #print('RESULTADO UnigramPalabras: ' + resultadoUnigramPalabras)
   resultadoBigramLetras = prioridadBigramLetras(cadena,diccionarios[0], diccionarios[1])
+  #print('RESULTADO BigramLetras: ' + resultadoBigramLetras)
   resultadoUnigramLetras = prioridadUnigramLetras(cadena,diccionarios[0], diccionarios[1])
+  #print('RESULTADO UnigramLetras: ' + resultadoUnigramLetras)
   
   return resultadoBigramPalabras, resultadoUnigramPalabras, resultadoBigramLetras, resultadoUnigramLetras
 
@@ -581,7 +586,3 @@ def calcula(cadena):
 
 if __name__ == "__main__":
     interfaz()
-    #textoEntrada = tkinter
-    #textoEntrada = '1111 222 1 111'
-    #textoSalida = prioridad('1111 222 1 111',diccionarios[0], diccionarios[1])
-    
