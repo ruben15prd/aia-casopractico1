@@ -1,6 +1,80 @@
 import re
+import tkinter
 
+def interfaz():
+    ventana_principal = tkinter.Tk()
+    ventana_principal.title("Prediccion de Texto")
+    ventana_principal.geometry("500x500")
+   
+    #NumPad(ventana_principal).place(x=20, y=200)
+   
+   
+   
+    ventana_principal.mainloop()
+   
+class NumPad(tkinter.Frame):
+    def __init__(self, root):
+        tkinter.Frame.__init__(self, root)
+        label = tkinter.Label(root, text='Introduzca los numeros segun: ')
+        label.place(x=20, y=10)
+       
+       
+       
+        textE = tkinter.StringVar()
+       
+        letras = "1: a, á, b, c " + "\n" + "2: d, e, é, f " + "\n" + "3: g, h, i, í" + "\n" + "4: j, k, l " + "\n" + "5: m, n, ñ, o, ó " + "\n" + "6: p, q, r, s " + "\n" +  "7: t, u, ú, v " + "\n" + "8: w, x, y, z "
+        textE.set(letras)
+        tkinter.Message(root, textvariable=textE, relief=tkinter.RAISED, bd=2, width=450).place(x=20, y=40)
+       
+       
+        textoEnt = tkinter.StringVar()
+        tkinter.Message(root, textvariable=textoEnt, relief=tkinter.RAISED, bd=2, width=450).place(x=20, y=330)
+       
+        self.grid()
+       
+        r = 1
+        c = 0
+        btn_list = ['9', '8', '7', '6', '5', '4', '3', '2', '1', '0']
+       
+        for boton in btn_list:
+            def fun(caracter):
+                nueva = textoEnt.get() + caracter
+                textoEnt.set(nueva)
+           
+            cmd = lambda button = boton: (fun(" ")) if button=='0' else fun(button)
+           
+            self.boton = tkinter.Button(self, text=boton, width=6, command=cmd).grid(row=r, column=c)
+           
+            c += 1
+            if c > 2:
+                c = 0
+                r += 1
+               
+               
+        textoEntRes = tkinter.StringVar()
+        tkinter.Message(root, textvariable=textoEntRes, relief=tkinter.RAISED, bd=2, width=450).place(x=20, y=400)
+       
+        def rellenaCampos():
+            resultados = calcula(textoEnt.get())
+           
+            nueva = 'Bigram de palabras: ' + resultados[0] + "\n"
+            textoEntRes.set(nueva)
+            nueva = textoEntRes.get() + 'Unigram de palabras: ' + resultados[1] + "\n"
+            textoEntRes.set(nueva)
+            nueva = textoEntRes.get() + 'Bigram de letras: ' + resultados[2] + "\n"
+            textoEntRes.set(nueva)
+            nueva = textoEntRes.get() + 'Unigram de letras: ' + resultados[3]
+            textoEntRes.set(nueva)
+           
+        def borraCampos():
+            textoEnt.set("")
+            textoEntRes.set("")
+            
+        tkinter.Button(root, text ="Aceptar", width=6, command=rellenaCampos).place(x=200, y=200)
+        tkinter.Button(root, text ="Borrar", width=6, command=borraCampos).place(x=200, y=230)
 
+               
+       
 def generaDiccionarios():
     '''En esta funcion se genera una tupla de dos diccionarios: Unigram y bigram de letras y unigram y bigram de palabras'''
     
@@ -488,26 +562,26 @@ class EstructuraGuardado:
 
 
 
-def main():
-    diccionarios = generaDiccionarios()
-    #TKinter
-    # '2671556 31132525 75'
+def calcula(cadena):
+  diccionarios = generaDiccionarios()
+  
+  #resultadoBigramPalabras = prioridadBigramPalabras('716316 67222 673261',diccionarios[0], diccionarios[1])
+  #resultadoUnigramPalabras = prioridadUnigramPalabras('716316 67222 673261',diccionarios[0], diccionarios[1])
+  #resultadoBigramLetras = prioridadBigramLetras('716316 67222 673261',diccionarios[0], diccionarios[1])
+  #resultadoUnigramLetras = prioridadUnigramLetras('716316 67222 673261',diccionarios[0], diccionarios[1])
+  
+  resultadoBigramPalabras = prioridadBigramPalabras(cadena,diccionarios[0], diccionarios[1])
+  resultadoUnigramPalabras = prioridadUnigramPalabras(cadena,diccionarios[0], diccionarios[1])
+  resultadoBigramLetras = prioridadBigramLetras(cadena,diccionarios[0], diccionarios[1])
+  resultadoUnigramLetras = prioridadUnigramLetras(cadena,diccionarios[0], diccionarios[1])
+  
+  return resultadoBigramPalabras, resultadoUnigramPalabras, resultadoBigramLetras, resultadoUnigramLetras
+
+
+
+if __name__ == "__main__":
+    interfaz()
+    #textoEntrada = tkinter
+    #textoEntrada = '1111 222 1 111'
+    #textoSalida = prioridad('1111 222 1 111',diccionarios[0], diccionarios[1])
     
-    
-   
-    
-    textoSalida = prioridadBigramPalabras('716316 67222 673261',diccionarios[0], diccionarios[1])
-    textoSalida2 = prioridadUnigramPalabras('716316 67222 673261',diccionarios[0], diccionarios[1])
-    textoSalida3 = prioridadBigramLetras('716316 67222 673261',diccionarios[0], diccionarios[1])
-    textoSalida4 = prioridadUnigramLetras('716316 67222 673261',diccionarios[0], diccionarios[1])
-    print(textoSalida)
-    print(textoSalida2)
-    print(textoSalida3)
-    print(textoSalida4)
-    
-    
-    #ola = biPalabras('hola', '1111',diccionarios[1])
-    #ola1 = uniPalabras('1111',diccionarios[1])
-    #print(ola1)
-    
-    #TKinter
