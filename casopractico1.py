@@ -15,7 +15,7 @@ def interfaz():
 class NumPad(tkinter.Frame):
     def __init__(self, root):
         tkinter.Frame.__init__(self, root)
-        label = tkinter.Label(root, text='Introduzca los numeros segun: ')
+        label = tkinter.Label(root, text='Introduzca los números según: ')
         label.place(x=20, y=10)
        
         textE = tkinter.StringVar()
@@ -76,7 +76,7 @@ class NumPad(tkinter.Frame):
             
         tkinter.Button(root, text ="Aceptar", width=6, command=rellenaCampos).place(x=200, y=200)
         tkinter.Button(root, text ="Borrar", width=6, command=borraCampos).place(x=200, y=230)
-        tkinter.Button(root, text ="Borrar Ultimo", width=10, command=borraUltimo).place(x=200, y=260)
+        tkinter.Button(root, text ="Borrar Último", width=10, command=borraUltimo).place(x=200, y=260)
         
 
                
