@@ -567,22 +567,39 @@ class EstructuraGuardado:
 
 
 def calcula(cadena):
-  diccionarios = generaDiccionarios()
+    '''Método que genera los resultados de unigram de letras, bigram de letras, unigram de palabras, bigram de palabras. También aquí se 
+    puede testear el código para un ejemplo'''
+    diccionarios = generaDiccionarios()
   
-  #Para ver el correcto funcionamiento de cada método descomentar y ejecutar
-  #cadena = '171525 456 22221756 572625' #cuando los defectos mueren
-  resultadoBigramPalabras = prioridadBigramPalabras(cadena,diccionarios[0], diccionarios[1])
-  #print('RESULTADO BigramPalabras: ' + resultadoBigramPalabras)
-  resultadoUnigramPalabras = prioridadUnigramPalabras(cadena,diccionarios[0], diccionarios[1])
-  #print('RESULTADO UnigramPalabras: ' + resultadoUnigramPalabras)
-  resultadoBigramLetras = prioridadBigramLetras(cadena,diccionarios[0], diccionarios[1])
-  #print('RESULTADO BigramLetras: ' + resultadoBigramLetras)
-  resultadoUnigramLetras = prioridadUnigramLetras(cadena,diccionarios[0], diccionarios[1])
-  #print('RESULTADO UnigramLetras: ' + resultadoUnigramLetras)
+    #Para ver el correcto funcionamiento de cada método descomentar y ejecutar
+    #cadena = '171525 456 22221756 572625' #cuando los defectos mueren
+    resultadoBigramPalabras = prioridadBigramPalabras(cadena,diccionarios[0], diccionarios[1])
+    #print('RESULTADO BigramPalabras: ' + resultadoBigramPalabras)
+    resultadoUnigramPalabras = prioridadUnigramPalabras(cadena,diccionarios[0], diccionarios[1])
+    #print('RESULTADO UnigramPalabras: ' + resultadoUnigramPalabras)
+    resultadoBigramLetras = prioridadBigramLetras(cadena,diccionarios[0], diccionarios[1])
+    #print('RESULTADO BigramLetras: ' + resultadoBigramLetras)
+    resultadoUnigramLetras = prioridadUnigramLetras(cadena,diccionarios[0], diccionarios[1])
+    #print('RESULTADO UnigramLetras: ' + resultadoUnigramLetras)
   
-  return resultadoBigramPalabras, resultadoUnigramPalabras, resultadoBigramLetras, resultadoUnigramLetras
+    return resultadoBigramPalabras, resultadoUnigramPalabras, resultadoBigramLetras, resultadoUnigramLetras
 
-
+def testing():
+    '''Método para testear el código'''
+    diccionarios = generaDiccionarios()
+    
+    #Para ver el correcto funcionamiento de cada método descomentar y ejecutar
+    cadena = '171525 456 22221756 572625' #cuando los defectos mueren
+    resultadoBigramPalabras = prioridadBigramPalabras(cadena,diccionarios[0], diccionarios[1])
+    print('RESULTADO BigramPalabras: ' + resultadoBigramPalabras)
+    resultadoUnigramPalabras = prioridadUnigramPalabras(cadena,diccionarios[0], diccionarios[1])
+    print('RESULTADO UnigramPalabras: ' + resultadoUnigramPalabras)
+    resultadoBigramLetras = prioridadBigramLetras(cadena,diccionarios[0], diccionarios[1])
+    print('RESULTADO BigramLetras: ' + resultadoBigramLetras)
+    resultadoUnigramLetras = prioridadUnigramLetras(cadena,diccionarios[0], diccionarios[1])
+    print('RESULTADO UnigramLetras: ' + resultadoUnigramLetras)
+    
+   
 
 if __name__ == "__main__":
     interfaz()
