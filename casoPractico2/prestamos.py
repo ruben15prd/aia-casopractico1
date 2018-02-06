@@ -684,3 +684,37 @@ prueba=[['funcionario','ninguno','dos o más','ninguno','divorciado','medios','c
       ['funcionario','dos o más','dos o más','dos o más','divorciado','medios','conceder']]
 
 # =============================================================================
+
+def aprendizajeArbolesDecision():
+    '''
+    1. Crear un nodo raiz conteniendo el conjunto inicial de entrenamiento D
+    2. REPETIR (hasta que no haya mas candidatos a nodos internos)
+        2.1 SELECCIONAR un nodo candidato a nodo interno
+        2.2 ELEGIR un criterio de decision
+        2.3 Crear los descendientes con los datos del nodo candidato que satisfacen el correspondiente valor del criterio de decision
+    3. ETIQUETAR cada nodo hoja con la clase dominante en los datos de dicho nodo (si no tiene datos, se usa la clase dominante en los datos del nodo padre)
+    4. PODAR nodos para evitar sobreajuste'''
+    
+    
+
+class NodoDT(object):
+    def __init__(self,atributo=-1,distr=None,ramas=None,clase=None):
+        self.distr=distr
+        self.atributo=atributo
+        self.ramas=ramas
+        self.clase=clase
+        
+class Clasificador:
+    def __init__(self,clasificacion,clases,atributos):
+        self.clasificacion=clasificacion
+        self.clases=clases
+        self.atributos=atributos
+    def entrena(self,entrenamiento,validacion=None):
+        pass
+    def clasifica(self,ejemplo):
+        pass
+    def evalua(self,prueba):
+        pass
+    def imprime(self):
+        pass
+
