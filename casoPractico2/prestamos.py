@@ -29,8 +29,41 @@ clasificacion='Préstamo'
 clases=['conceder','no conceder','estudiar']
 
 # Conjuntos de entrenamiento, validación y prueba
-  
+
 entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
+      ['funcionario','dos o más','ninguna','uno','viudo','bajos','no conceder'],
+      ['parado','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
+      ['funcionario','dos o más','ninguna','dos o más','divorciado','altos','conceder'],
+      ['funcionario','uno','dos o más','dos o más','soltero','altos','conceder'],
+      ['parado','ninguno','dos o más','dos o más','divorciado','altos','conceder'],
+      ['funcionario','ninguno','ninguna','uno','viudo','altos','conceder'],
+      ['jubilado','ninguno','ninguna','dos o más','divorciado','altos','estudiar'],
+      ['funcionario','ninguno','una','uno','soltero','bajos','estudiar'],
+      ['funcionario','uno','una','ninguno','divorciado','altos','conceder']]
+
+validacion=[['parado','uno','ninguna','ninguno','casado','bajos','no conceder'],
+       ['laboral','uno','ninguna','ninguno','viudo','medios','estudiar'],
+       ['funcionario','ninguno','ninguna','ninguno','divorciado','altos','conceder'],
+       ['laboral','ninguno','una','ninguno','divorciado','medios','no conceder'],
+       ['parado','dos o más','una','dos o más','casado','medios','no conceder'],
+       ['parado','uno','una','ninguno','divorciado','medios','estudiar'],
+       ['laboral','ninguno','dos o más','dos o más','viudo','bajos','no conceder'],
+       ['funcionario','dos o más','una','ninguno','viudo','bajos','estudiar'],
+       ['funcionario','dos o más','una','ninguno','casado','altos','conceder'],
+       ['laboral','dos o más','ninguna','dos o más','viudo','altos','conceder']]
+
+prueba=[['funcionario','ninguno','dos o más','ninguno','divorciado','medios','conceder'],
+      ['funcionario','uno','dos o más','dos o más','divorciado','bajos','conceder'],
+      ['laboral','dos o más','una','ninguno','casado','medios','estudiar'],
+      ['jubilado','uno','ninguna','ninguno','viudo','bajos','estudiar'],
+      ['laboral','dos o más','dos o más','uno','casado','medios','conceder'],
+      ['laboral','dos o más','dos o más','uno','casado','altos','conceder'],
+      ['parado','ninguno','una','dos o más','divorciado','altos','estudiar'],
+      ['parado','uno','dos o más','uno','casado','medios','conceder'],
+      ['laboral','uno','una','uno','casado','medios','estudiar'],
+      ['laboral','uno','ninguna','dos o más','divorciado','bajos','no conceder']]
+  
+"""entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
       ['funcionario','dos o más','ninguna','uno','viudo','bajos','no conceder'],
       ['parado','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
       ['funcionario','dos o más','ninguna','dos o más','divorciado','altos','conceder'],
@@ -354,9 +387,9 @@ entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar
       ['laboral','ninguno','dos o más','uno','viudo','medios','conceder'],
       ['laboral','ninguno','ninguna','uno','viudo','medios','estudiar'],
       ['funcionario','ninguno','dos o más','dos o más','divorciado','bajos','conceder'],
-      ['jubilado','ninguno','ninguna','dos o más','viudo','medios','no conceder']]
+      ['jubilado','ninguno','ninguna','dos o más','viudo','medios','no conceder']]"""
 
-validacion=[['parado','uno','ninguna','ninguno','casado','bajos','no conceder'],
+"""validacion=[['parado','uno','ninguna','ninguno','casado','bajos','no conceder'],
        ['laboral','uno','ninguna','ninguno','viudo','medios','estudiar'],
        ['funcionario','ninguno','ninguna','ninguno','divorciado','altos','conceder'],
        ['laboral','ninguno','una','ninguno','divorciado','medios','no conceder'],
@@ -517,9 +550,9 @@ validacion=[['parado','uno','ninguna','ninguno','casado','bajos','no conceder'],
        ['funcionario','ninguno','dos o más','dos o más','casado','medios','conceder'],
        ['laboral','uno','dos o más','uno','divorciado','altos','conceder'],
        ['laboral','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
-       ['funcionario','uno','dos o más','ninguno','viudo','bajos','conceder']]
+       ['funcionario','uno','dos o más','ninguno','viudo','bajos','conceder']]"""
 
-prueba=[['funcionario','ninguno','dos o más','ninguno','divorciado','medios','conceder'],
+"""prueba=[['funcionario','ninguno','dos o más','ninguno','divorciado','medios','conceder'],
       ['funcionario','uno','dos o más','dos o más','divorciado','bajos','conceder'],
       ['laboral','dos o más','una','ninguno','casado','medios','estudiar'],
       ['jubilado','uno','ninguna','ninguno','viudo','bajos','estudiar'],
@@ -681,29 +714,53 @@ prueba=[['funcionario','ninguno','dos o más','ninguno','divorciado','medios','c
       ['jubilado','uno','ninguna','uno','soltero','altos','estudiar'],
       ['parado','uno','dos o más','ninguno','divorciado','bajos','no conceder'],
       ['funcionario','uno','dos o más','ninguno','viudo','medios','conceder'],
-      ['funcionario','dos o más','dos o más','dos o más','divorciado','medios','conceder']]
+      ['funcionario','dos o más','dos o más','dos o más','divorciado','medios','conceder']]"""
 
 # =============================================================================
-
-def aprendizajeArbolesDecision():
-    '''
-    1. Crear un nodo raiz conteniendo el conjunto inicial de entrenamiento D
-    2. REPETIR (hasta que no haya mas candidatos a nodos internos)
-        2.1 SELECCIONAR un nodo candidato a nodo interno
-        2.2 ELEGIR un criterio de decision
-        2.3 Crear los descendientes con los datos del nodo candidato que satisfacen el correspondiente valor del criterio de decision
-    3. ETIQUETAR cada nodo hoja con la clase dominante en los datos de dicho nodo (si no tiene datos, se usa la clase dominante en los datos del nodo padre)
-    4. PODAR nodos para evitar sobreajuste'''
+def aprendizajeArbolesDecision(conjuntoEjemplo):#, atributosRestantes):
+    # CASOS BASE:
+    #  - Cuando todos los datos son de la misma clase
+    casoBase = 1
+    primero = conjuntoEjemplo[0][len(conjuntoEjemplo[0])-1]
+    print (len(conjuntoEjemplo)-1)
+    for elem in conjuntoEjemplo:
+        if elem[len(elem)-1] != primero:
+            print (elem[len(elem)-1])
+            casoBase = 0
+    print (casoBase)
+    
+    
+    #  - Todos los elementos son muy pocos comparados con los que habia al principio
+    #  - Cuando la mayoria sean todos de la misma clase
+    
+    
+    
+    
+    #1. Crear un nodo raiz conteniendo el conjunto inicial de entrenamiento D
+    """nodo = NodoDT()
+    nodo.atributo = atributosRestantes[0]
+    nodo.distr = []
+    for at in atributos[]:
+        nodo.distr = at[]
+    print (raiz.distr)"""
+    #2. REPETIR (hasta que no haya mas candidatos a nodos internos)
+        #2.1 SELECCIONAR un nodo candidato a nodo interno
+        #2.2 ELEGIR un criterio de decision
+        #2.3 Crear los descendientes con los datos del nodo candidato que satisfacen el correspondiente valor del criterio de decision
+    #3. ETIQUETAR cada nodo hoja con la clase dominante en los datos de dicho nodo (si no tiene datos, se usa la clase dominante en los datos del nodo padre)
+    #4. PODAR nodos para evitar sobreajuste
     
     
 
 class NodoDT(object):
     def __init__(self,atributo=-1,distr=None,ramas=None,clase=None):
-        self.distr=distr
-        self.atributo=atributo
-        self.ramas=ramas
-        self.clase=clase
-        
+        self.distr=distr # Diccionario con el numero de ejemplos de cada clase
+        self.atributo=atributo # Indice del atributo, solo para  nodos internos
+        self.ramas=ramas # Diccionario con tantas claves como valores tenga el atributo (valor del atributo: nodo inferior)
+        self.clase=clase # Solo para nodos hojas
+    
+    
+    
 class Clasificador:
     def __init__(self,clasificacion,clases,atributos):
         self.clasificacion=clasificacion
