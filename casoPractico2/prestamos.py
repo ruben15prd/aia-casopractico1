@@ -14,7 +14,7 @@
 # * Estado civil: soltero, casao, viudo, divorciado. 
 # * Ingresos: bajos, medios, altos
 
-atributos=[("Empleo",["parado", "funcionario", "laboral","jubilado"]),
+atributos=[("Empleo",["parado", "funcionario", "laboral", "jubilado"]),
            ("Productos",["ninguno", "uno", "dos o más"]),
            ("Propiedades",["ninguna", "una", "dos o más"]),
            ("Hijos",["ninguno", "uno", "dos o más"]),
@@ -30,7 +30,7 @@ clases=['conceder','no conceder','estudiar']
 
 # Conjuntos de entrenamiento, validación y prueba
 
-entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
+"""entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
       ['funcionario','dos o más','ninguna','uno','viudo','bajos','no conceder'],
       ['parado','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
       ['funcionario','dos o más','ninguna','dos o más','divorciado','altos','conceder'],
@@ -39,7 +39,18 @@ entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar
       ['funcionario','ninguno','ninguna','uno','viudo','altos','conceder'],
       ['jubilado','ninguno','ninguna','dos o más','divorciado','altos','estudiar'],
       ['funcionario','ninguno','una','uno','soltero','bajos','estudiar'],
-      ['funcionario','uno','una','ninguno','divorciado','altos','conceder']]
+      ['funcionario','uno','una','ninguno','divorciado','altos','conceder']]"""
+entrenamiento2=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
+      ['funcionario','dos o más','ninguna','uno','viudo','bajos','estudiar'],
+      ['parado','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
+      ['funcionario','dos o más','ninguna','dos o más','divorciado','altos','estudiar'],
+      ['funcionario','uno','dos o más','dos o más','soltero','altos','estudiar'],
+      ['parado','ninguno','dos o más','dos o más','divorciado','altos','estudiar'],
+      ['funcionario','ninguno','ninguna','uno','viudo','altos','estudiar'],
+      ['jubilado','ninguno','ninguna','dos o más','divorciado','altos','estudiar'],
+      ['funcionario','ninguno','una','uno','soltero','bajos','conceder'],
+      ['funcionario','uno','una','ninguno','divorciado','altos','estudiar']]
+entrenamiento2ahora=[['jubilado','ninguno','ninguna','uno','soltero','altos','no conceder']]
 
 validacion=[['parado','uno','ninguna','ninguno','casado','bajos','no conceder'],
        ['laboral','uno','ninguna','ninguno','viudo','medios','estudiar'],
@@ -717,21 +728,115 @@ prueba=[['funcionario','ninguno','dos o más','ninguno','divorciado','medios','c
       ['funcionario','dos o más','dos o más','dos o más','divorciado','medios','conceder']]"""
 
 # =============================================================================
-def aprendizajeArbolesDecision(conjuntoEjemplo):#, atributosRestantes):
+def calculaDistribucion(conjuntoActual): # Hay que quitar lista y hacer el for con clases
+    dicClases = {}
+    for e in clases:
+        dicClases[e] = 0
+    
+    for elem1 in conjuntoActual:
+        dicClases[ elem1[len(elem1)-1] ] += 1
+    
+    return dicClases
+
+
+# USADA PARA CLASIFICA en lugar de calculaDistribucion
+def calculaDistribucion1111(conjuntoActual, lista):
+    diccionario = {}
+    for e in lista:
+        diccionario[e] = 0
+    
+    for elem1 in conjuntoActual:
+        ## 
+        diccionario[ elem1[len(elem1)-1] ] += 1
+    
+    return diccionario
+
+
+
+def compruebaCasoBase(conjuntoInicio, conjuntoActual, cotaMinima=0, cotaMayoria=1):
+    casoBase = 0
+    primero = conjuntoActual[0][len(conjuntoActual[0])-1]
+    #print ("primero: " + primero)
+    
     # CASOS BASE:
     #  - Cuando todos los datos son de la misma clase
-    casoBase = 1
-    primero = conjuntoEjemplo[0][len(conjuntoEjemplo[0])-1]
-    print (len(conjuntoEjemplo)-1)
-    for elem in conjuntoEjemplo:
-        if elem[len(elem)-1] != primero:
-            print (elem[len(elem)-1])
+    for elem in conjuntoActual:
+        if elem[len(elem)-1] == primero:
+            casoBase = 1
+            #print ("if :"+elem[len(elem)-1])
+        else:
             casoBase = 0
-    print (casoBase)
-    
+            #print ("else :"+elem[len(elem)-1])
+            break
     
     #  - Todos los elementos son muy pocos comparados con los que habia al principio
+    elemsMin = len(conjuntoActual) / len(conjuntoInicio)
+    if elemsMin < cotaMinima:
+        casoBase = 1
+    
     #  - Cuando la mayoria sean todos de la misma clase
+    dicClase = calculaDistribucion(conjuntoActual)
+    #print (dicClase)
+        
+    elemsMax = max(dicClase.values()) / len(conjuntoActual)
+    #print (elemsMax)
+    
+    if elemsMax > cotaMayoria:
+        casoBase = 1
+    
+    #CASOS EN LOS QUE SE HAN DE CREAR HOJAS:
+    # Si se queda el conjunto con un ejemplo se devuelve una hoja con la clase mayoritaria
+    # Si el conjunto está vacío se devuelve una hoja con la clase mayoritaria del nodo anterior
+    if len(conjuntoActual) <= 1: 
+        casoBase = 1
+    
+    return casoBase
+    
+
+
+def aprendizajeArbolesDecision(conjuntoInicio, atributos, funcionClasificacion, cotaMinima=0, cotaMayoria=1):
+    #conjuntoActual y atributosRestantes son listas de indices
+    conjuntoActual = conjuntoInicio[:]
+    atributosRestantes = atributos[:]
+    aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, conjuntoActual, atributosRestantes)
+
+
+
+def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, conjuntoActual, atributosRestantes):
+    # Crear parametro para almacenar la clase del nodo anterior y pasarsela al nodo hoja cuando no hay mas elementos, compruebaCasoBase=0
+    # Si es caso base se construye un nodo hoja
+    if compruebaCasoBase(conjuntoInicio,conjuntoActual,cotaMinima,cotaMayoria) == 1:
+        if len(conjuntoActual) == 1:
+            nodoHoja = NodoDT(distr=calculaDistribucion(conjuntoActual),
+                              atributo=None,
+                              ramas=None,
+                              clase=conjuntoActual[0][len(conjuntoActual[0])-1])
+            #print ("nodoHoja:" + str(conjuntoActual[0][len(conjuntoActual[0])-1]))
+        """elif len(conjuntoActual) == 0:
+            nodoHoja = NodoDT(distr=calculaDistribucion(conjuntoActual),
+                              atributo=None,
+                              ramas=None,
+                              clase="""
+            #print ("nodoHoja:" + str(conjuntoActual[0][len(conjuntoActual[0])-1]))
+    else:
+        # Si no es caso base se elige el mejor atributo atr(mejor atributo) usando la funcion clasifica(funcionClasificacion), dentro se ponen los distintos sumatorios de Entropia y los otros
+        nuevaClasificacion = Clasificador(funcionClasificacion, clases, atributos, conjuntoActual)
+        print ("antes")
+        mejorAtributo = nuevaClasificacion.clasifica(conjuntoActual)
+        print ("despues")
+        # Se crea un nuevo conjuntoActual conforme al valor del atributo elegido
+        nuevoConjuntoActual = []
+        for elem in conjuntoActual:
+            if elem[len(elem)-1] == mejorAtributo: #Si contiene al mejor atributo
+                nuevoConjuntoActual.append(elem)
+        conjuntoActual = nuevoConjuntoActual
+        
+        # Se construye un nodo internmedio con distr, atr, ramas{valorAtributo: aprendizajeRecursivo(
+        #       conjuntoInicio, atributos, porcentajeMinimo, porcentajeMayoria, nuevoConjuntoActual,
+        #       atributosRestantes-atr)}   
+    
+    #else:
+    
     
     
     
@@ -762,16 +867,33 @@ class NodoDT(object):
     
     
 class Clasificador:
-    def __init__(self,clasificacion,clases,atributos):
+    def __init__(self,clasificacion,clases,atributos, conjuntoActual):
         self.clasificacion=clasificacion
         self.clases=clases
         self.atributos=atributos
+        self.conjuntoActual=conjuntoActual
+        
     def entrena(self,entrenamiento,validacion=None):
         pass
-    def clasifica(self,ejemplo):
-        pass
+    
+    def clasifica(self, ejemplo):
+        result = ""
+        for atrib in atributos:
+            dic = calculaDistribucion1111(self.conjuntoActual, atrib[1])
+            print (dic)
+            # Se hacen los sumatorios con los valores de cada atributo y quedarnos con el menor para "error"
+            """if ejemplo == "error":
+                
+            
+            elif ejemplo == "gini":
+            
+            else ejemplo == "entropia":
+            """
+        return result
+    
     def evalua(self,prueba):
         pass
+    
     def imprime(self):
         pass
 
