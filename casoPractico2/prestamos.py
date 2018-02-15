@@ -30,7 +30,7 @@ clases=['conceder','no conceder','estudiar']
 
 # Conjuntos de entrenamiento, validación y prueba
 
-"""entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
+entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
       ['funcionario','dos o más','ninguna','uno','viudo','bajos','no conceder'],
       ['parado','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
       ['funcionario','dos o más','ninguna','dos o más','divorciado','altos','conceder'],
@@ -39,7 +39,7 @@ clases=['conceder','no conceder','estudiar']
       ['funcionario','ninguno','ninguna','uno','viudo','altos','conceder'],
       ['jubilado','ninguno','ninguna','dos o más','divorciado','altos','estudiar'],
       ['funcionario','ninguno','una','uno','soltero','bajos','estudiar'],
-      ['funcionario','uno','una','ninguno','divorciado','altos','conceder']]"""
+      ['funcionario','uno','una','ninguno','divorciado','altos','conceder']]
 entrenamiento2=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
       ['funcionario','dos o más','ninguna','uno','viudo','bajos','estudiar'],
       ['parado','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
@@ -728,7 +728,7 @@ prueba=[['funcionario','ninguno','dos o más','ninguno','divorciado','medios','c
       ['funcionario','dos o más','dos o más','dos o más','divorciado','medios','conceder']]"""
 
 # =============================================================================
-def calculaDistribucion(conjuntoActual): # Hay que quitar lista y hacer el for con clases
+def calculaDistribucion(conjuntoActual):
     dicClases = {}
     for e in clases:
         dicClases[e] = 0
@@ -738,18 +738,31 @@ def calculaDistribucion(conjuntoActual): # Hay que quitar lista y hacer el for c
     
     return dicClases
 
-
+#["parado", "funcionario", "laboral", "jubilado"]
 # USADA PARA CLASIFICA en lugar de calculaDistribucion
-def calculaDistribucion1111(conjuntoActual, lista):
-    diccionario = {}
-    for e in lista:
-        diccionario[e] = 0
-    
-    for elem1 in conjuntoActual:
-        ## 
-        diccionario[ elem1[len(elem1)-1] ] += 1
-    
-    return diccionario
+def calculaAtributoMax(conjuntoActual, atributos):
+   diccionarioAtributosValores = {}
+   contadorPosicion = 0
+   
+   for atr in atributos:
+       listaValoresAtributo = atr[1]
+       dic = {}
+       
+       for atrVal in listaValoresAtributo:
+           dic[atrVal] = 0
+       
+       diccionarioAtributosValores[contadorPosicion] = dic
+       contadorPosicion = contadorPosicion + 1
+   
+   for entrada in conjuntoActual:
+       contadorPosicion = 0
+       
+       for elem in entrada[0:len(entrada) - 1]:
+           dic = diccionarioAtributosValores[contadorPosicion]
+           dic[elem] += 1
+           contadorPosicion += 1
+       
+   return diccionarioAtributosValores
 
 
 
@@ -833,7 +846,18 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
         
         # Se construye un nodo internmedio con distr, atr, ramas{valorAtributo: aprendizajeRecursivo(
         #       conjuntoInicio, atributos, porcentajeMinimo, porcentajeMayoria, nuevoConjuntoActual,
-        #       atributosRestantes-atr)}   
+        #       atributosRestantes-atr)}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     #else:
     
@@ -878,17 +902,27 @@ class Clasificador:
     
     def clasifica(self, ejemplo):
         result = ""
-        for atrib in atributos:
-            dic = calculaDistribucion1111(self.conjuntoActual, atrib[1])
-            print (dic)
-            # Se hacen los sumatorios con los valores de cada atributo y quedarnos con el menor para "error"
-            """if ejemplo == "error":
-                
+        dic = calculaAtributoMax(self.conjuntoActual, self.atributos)
+        instanciasClaseMaxima = max(calculaDistribucion(self.conjuntoActual))
+        print ("iteracion: "+str(dic))
+        
+        dicClases = calculaDistribucion(self.conjuntoActual)
+        print ("dicClases: "+ str(dicClases) )
+        '''dicClases = list( calculaDistribucion(self.conjuntoActual).values() )
+        dicClases1 = sorted( list(dicClases) )[-1]
+        print ("dicClases: "+ str(list(dicClases)) )
+        print ("dicClases1: "+ str(dicClases1) )'''
+        
+        
+        # Se hacen los sumatorios con los valores de cada atributo y quedarnos con el menor para "error"
+        if ejemplo == "error":
+            tam = len(self.conjuntoActual)
+            for atrib in self.atributos:
+                dic
             
-            elif ejemplo == "gini":
-            
-            else ejemplo == "entropia":
-            """
+        """elif ejemplo == "gini":
+        else ejemplo == "entropia":
+        """
         return result
     
     def evalua(self,prueba):
