@@ -32,6 +32,11 @@ clases=['conceder','no conceder','estudiar']
 
 entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
       ['funcionario','dos o más','ninguna','uno','viudo','bajos','no conceder'],
+      ['jubilado','ninguno','dos o más','dos o más','soltero','altos','estudiar'],
+      ['funcionario','ninguno','dos o más','dos o más','viudo','bajos','estudiar'],
+      ['laboral','ninguno','una','dos o más','viudo','altos','conceder'],
+      ['funcionario','uno','una','uno','viudo','medios','estudiar'],
+      ['parado','dos o más','ninguna','uno','casado','medios','no conceder'],
       ['parado','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
       ['funcionario','dos o más','ninguna','dos o más','divorciado','altos','conceder'],
       ['funcionario','uno','dos o más','dos o más','soltero','altos','conceder'],
@@ -738,31 +743,39 @@ def calculaDistribucion(conjuntoActual):
     
     return dicClases
 
-#["parado", "funcionario", "laboral", "jubilado"]
-# USADA PARA CLASIFICA en lugar de calculaDistribucion
+
+
+# USADA en la funcion clasifica() para obtener cuantas personas hay de cada valor del atributo y cuantas pertenecen
+# a la clase dominante
 def calculaAtributoMax(conjuntoActual, atributos):
-   diccionarioAtributosValores = {}
-   contadorPosicion = 0
-   
-   for atr in atributos:
-       listaValoresAtributo = atr[1]
-       dic = {}
-       
-       for atrVal in listaValoresAtributo:
-           dic[atrVal] = 0
-       
-       diccionarioAtributosValores[contadorPosicion] = dic
-       contadorPosicion = contadorPosicion + 1
-   
-   for entrada in conjuntoActual:
-       contadorPosicion = 0
-       
-       for elem in entrada[0:len(entrada) - 1]:
-           dic = diccionarioAtributosValores[contadorPosicion]
-           dic[elem] += 1
-           contadorPosicion += 1
-       
-   return diccionarioAtributosValores
+  diccionarioAtributosValores = {}
+  contadorPosicion = 0
+  
+  dicClases = calculaDistribucion(conjuntoActual)
+  
+  claseMaxima = max(dicClases, key=dicClases.get)
+  
+  for atr in atributos:
+      listaValoresAtributo = atr[1]
+      dic = {}
+      
+      for atrVal in listaValoresAtributo:
+          dic[atrVal] = [0,0]
+      
+      diccionarioAtributosValores[contadorPosicion] = dic
+      contadorPosicion = contadorPosicion + 1
+  
+  for entrada in conjuntoActual:
+      contadorPosicion = 0
+      clase = entrada[len(entrada) - 1]
+      for elem in entrada[0:len(entrada) - 1]:
+          dic = diccionarioAtributosValores[contadorPosicion]
+          dic[elem][0] += 1
+          if clase == claseMaxima:
+              dic[elem][1] += 1
+          contadorPosicion += 1
+             
+  return diccionarioAtributosValores
 
 
 
@@ -789,7 +802,7 @@ def compruebaCasoBase(conjuntoInicio, conjuntoActual, cotaMinima=0, cotaMayoria=
     
     #  - Cuando la mayoria sean todos de la misma clase
     dicClase = calculaDistribucion(conjuntoActual)
-    #print (dicClase)
+    print (dicClase)
         
     elemsMax = max(dicClase.values()) / len(conjuntoActual)
     #print (elemsMax)
@@ -798,9 +811,13 @@ def compruebaCasoBase(conjuntoInicio, conjuntoActual, cotaMinima=0, cotaMayoria=
         casoBase = 1
     
     #CASOS EN LOS QUE SE HAN DE CREAR HOJAS:
-    # Si se queda el conjunto con un ejemplo se devuelve una hoja con la clase mayoritaria
-    # Si el conjunto está vacío se devuelve una hoja con la clase mayoritaria del nodo anterior
+    #   Si se queda el conjunto con un ejemplo se devuelve una hoja con la clase mayoritaria
+    #   Si el conjunto está vacío se devuelve una hoja con la clase mayoritaria del nodo anterior
     if len(conjuntoActual) <= 1: 
+        casoBase = 1
+        
+    # Si se queda sin atributos
+    if len(atributos) == 0:
         casoBase = 1
     
     return casoBase
@@ -816,9 +833,10 @@ def aprendizajeArbolesDecision(conjuntoInicio, atributos, funcionClasificacion, 
 
 
 def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, conjuntoActual, atributosRestantes):
+
     # Crear parametro para almacenar la clase del nodo anterior y pasarsela al nodo hoja cuando no hay mas elementos, compruebaCasoBase=0
     # Si es caso base se construye un nodo hoja
-    if compruebaCasoBase(conjuntoInicio,conjuntoActual,cotaMinima,cotaMayoria) == 1:
+    if compruebaCasoBase(conjuntoInicio, conjuntoActual, cotaMinima, cotaMayoria) == 1:
         if len(conjuntoActual) == 1:
             nodoHoja = NodoDT(distr=calculaDistribucion(conjuntoActual),
                               atributo=None,
@@ -833,20 +851,40 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             #print ("nodoHoja:" + str(conjuntoActual[0][len(conjuntoActual[0])-1]))
     else:
         # Si no es caso base se elige el mejor atributo atr(mejor atributo) usando la funcion clasifica(funcionClasificacion), dentro se ponen los distintos sumatorios de Entropia y los otros
-        nuevaClasificacion = Clasificador(funcionClasificacion, clases, atributos, conjuntoActual)
-        print ("antes")
-        mejorAtributo = nuevaClasificacion.clasifica(conjuntoActual)
-        print ("despues")
+        nuevaClasificacion = Clasificador(funcionClasificacion, clases, atributosRestantes, conjuntoActual)
+        #print ("antes")
+        mejorAtributo = nuevaClasificacion.clasifica(funcionClasificacion)
+        #print ("despues")
+        #print("atributosAntes:" + str(atributos) )
+        #print("atributosRestantesAntes:" + str(atributosRestantes) )
         # Se crea un nuevo conjuntoActual conforme al valor del atributo elegido
-        nuevoConjuntoActual = []
-        for elem in conjuntoActual:
-            if elem[len(elem)-1] == mejorAtributo: #Si contiene al mejor atributo
-                nuevoConjuntoActual.append(elem)
-        conjuntoActual = nuevoConjuntoActual
-        
-        # Se construye un nodo internmedio con distr, atr, ramas{valorAtributo: aprendizajeRecursivo(
-        #       conjuntoInicio, atributos, porcentajeMinimo, porcentajeMayoria, nuevoConjuntoActual,
-        #       atributosRestantes-atr)}
+        ''' for en el que en cada iteracion se crea un conjunto con los elementos del conjunto actual que tengan el valor del atributo'''
+        for valor in atributosRestantes[mejorAtributo][1]:
+            nuevoConjuntoActual = []
+            #print("valor: " + str(valor))
+            for fila in conjuntoActual:
+                #print("fila: " + str(fila))
+                if valor == fila[mejorAtributo]:
+                    nuevoConjuntoActual.append(fila)
+            
+            #print ("conjActual:" + str(nuevoConjuntoActual))
+            
+            # Se construye un nodo internmedio con distr, atr, ramas{valorAtributo: aprendizajeRecursivo(
+            #       conjuntoInicio, atributos, porcentajeMinimo, porcentajeMayoria, nuevoConjuntoActual,
+            #       atributosRestantes-atr)}
+            atribRestantes = atributosRestantes[:]
+            del(atribRestantes[mejorAtributo])
+            #print("atributosDespues:" + str(atributos) )
+            #print("atributosRestantesDespues:" + str(atribRestantes) )
+            
+            
+            # No hacer llamadas recursivas sin ejemplos
+            if len(nuevoConjuntoActual) > 0:
+                """nuevoNodo = NodoDT(distr=calculaDistribucion(nuevoConjuntoActual),
+                                   atributo=mejorAtributo,
+                                   ramas={valor: aprendizajeRecursivo(entrenamiento, atributos, 0, 1, "error", nuevoConjuntoActual, atribRestantes)},
+                                   clase=None)"""
+            #else:#Creo una hoja con la clase anterior
     
     
     
@@ -854,24 +892,12 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
     
     
     
-    
-    
-    
-    
-    
-    #else:
     
     
     
     
     
     #1. Crear un nodo raiz conteniendo el conjunto inicial de entrenamiento D
-    """nodo = NodoDT()
-    nodo.atributo = atributosRestantes[0]
-    nodo.distr = []
-    for at in atributos[]:
-        nodo.distr = at[]
-    print (raiz.distr)"""
     #2. REPETIR (hasta que no haya mas candidatos a nodos internos)
         #2.1 SELECCIONAR un nodo candidato a nodo interno
         #2.2 ELEGIR un criterio de decision
@@ -904,21 +930,38 @@ class Clasificador:
         result = ""
         dic = calculaAtributoMax(self.conjuntoActual, self.atributos)
         instanciasClaseMaxima = max(calculaDistribucion(self.conjuntoActual))
-        print ("iteracion: "+str(dic))
-        
-        dicClases = calculaDistribucion(self.conjuntoActual)
-        print ("dicClases: "+ str(dicClases) )
-        '''dicClases = list( calculaDistribucion(self.conjuntoActual).values() )
-        dicClases1 = sorted( list(dicClases) )[-1]
-        print ("dicClases: "+ str(list(dicClases)) )
-        print ("dicClases1: "+ str(dicClases1) )'''
+        #print ("iteracion: "+str(dic))
         
         
+        # Calcular la impureza del nodo padre y restarla al sumatorio de ni/n * impureza de cada valor del atributo
+        # Padre {'conceder': 6, 'no conceder': 2, 'estudiar': 7} --> - 6/15*log2(6/15) - 2/15*log2(2/15) - 7/15*log2(7/15)
+        
+        #print("antes de error")
         # Se hacen los sumatorios con los valores de cada atributo y quedarnos con el menor para "error"
         if ejemplo == "error":
+            #print("entra en error")
             tam = len(self.conjuntoActual)
-            for atrib in self.atributos:
-                dic
+            indiceAtributoMaximo = 0
+            valorErrorMinimo = 1.0
+            for elem in range(len(atributos)):
+                error = 0.00
+                
+                for elem1 in dic[elem]:
+                    #print(str(elem1))
+                    
+                    if dic[elem][elem1][0] > 0:
+                        pd = dic[elem][elem1][0]
+                        si = dic[elem][elem1][1]
+                        
+                        error += (pd/tam)*(1 - (si/pd))
+                        
+                #print("atributo nuevo:"+str(error))
+                if error < valorErrorMinimo:
+                    valorErrorMinimo = error
+                    indiceAtributoMaximo = elem
+            #print(indiceAtributoMaximo)
+            return indiceAtributoMaximo
+                
             
         """elif ejemplo == "gini":
         else ejemplo == "entropia":
