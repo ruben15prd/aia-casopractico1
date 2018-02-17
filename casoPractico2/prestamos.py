@@ -60,6 +60,8 @@ entrenamiento2=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudia
       ['funcionario','uno','una','ninguno','divorciado','altos','conceder']]
 
 
+
+
 def aprendizajeArbolesDecision(conjuntoInicio, atributos, funcionClasificacion, cotaMinima=0, cotaMayoria=1):
     #conjuntoActual y atributosRestantes son listas de indices
     conjuntoActual = list(range(len(conjuntoInicio)))
@@ -238,33 +240,28 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
     result = ""
     dic = calculaAtributoValores(conjuntoInicio, atributos, conjuntoActual, atributosRestantes)
     #instanciasClaseMaxima = max(calculaDistribucion(conjuntoInicio, conjuntoActual))
-    #print ("iteracion: "+str(dic))
-    #Impureza   
-        
+    #print ("iteracion: "+str(dic))  
     # Calcular la impureza del nodo padre y restarla al sumatorio de ni/n * impureza de cada valor del atributo
     # Padre {'conceder': 6, 'no conceder': 2, 'estudiar': 7} --> - 6/15*log2(6/15) - 2/15*log2(2/15) - 7/15*log2(7/15)
         
     #print("antes de error")
     # Se hacen los sumatorios con los valores de cada atributo y quedarnos con el menor para "error"
-    '''
-    todosIndices = list(range(len(atributos)))
-    a = np.array(todosIndices)
-    b = atributosRestantes
-    #print("-------")
-    #print( str(list(a[b])))
-    res= list(a[b])
-        
-    c = np.array(datoEntrenamiento)
-    d = res
-    #print("-------")
-    #print( str(list(c[d])))
-    indicesAObtener = list(c[d])
-    '''
+    #Impureza del padre
+    
     
     #print("---------")
     #print("CONJUNTOINICIO: " + str(conjuntoInicio))
     #print("ATRIBUTOSRESTANTES: " + str(atributosRestantes))
     if funcionClasificacion == "error":
+        
+        #impurezaPadre = 1 - pd/S
+        
+        distribucionClases = calculaDistribucion(conjuntoInicio,conjuntoActual)
+        pdPadre = sorted(distribucionClases.values())[len(distribucionClases) - 1]
+        
+        
+        impurezaPadre = 1 - (pdPadre/len(conjuntoActual))
+        
         #print("entra en error")
         tam = len(conjuntoActual)
         indiceAtributoMaximo = 0
@@ -283,9 +280,13 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
                     error += (pd/tam)*(1 - (si/pd))
                       
             #print("atributo nuevo:"+str(error))
-            if error < valorErrorMinimo:
+            
+                
+            impurezaTotalAtributo = impurezaPadre - error
+            if impurezaTotalAtributo < valorErrorMinimo:
                 valorErrorMinimo = error
                 indiceAtributoMaximo = elem
+            
         #print(indiceAtributoMaximo)
         return indiceAtributoMaximo
                 
@@ -293,7 +294,7 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
     """elif funcionClasificacion == "gini":
     else funcionClasificacion == "entropia":
     """
-    return result
+    
 
 
 def calculaAtributoValores(conjuntoInicio, atributos, conjuntoActual, atributosRestantes):
