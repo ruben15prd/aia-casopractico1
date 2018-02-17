@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 """
 Created on Sat Feb 17 16:59:51 2018
 
@@ -40,6 +41,12 @@ entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar
       ['funcionario','dos o más','ninguna','uno','viudo','bajos','no conceder'],
       ['jubilado','ninguno','dos o más','dos o más','soltero','altos','estudiar'],
       ['funcionario','ninguno','dos o más','dos o más','viudo','bajos','estudiar'],
+      ['laboral','ninguno','una','dos o más','viudo','altos','conceder']]
+
+entrenamiento2=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
+      ['funcionario','dos o más','ninguna','uno','viudo','bajos','no conceder'],
+      ['jubilado','ninguno','dos o más','dos o más','soltero','altos','estudiar'],
+      ['funcionario','ninguno','dos o más','dos o más','viudo','bajos','estudiar'],
       ['laboral','ninguno','una','dos o más','viudo','altos','conceder'],
       ['funcionario','uno','una','uno','viudo','medios','estudiar'],
       ['parado','dos o más','ninguna','uno','casado','medios','no conceder'],
@@ -63,6 +70,10 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
 
     # Crear parametro para almacenar la clase del nodo anterior y pasarsela al nodo hoja cuando no hay mas elementos, compruebaCasoBase=0
     # Si es caso base se construye un nodo hoja
+    print("----------------")
+    print("conjuntoActual: " + str(conjuntoActual))
+    print("atributosRestantes: " + str(atributosRestantes))
+    
     
     if compruebaCasoBase(conjuntoInicio, conjuntoActual, atributosRestantes, cotaMinima, cotaMayoria ) == 1:
         if len(conjuntoActual) == 1:
@@ -70,7 +81,13 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
                               atributo=None,
                               ramas=None,
                               clase=conjuntoInicio[conjuntoActual[0]][len(conjuntoInicio[conjuntoActual[0]])-1])
-            print ("nodoHoja:" + str(conjuntoInicio[conjuntoActual[0]][len(conjuntoInicio[conjuntoActual[0]])-1]))
+            
+            distr=calculaDistribucion(conjuntoInicio,conjuntoActual)
+            atributo=None
+            ramas=None
+            clase=conjuntoInicio[conjuntoActual[0]][len(conjuntoInicio[conjuntoActual[0]])-1]
+            print ("nodoHoja1:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+                   " -clase:" + str(clase))
     
     
     else:
@@ -81,6 +98,7 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
         # Si no es caso base se elige el mejor atributo atr(mejor atributo) usando la funcion clasifica(funcionClasificacion), dentro se ponen los distintos sumatorios de Entropia y los otros
         
         indiceMejorAtributo = obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosRestantes, funcionClasificacion)
+        print("indice: " + str(indiceMejorAtributo))
         #Creamos el conjunto actual de cada una de las ramas
         for valor in atributos[indiceMejorAtributo][1]:
             nuevoConjuntoActual = []
@@ -94,28 +112,44 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             
             #print ("conjActual:" + str(nuevoConjuntoActual))
         
-        #Creamos los atributos restantes de cada una de las ramas
-        atribRestantes = atributosRestantes[:]
-        del(atribRestantes[indiceMejorAtributo])
+            #Creamos los atributos restantes de cada una de las ramas
+            
+            atribRestantes = atributosRestantes[:]
+            atribRestantes.remove(indiceMejorAtributo)
+            #del(atribRestantes[indiceMejorAtributo])
         
-        #print("atributosDespues:" + str(atributosRestantes) )
-        #print("atributosRestantesDespues:" + str(atribRestantes) )
+            #print("atributosDespues:" + str(atributosRestantes) )
+            #print("atributosRestantesDespues:" + str(atribRestantes) )
         
-        # Se construye un nodo internmedio con distr, atr, ramas{valorAtributo: aprendizajeRecursivo(
+            # Se construye un nodo internmedio con distr, atr, ramas{valorAtributo: aprendizajeRecursivo(
             #       conjuntoInicio, atributos, porcentajeMinimo, porcentajeMayoria, nuevoConjuntoActual,
             #       atributosRestantes-atr)}
         
-        # No hacer llamadas recursivas sin ejemplos
-        if len(nuevoConjuntoActual) > 0:
-            nuevoNodo = NodoDT(distr=calculaDistribucion(conjuntoInicio,nuevoConjuntoActual),
-                                  atributo=indiceMejorAtributo,
-                                  ramas={valor: aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, nuevoConjuntoActual, atribRestantes)},
-                                  clase=None)
-        else:#Creo una hoja con la clase anterior
-            nodoHoja2 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
-                              atributo=None,
-                              ramas=None,
-                              clase=claseMaxima)
+            # No hacer llamadas recursivas sin ejemplos
+            if len(nuevoConjuntoActual) > 0:
+                nuevoNodo = NodoDT(distr=calculaDistribucion(conjuntoInicio,nuevoConjuntoActual),
+                                   atributo=indiceMejorAtributo,
+                                   ramas={valor: aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, nuevoConjuntoActual, atribRestantes)},
+                                   clase=None)
+                
+                distr=calculaDistribucion(conjuntoInicio,conjuntoActual)
+                atributo=indiceMejorAtributo
+                ramas={valor: aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, nuevoConjuntoActual, atribRestantes)}
+                clase=None
+                print ("nuevoNodo:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+                   " -clase:" + str(clase))
+            else:#Creo una hoja con la clase anterior
+                nodoHoja2 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
+                                   atributo=None,
+                                   ramas=None,
+                                   clase=claseMaxima)
+                
+                distr=calculaDistribucion(conjuntoInicio,conjuntoActual)
+                atributo=None
+                ramas=None
+                clase=claseMaxima
+                print ("nodoHoja1:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+                   " -clase:" + str(clase))
         
         
     
@@ -212,6 +246,24 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
         
     #print("antes de error")
     # Se hacen los sumatorios con los valores de cada atributo y quedarnos con el menor para "error"
+    '''
+    todosIndices = list(range(len(atributos)))
+    a = np.array(todosIndices)
+    b = atributosRestantes
+    #print("-------")
+    #print( str(list(a[b])))
+    res= list(a[b])
+        
+    c = np.array(datoEntrenamiento)
+    d = res
+    #print("-------")
+    #print( str(list(c[d])))
+    indicesAObtener = list(c[d])
+    '''
+    
+    #print("---------")
+    #print("CONJUNTOINICIO: " + str(conjuntoInicio))
+    #print("ATRIBUTOSRESTANTES: " + str(atributosRestantes))
     if funcionClasificacion == "error":
         #print("entra en error")
         tam = len(conjuntoActual)
@@ -219,7 +271,8 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
         valorErrorMinimo = 1.0
         for elem in atributosRestantes:
             error = 0.00
-                
+            #print(str(elem)) 
+            #print(str(dic[elem]))
             for elem1 in dic[elem]:
                 #print(str(elem1))
                     
@@ -258,19 +311,36 @@ def calculaAtributoValores(conjuntoInicio, atributos, conjuntoActual, atributosR
         for atrVal in listaValoresAtributo:
             dic[atrVal] = [0,0]
       
-        diccionarioAtributosValores[contadorPosicion] = dic
+        diccionarioAtributosValores[atributosRestantes[contadorPosicion]] = dic
         contadorPosicion += 1
-    #print(str(diccionarioAtributosValores[0]))
+    #print(str(diccionarioAtributosValores))
         
     for entrada in conjuntoActual:
         contadorPosicion = 0
         datoEntrenamiento = conjuntoInicio[entrada]
         clase = datoEntrenamiento[len(datoEntrenamiento) - 1]
         #print(str(datoEntrenamiento))
+        todosIndices = list(range(len(atributos)))
+        a = np.array(todosIndices)
+        b = atributosRestantes
+        #print("-------")
+        #print( str(list(a[b])))
+        res= list(a[b])
         
-        for elem in datoEntrenamiento[0:len(datoEntrenamiento) - 1]:
-          
-            dic = diccionarioAtributosValores[contadorPosicion]
+        c = np.array(datoEntrenamiento)
+        d = res
+        #print("-------")
+        #print( str(list(c[d])))
+        indicesAObtener = list(c[d])
+        
+        for elem in indicesAObtener:
+        #for elem in datoEntrenamiento[0:len(datoEntrenamiento) - 1]:
+        #for elem in atributosRestantes:
+            #todosIndices = list(range(len(atributosRestantes)))
+            
+            
+                
+            dic = diccionarioAtributosValores[atributosRestantes[contadorPosicion]]
             #print("diccionario: " + str(dic))
             #print("elem: " + str(elem))
             dic[elem][0] += 1
@@ -278,7 +348,7 @@ def calculaAtributoValores(conjuntoInicio, atributos, conjuntoActual, atributosR
                 dic[elem][1] += 1
             contadorPosicion += 1
         
-    #print(str(diccionarioAtributosValores))           
+    print(str(diccionarioAtributosValores))           
     return diccionarioAtributosValores
 
 class Clasificador:
