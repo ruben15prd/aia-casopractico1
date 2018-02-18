@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import math
 """
 Created on Sat Feb 17 16:59:51 2018
 
@@ -60,7 +61,7 @@ entrenamiento2=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudia
       ['funcionario','uno','una','ninguno','divorciado','altos','conceder']]
 
 
-
+arbol = []
 
 def aprendizajeArbolesDecision(conjuntoInicio, atributos, funcionClasificacion, cotaMinima=0, cotaMayoria=1):
     #conjuntoActual y atributosRestantes son listas de indices
@@ -72,9 +73,9 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
 
     # Crear parametro para almacenar la clase del nodo anterior y pasarsela al nodo hoja cuando no hay mas elementos, compruebaCasoBase=0
     # Si es caso base se construye un nodo hoja
-    print("----------------")
-    print("conjuntoActual: " + str(conjuntoActual))
-    print("atributosRestantes: " + str(atributosRestantes))
+    #print("----------------")
+    #print("conjuntoActual: " + str(conjuntoActual))
+    #print("atributosRestantes: " + str(atributosRestantes))
     
     
     if compruebaCasoBase(conjuntoInicio, conjuntoActual, atributosRestantes, cotaMinima, cotaMayoria ) == 1:
@@ -88,9 +89,11 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             atributo=None
             ramas=None
             clase=conjuntoInicio[conjuntoActual[0]][len(conjuntoInicio[conjuntoActual[0]])-1]
+            '''
             print ("nodoHoja1:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
                    " -clase:" + str(clase))
-    
+            '''
+            
     
     else:
         instanciasClaseMaxima = calculaDistribucion(conjuntoInicio, conjuntoActual)
@@ -100,7 +103,7 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
         # Si no es caso base se elige el mejor atributo atr(mejor atributo) usando la funcion clasifica(funcionClasificacion), dentro se ponen los distintos sumatorios de Entropia y los otros
         
         indiceMejorAtributo = obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosRestantes, funcionClasificacion)
-        print("indice: " + str(indiceMejorAtributo))
+        #print("indice: " + str(indiceMejorAtributo))
         #Creamos el conjunto actual de cada una de las ramas
         for valor in atributos[indiceMejorAtributo][1]:
             nuevoConjuntoActual = []
@@ -138,8 +141,12 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
                 atributo=indiceMejorAtributo
                 ramas={valor: aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, nuevoConjuntoActual, atribRestantes)}
                 clase=None
+                
                 print ("nuevoNodo:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
                    " -clase:" + str(clase))
+                
+                
+                
             else:#Creo una hoja con la clase anterior
                 nodoHoja2 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
                                    atributo=None,
@@ -150,12 +157,19 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
                 atributo=None
                 ramas=None
                 clase=claseMaxima
+                '''
                 print ("nodoHoja1:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
                    " -clase:" + str(clase))
-        
-        
+                '''
     
-      
+    
+        
+        
+        '''
+        print ("arbol:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+                   " -clase:" + str(clase))
+        '''
+    #return arbol      
     
     
     #1. Crear un nodo raiz conteniendo el conjunto inicial de entrenamiento D
@@ -237,7 +251,7 @@ class NodoDT(object):
         self.clase=clase # Solo para nodos hojas
         
 def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosRestantes, funcionClasificacion):
-    result = ""
+    
     dic = calculaAtributoValores(conjuntoInicio, atributos, conjuntoActual, atributosRestantes)
     #instanciasClaseMaxima = max(calculaDistribucion(conjuntoInicio, conjuntoActual))
     #print ("iteracion: "+str(dic))  
@@ -264,7 +278,7 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
         
         #print("entra en error")
         tam = len(conjuntoActual)
-        indiceAtributoMaximo = 0
+        indiceAtributoMejor = 0
         valorErrorMinimo = 1.0
         for elem in atributosRestantes:
             error = 0.00
@@ -285,15 +299,91 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
             impurezaTotalAtributo = impurezaPadre - error
             if impurezaTotalAtributo < valorErrorMinimo:
                 valorErrorMinimo = error
-                indiceAtributoMaximo = elem
+                indiceAtributoMejor = elem
             
-        #print(indiceAtributoMaximo)
-        return indiceAtributoMaximo
+        #print(indiceAtributoMejor)
+        return indiceAtributoMejor
                 
-            
-    """elif funcionClasificacion == "gini":
-    else funcionClasificacion == "entropia":
-    """
+    # Mide lo organizados que están los datos dentro del conjunto
+    elif funcionClasificacion == "gini":
+        distribucionClases = calculaDistribucion(conjuntoInicio,conjuntoActual)
+        tam = len(conjuntoActual)
+        #print ("distribucion:"+str(distribucionClases))
+        pj = 0
+       
+        for clase in distribucionClases:
+            pj += distribucionClases[clase]**2
+            #print ("clase: " + str(distribucionClases[clase]))
+       
+        impurezaPadre = 1 - pj
+        #print ("impurezaPadre: " + str(impurezaPadre))
+        #print("dic: "+str(dic))
+       
+        indiceAtributoMasOrganizado = 0
+        valorOrganizacionMinimo = 1.0
+        for elem in atributosRestantes:
+            organizacion = 0.00
+           
+            for elem1 in dic[elem]:
+                if dic[elem][elem1][0] > 0:
+                    pi = dic[elem][elem1][0]**2
+                    si = dic[elem][elem1][0]
+                   
+                    organizacion += (si/tam)*(1-pi)
+           
+            #print("atributo nuevo:" + str(organizacion))
+                   
+            impurezaTotalAtributo = impurezaPadre - organizacion  
+            if impurezaTotalAtributo < valorOrganizacionMinimo:
+                valorOrganizacionMinimo = organizacion
+                indiceAtributoMasOrganizado = elem
+       
+        #print("indiceAtributoMasOrganizado: " + str(indiceAtributoMasOrganizado))
+        return indiceAtributoMasOrganizado
+    
+    elif funcionClasificacion == "entropia":
+        
+        # Padre {'conceder': 6, 'no conceder': 2, 'estudiar': 7} --> - 6/15*log2(6/15) - 2/15*log2(2/15) - 7/15*log2(7/15)
+        
+        
+        
+        
+        distribucionClases = calculaDistribucion(conjuntoInicio,conjuntoActual)
+        #print ("distribucion:"+str(distribucionClases))
+        tam = len(conjuntoActual)
+        
+        impurezaPadre = 0
+       
+        for clase in distribucionClases:
+            valorClase = distribucionClases[clase]
+            impurezaPadre -= valorClase/len(conjuntoActual)*math.log(valorClase,2)
+            #print ("clase: " + str(distribucionClases[clase]))
+       
+        #print ("impurezaPadre: " + str(impurezaPadre))
+        #print("dic: "+str(dic))
+       
+        indiceAtributoMejor = 0
+        valorErrorMinimo = 1.0
+        for elem in atributosRestantes:
+            error = 0.00
+           
+            for elem1 in dic[elem]:
+                if dic[elem][elem1][0] > 0:
+                    si = dic[elem][elem1][0]
+                   
+                    error -= si*math.log(si,2)
+           
+           # print("atributo nuevo:" + str(error))
+                   
+            impurezaTotalAtributo = impurezaPadre - error  
+            if impurezaTotalAtributo < valorErrorMinimo:
+                valorErrorMinimo = error
+                indiceAtributoMejor = elem
+       
+        #print("indiceAtributoMejor: " + str(indiceAtributoMejor))
+        return indiceAtributoMejor
+        
+    
     
 
 
@@ -349,7 +439,7 @@ def calculaAtributoValores(conjuntoInicio, atributos, conjuntoActual, atributosR
                 dic[elem][1] += 1
             contadorPosicion += 1
         
-    print(str(diccionarioAtributosValores))           
+    #print(str(diccionarioAtributosValores))           
     return diccionarioAtributosValores
 
 class Clasificador:
