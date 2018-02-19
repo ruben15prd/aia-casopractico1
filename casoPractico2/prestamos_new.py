@@ -37,7 +37,6 @@ clasificacion='Préstamo'
 clases=['conceder','no conceder','estudiar']
 
 # Conjuntos de entrenamiento, validación y prueba
-
 entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
       ['funcionario','dos o más','ninguna','uno','viudo','bajos','no conceder'],
       ['parado','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
@@ -364,14 +363,26 @@ entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar
       ['funcionario','ninguno','dos o más','dos o más','divorciado','bajos','conceder'],
       ['jubilado','ninguno','ninguna','dos o más','viudo','medios','no conceder']]
 
-
+def calculaNumeroElementos(distribucion):
+    numero = 0
+    for elem in distribucion.values():
+        numero += elem
+    return numero
 
 def aprendizajeArbolesDecision(conjuntoInicio, atributos, funcionClasificacion, cotaMinima=0, cotaMayoria=1):
     #conjuntoActual y atributosRestantes son listas de indices
     conjuntoActual = list(range(len(conjuntoInicio)))
     atributosRestantes = list(range(len(atributos)))
-    aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, conjuntoActual, atributosRestantes)
-
+    
+    
+    nodo = aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, conjuntoActual, atributosRestantes)
+    
+    
+           
+    return nodo
+    #print(str(numero))
+    
+    
 def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, conjuntoActual, atributosRestantes):
 
     # Crear parametro para almacenar la clase del nodo anterior y pasarsela al nodo hoja cuando no hay mas elementos, compruebaCasoBase=0
@@ -380,13 +391,12 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
     #print("conjuntoActual: " + str(conjuntoActual))
     #print("atributosRestantes: " + str(atributosRestantes))
     
-    arbol = []
-    
     instanciasClaseMaxima = calculaDistribucion(conjuntoInicio, conjuntoActual)
     claseMaxima = max(instanciasClaseMaxima, key=instanciasClaseMaxima.get)
     if compruebaCasoBase(conjuntoInicio, conjuntoActual, atributosRestantes, cotaMinima, cotaMayoria ) == 1:
-        if len(conjuntoActual) == 1:
-            nodoHoja1 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
+        
+        if len(conjuntoActual) == 1:#Nodo hoja
+            nodo1 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
                               atributo=None,
                               ramas=None,
                               clase=conjuntoInicio[conjuntoActual[0]][len(conjuntoInicio[conjuntoActual[0]])-1])
@@ -395,27 +405,29 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             atributo=None
             ramas=None
             clase=conjuntoInicio[conjuntoActual[0]][len(conjuntoInicio[conjuntoActual[0]])-1]
-            '''
-            print ("nodoHoja1:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
-                   " -clase:" + str(clase))
-            '''
-            arbol.append(nodoHoja1)
             
-        else:
-            nodoHoja2 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
+            
+            print ("nodo1:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+                       " -clase:" + str(clase))
+            
+            return nodo1
+        else:#Nodo hoja
+            nodo2 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
                                    atributo=None,
                                    ramas=None,
                                    clase=claseMaxima)
-                
+            
             distr=calculaDistribucion(conjuntoInicio,conjuntoActual)
             atributo=None
             ramas=None
             clase=claseMaxima
-            '''
-            print ("nodoHoja2:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
-                  " -clase:" + str(clase))    
-            '''
-            arbol.append(nodoHoja2)
+            
+            
+            print ("nodo2:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+                       " -clase:" + str(clase))
+            
+            return nodo2
+            
     else:
         
         dicRamas = {}
@@ -453,57 +465,51 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             #       atributosRestantes-atr)}
         
             # No hacer llamadas recursivas sin ejemplos
-        #print(str(len(dicRamas)))    
-        if len(dicRamas) > 0:
-            nuevoNodo = NodoDT(distr=calculaDistribucion(conjuntoInicio,nuevoConjuntoActual),
+            if len(nuevoConjuntoActual) == 0:#Nodo hoja
+                claseMaxima = max(instanciasClaseMaxima, key=instanciasClaseMaxima.get)
+                nodo3 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
+                                   atributo=None,
+                                   ramas=None,
+                                   clase=claseMaxima)
+                
+                distr=calculaDistribucion(conjuntoInicio,conjuntoActual)
+                atributo=None
+                ramas=None
+                clase=claseMaxima
+                
+                
+                print ("nodo3:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+                       " -clase:" + str(clase))
+                dicRamas[valor] = nodo3
+                #return nodo3
+                
+        #print(str(len(dicRamas)))
+        # Es redundante
+        if len(dicRamas) > 0:#Nodo interno
+            nodo4 = NodoDT(distr=calculaDistribucion(conjuntoInicio,nuevoConjuntoActual),
                                    atributo=indiceMejorAtributo,
                                    ramas=dicRamas,
                                    clase=None)
-                
+            
             distr=calculaDistribucion(conjuntoInicio,conjuntoActual)
             atributo=indiceMejorAtributo
             ramas=dicRamas
             clase=None
             
-            '''
-            print ("nuevoNodo:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
-                   " -clase:" + str(clase))
-            '''
-            arbol.append(nuevoNodo)
+            
+            
+            print ("nodo4:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+                       " -clase:" + str(clase))
+            
+            return nodo4
+            
             
         
         
-        #print("--------------------------------")
-        
-        
-        
-        '''
-        print ("arbol:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
-                   " -clase:" + str(clase))
-        '''
-    '''   
-    for nodo in arbol:
-        distr=nodo.distr
-        atributo=nodo.atributo
-        ramas=nodo.ramas
-        clase=nodo.clase
-        
-        print ("arbol:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
-                   " -clase:" + str(clase))
-    #return arbol      
-    '''
+   
+    
     
     #Guardamos el nodo raiz, que es lo que hay que guardar, no el arbol completo
-    nodoRaiz = arbol[len(arbol) - 1]
-    
-    distr=nodoRaiz.distr
-    atributo=nodoRaiz.atributo
-    ramas=nodoRaiz.ramas
-    clase=nodoRaiz.clase
-    
-    print ("arbol:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
-                   " -clase:" + str(clase))
-    
     #1. Crear un nodo raiz conteniendo el conjunto inicial de entrenamiento D
     #2. REPETIR (hasta que no haya mas candidatos a nodos internos)
         #2.1 SELECCIONAR un nodo candidato a nodo interno
@@ -511,7 +517,6 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
         #2.3 Crear los descendientes con los datos del nodo candidato que satisfacen el correspondiente valor del criterio de decision
     #3. ETIQUETAR cada nodo hoja con la clase dominante en los datos de dicho nodo (si no tiene datos, se usa la clase dominante en los datos del nodo padre)
     #4. PODAR nodos para evitar sobreajuste
-    
 
 def compruebaCasoBase(conjuntoInicio, conjuntoActual, atributosRestantes, cotaMinima=0, cotaMayoria=1):
     casoBase = 0
@@ -544,10 +549,10 @@ def compruebaCasoBase(conjuntoInicio, conjuntoActual, atributosRestantes, cotaMi
     
     if len(conjuntoActual) > 0:  
         elemsMax = max(dicClase.values()) / len(conjuntoActual)
-    #print (elemsMax)
-    if len(conjuntoActual) > 0:
         if elemsMax > cotaMayoria:
             casoBase = 1
+    #print (elemsMax)
+        
     
     #CASOS EN LOS QUE SE HAN DE CREAR HOJAS:
     #   Si se queda el conjunto con un ejemplo se devuelve una hoja con la clase mayoritaria
@@ -620,10 +625,10 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
                 #print(str(elem1))
                     
                 if dic[elem][elem1][0] > 0:
-                    pd = dic[elem][elem1][0]
-                    si = dic[elem][elem1][1]
+                    pd = dic[elem][elem1][1]
+                    si = dic[elem][elem1][0]
                         
-                    error += (pd/tam)*(1 - (si/pd))
+                    error += (si/tam)*(1 - (pd/si))
                       
             #print("atributo nuevo:"+str(error))
             
@@ -647,7 +652,7 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
             pj += distribucionClases[clase]**2
             #print ("clase: " + str(distribucionClases[clase]))
        
-        impurezaPadre = 1 - pj
+        impurezaPadre = 1 - (pj/tam**2)
         #print ("impurezaPadre: " + str(impurezaPadre))
         #print("dic: "+str(dic))
        
@@ -688,7 +693,7 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
        
         for clase in distribucionClases:
             valorClase = distribucionClases[clase]
-            impurezaPadre -= valorClase/len(conjuntoActual)*math.log(valorClase,2)
+            impurezaPadre -= ((valorClase/len(conjuntoActual))*math.log(valorClase,2))/(tam)
             #print ("clase: " + str(distribucionClases[clase]))
        
         #print ("impurezaPadre: " + str(impurezaPadre))
@@ -703,7 +708,7 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
                 if dic[elem][elem1][0] > 0:
                     si = dic[elem][elem1][0]
                    
-                    error -= si*math.log(si,2)
+                    error -= (si*math.log(si,2))/tam
            
            # print("atributo nuevo:" + str(error))
                    
@@ -775,14 +780,14 @@ def calculaAtributoValores(conjuntoInicio, atributos, conjuntoActual, atributosR
     return diccionarioAtributosValores
 
 class Clasificador:
-    def __init__(self,clasificacion,clases,atributos, nodoRaiz):
+    def __init__(self,clasificacion,clases,atributos):
         self.clasificacion=clasificacion
         self.clases=clases
         self.atributos=atributos
-        self.nodoRaiz=nodoRaiz
+        self.nodoRaiz=None
         
     def entrena(self,entrenamiento,validacion=None):
-        pass
+        self.nodoRaiz = aprendizajeArbolesDecision(entrenamiento,atributos,"error", 0,1)
     
     def clasifica(self, ejemplo):
         pass
@@ -791,4 +796,15 @@ class Clasificador:
         pass
     
     def imprime(self):
-        pass
+        distr=self.nodoRaiz.distr
+        atributo=self.nodoRaiz.atributo
+        ramas=self.nodoRaiz.ramas
+        clase=self.nodoRaiz.clase
+        
+        print ("nodo:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+                       " -clase:" + str(clase))
+        
+                    
+clasificador1 = Clasificador("",clases,atributos)
+clasificador1.entrena(entrenamiento)
+clasificador1.imprime()
