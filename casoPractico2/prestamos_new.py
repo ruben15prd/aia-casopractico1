@@ -380,6 +380,8 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
     #print("conjuntoActual: " + str(conjuntoActual))
     #print("atributosRestantes: " + str(atributosRestantes))
     
+    arbol = []
+    
     instanciasClaseMaxima = calculaDistribucion(conjuntoInicio, conjuntoActual)
     claseMaxima = max(instanciasClaseMaxima, key=instanciasClaseMaxima.get)
     if compruebaCasoBase(conjuntoInicio, conjuntoActual, atributosRestantes, cotaMinima, cotaMayoria ) == 1:
@@ -393,9 +395,12 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             atributo=None
             ramas=None
             clase=conjuntoInicio[conjuntoActual[0]][len(conjuntoInicio[conjuntoActual[0]])-1]
-            
+            '''
             print ("nodoHoja1:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
                    " -clase:" + str(clase))
+            '''
+            arbol.append(nodoHoja1)
+            
         else:
             nodoHoja2 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
                                    atributo=None,
@@ -406,11 +411,11 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             atributo=None
             ramas=None
             clase=claseMaxima
-            
+            '''
             print ("nodoHoja2:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
-                   " -clase:" + str(clase))    
-            
-    
+                  " -clase:" + str(clase))    
+            '''
+            arbol.append(nodoHoja2)
     else:
         
         dicRamas = {}
@@ -460,10 +465,11 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             ramas=dicRamas
             clase=None
             
+            '''
             print ("nuevoNodo:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
                    " -clase:" + str(clase))
-            
-        
+            '''
+            arbol.append(nuevoNodo)
             
         
         
@@ -475,8 +481,28 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
         print ("arbol:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
                    " -clase:" + str(clase))
         '''
+    '''   
+    for nodo in arbol:
+        distr=nodo.distr
+        atributo=nodo.atributo
+        ramas=nodo.ramas
+        clase=nodo.clase
+        
+        print ("arbol:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+                   " -clase:" + str(clase))
     #return arbol      
+    '''
     
+    #Guardamos el nodo raiz, que es lo que hay que guardar, no el arbol completo
+    nodoRaiz = arbol[len(arbol) - 1]
+    
+    distr=nodoRaiz.distr
+    atributo=nodoRaiz.atributo
+    ramas=nodoRaiz.ramas
+    clase=nodoRaiz.clase
+    
+    print ("arbol:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+                   " -clase:" + str(clase))
     
     #1. Crear un nodo raiz conteniendo el conjunto inicial de entrenamiento D
     #2. REPETIR (hasta que no haya mas candidatos a nodos internos)
@@ -485,7 +511,7 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
         #2.3 Crear los descendientes con los datos del nodo candidato que satisfacen el correspondiente valor del criterio de decision
     #3. ETIQUETAR cada nodo hoja con la clase dominante en los datos de dicho nodo (si no tiene datos, se usa la clase dominante en los datos del nodo padre)
     #4. PODAR nodos para evitar sobreajuste
-
+    
 
 def compruebaCasoBase(conjuntoInicio, conjuntoActual, atributosRestantes, cotaMinima=0, cotaMayoria=1):
     casoBase = 0
@@ -749,11 +775,11 @@ def calculaAtributoValores(conjuntoInicio, atributos, conjuntoActual, atributosR
     return diccionarioAtributosValores
 
 class Clasificador:
-    def __init__(self,clasificacion,clases,atributos, arbol):
+    def __init__(self,clasificacion,clases,atributos, nodoRaiz):
         self.clasificacion=clasificacion
         self.clases=clases
         self.atributos=atributos
-        self.arbol=arbol
+        self.nodoRaiz=nodoRaiz
         
     def entrena(self,entrenamiento,validacion=None):
         pass
