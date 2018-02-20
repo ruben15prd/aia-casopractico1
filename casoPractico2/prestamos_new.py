@@ -363,6 +363,336 @@ entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar
       ['funcionario','ninguno','dos o más','dos o más','divorciado','bajos','conceder'],
       ['jubilado','ninguno','ninguna','dos o más','viudo','medios','no conceder']]
 
+
+validacion=[['parado','uno','ninguna','ninguno','casado','bajos','no conceder'],
+       ['laboral','uno','ninguna','ninguno','viudo','medios','estudiar'],
+       ['funcionario','ninguno','ninguna','ninguno','divorciado','altos','conceder'],
+       ['laboral','ninguno','una','ninguno','divorciado','medios','no conceder'],
+       ['parado','dos o más','una','dos o más','casado','medios','no conceder'],
+       ['parado','uno','una','ninguno','divorciado','medios','estudiar'],
+       ['laboral','ninguno','dos o más','dos o más','viudo','bajos','no conceder'],
+       ['funcionario','dos o más','una','ninguno','viudo','bajos','estudiar'],
+       ['funcionario','dos o más','una','ninguno','casado','altos','conceder'],
+       ['laboral','dos o más','ninguna','dos o más','viudo','altos','conceder'],
+       ['laboral','uno','ninguna','ninguno','viudo','bajos','no conceder'],
+       ['funcionario','dos o más','dos o más','uno','viudo','altos','conceder'],
+       ['laboral','uno','dos o más','dos o más','viudo','altos','conceder'],
+       ['laboral','dos o más','una','uno','viudo','altos','conceder'],
+       ['parado','uno','una','dos o más','soltero','medios','estudiar'],
+       ['jubilado','ninguno','una','dos o más','viudo','bajos','no conceder'],
+       ['funcionario','ninguno','dos o más','uno','divorciado','bajos','conceder'],
+       ['parado','uno','una','ninguno','viudo','altos','estudiar'],
+       ['parado','dos o más','una','ninguno','divorciado','bajos','no conceder'],
+       ['jubilado','dos o más','una','uno','soltero','bajos','no conceder'],
+       ['funcionario','ninguno','dos o más','ninguno','casado','altos','conceder'],
+       ['jubilado','ninguno','ninguna','ninguno','casado','altos','estudiar'],
+       ['funcionario','dos o más','una','dos o más','divorciado','medios','no conceder'],
+       ['funcionario','uno','ninguna','uno','soltero','altos','conceder'],
+       ['parado','dos o más','dos o más','ninguno','viudo','bajos','no conceder'],
+       ['laboral','ninguno','ninguna','ninguno','divorciado','bajos','no conceder'],
+       ['funcionario','dos o más','ninguna','uno','viudo','medios','estudiar'],
+       ['parado','uno','una','dos o más','divorciado','bajos','no conceder'],
+       ['laboral','dos o más','dos o más','uno','soltero','altos','conceder'],
+       ['parado','dos o más','ninguna','ninguno','soltero','medios','no conceder'],
+       ['funcionario','uno','ninguna','uno','soltero','medios','estudiar'],
+       ['funcionario','ninguno','ninguna','dos o más','soltero','altos','conceder'],
+       ['funcionario','uno','dos o más','ninguno','casado','medios','conceder'],
+       ['funcionario','dos o más','ninguna','ninguno','divorciado','bajos','no conceder'],
+       ['parado','ninguno','una','dos o más','casado','altos','estudiar'],
+       ['jubilado','ninguno','ninguna','dos o más','casado','bajos','no conceder'],
+       ['parado','uno','una','ninguno','casado','altos','estudiar'],
+       ['laboral','dos o más','una','ninguno','soltero','medios','estudiar'],
+       ['parado','ninguno','dos o más','ninguno','viudo','medios','conceder'],
+       ['funcionario','uno','una','uno','casado','medios','estudiar'],
+       ['laboral','uno','dos o más','ninguno','casado','medios','conceder'],
+       ['jubilado','uno','una','uno','divorciado','medios','estudiar'],
+       ['parado','uno','dos o más','ninguno','viudo','medios','conceder'],
+       ['laboral','dos o más','ninguna','dos o más','viudo','medios','estudiar'],
+       ['funcionario','ninguno','dos o más','uno','viudo','altos','conceder'],
+       ['jubilado','dos o más','ninguna','ninguno','viudo','bajos','no conceder'],
+       ['jubilado','uno','dos o más','uno','divorciado','bajos','no conceder'],
+       ['funcionario','uno','dos o más','uno','viudo','bajos','conceder'],
+       ['jubilado','dos o más','ninguna','ninguno','casado','bajos','no conceder'],
+       ['jubilado','uno','una','uno','divorciado','bajos','no conceder'],
+       ['laboral','ninguno','dos o más','uno','soltero','medios','conceder'],
+       ['laboral','dos o más','ninguna','uno','viudo','altos','conceder'],
+       ['laboral','dos o más','ninguna','uno','divorciado','altos','conceder'],
+       ['jubilado','uno','ninguna','uno','casado','bajos','no conceder'],
+       ['parado','dos o más','una','ninguno','soltero','medios','estudiar'],
+       ['jubilado','ninguno','dos o más','uno','viudo','bajos','no conceder'],
+       ['parado','dos o más','dos o más','dos o más','divorciado','medios','conceder'],
+       ['jubilado','dos o más','dos o más','dos o más','casado','bajos','no conceder'],
+       ['jubilado','uno','dos o más','ninguno','casado','medios','conceder'],
+       ['parado','uno','dos o más','dos o más','soltero','medios','conceder'],
+       ['parado','uno','dos o más','dos o más','casado','medios','conceder'],
+       ['jubilado','dos o más','dos o más','uno','viudo','bajos','no conceder'],
+       ['parado','ninguno','una','dos o más','soltero','altos','estudiar'],
+       ['funcionario','dos o más','ninguna','ninguno','casado','medios','estudiar'],
+       ['laboral','dos o más','dos o más','dos o más','casado','medios','conceder'],
+       ['funcionario','uno','una','ninguno','viudo','altos','conceder'],
+       ['jubilado','ninguno','una','dos o más','viudo','medios','no conceder'],
+       ['jubilado','dos o más','dos o más','ninguno','soltero','medios','conceder'],
+       ['parado','dos o más','dos o más','ninguno','casado','bajos','no conceder'],
+       ['parado','uno','ninguna','ninguno','soltero','bajos','no conceder'],
+       ['laboral','dos o más','ninguna','dos o más','divorciado','altos','conceder'],
+       ['jubilado','ninguno','ninguna','uno','casado','altos','estudiar'],
+       ['funcionario','uno','ninguna','ninguno','casado','bajos','no conceder'],
+       ['jubilado','uno','dos o más','uno','soltero','bajos','no conceder'],
+       ['jubilado','dos o más','una','ninguno','soltero','altos','estudiar'],
+       ['jubilado','ninguno','dos o más','dos o más','soltero','medios','conceder'],
+       ['funcionario','ninguno','una','dos o más','casado','bajos','estudiar'],
+       ['jubilado','dos o más','dos o más','ninguno','divorciado','medios','conceder'],
+       ['funcionario','uno','una','dos o más','soltero','bajos','estudiar'],
+       ['jubilado','dos o más','ninguna','ninguno','soltero','medios','no conceder'],
+       ['laboral','uno','una','dos o más','casado','altos','conceder'],
+       ['laboral','dos o más','una','dos o más','soltero','medios','no conceder'],
+       ['jubilado','dos o más','ninguna','ninguno','casado','medios','no conceder'],
+       ['parado','ninguno','una','dos o más','viudo','altos','estudiar'],
+       ['funcionario','dos o más','una','uno','divorciado','medios','estudiar'],
+       ['jubilado','uno','dos o más','dos o más','viudo','bajos','no conceder'],
+       ['laboral','dos o más','dos o más','dos o más','divorciado','medios','conceder'],
+       ['funcionario','dos o más','una','uno','viudo','medios','estudiar'],
+       ['jubilado','ninguno','una','uno','soltero','bajos','no conceder'],
+       ['funcionario','dos o más','ninguna','dos o más','soltero','bajos','no conceder'],
+       ['laboral','ninguno','una','ninguno','soltero','altos','conceder'],
+       ['laboral','ninguno','una','ninguno','casado','altos','conceder'],
+       ['jubilado','dos o más','una','uno','soltero','medios','estudiar'],
+       ['funcionario','uno','ninguna','uno','viudo','bajos','no conceder'],
+       ['jubilado','dos o más','una','dos o más','casado','altos','estudiar'],
+       ['parado','ninguno','dos o más','dos o más','viudo','altos','estudiar'],
+       ['jubilado','ninguno','dos o más','ninguno','soltero','altos','estudiar'],
+       ['funcionario','ninguno','una','ninguno','casado','bajos','estudiar'],
+       ['jubilado','dos o más','dos o más','dos o más','viudo','altos','estudiar'],
+       ['funcionario','uno','ninguna','uno','casado','medios','estudiar'],
+       ['funcionario','uno','una','dos o más','casado','medios','estudiar'],
+       ['jubilado','uno','ninguna','dos o más','divorciado','medios','no conceder'],
+       ['parado','dos o más','una','dos o más','soltero','bajos','no conceder'],
+       ['parado','uno','dos o más','uno','viudo','medios','conceder'],
+       ['jubilado','ninguno','ninguna','uno','divorciado','altos','estudiar'],
+       ['funcionario','dos o más','ninguna','ninguno','soltero','medios','estudiar'],
+       ['funcionario','dos o más','una','dos o más','viudo','altos','conceder'],
+       ['funcionario','ninguno','dos o más','dos o más','viudo','medios','conceder'],
+       ['funcionario','ninguno','ninguna','ninguno','divorciado','bajos','no conceder'],
+       ['laboral','ninguno','una','uno','casado','medios','no conceder'],
+       ['funcionario','ninguno','dos o más','dos o más','soltero','medios','conceder'],
+       ['laboral','uno','una','uno','divorciado','bajos','no conceder'],
+       ['jubilado','dos o más','ninguna','dos o más','viudo','altos','estudiar'],
+       ['parado','dos o más','una','dos o más','casado','altos','estudiar'],
+       ['parado','dos o más','una','dos o más','soltero','medios','no conceder'],
+       ['laboral','ninguno','ninguna','dos o más','casado','altos','conceder'],
+       ['laboral','ninguno','una','dos o más','viudo','medios','no conceder'],
+       ['jubilado','uno','ninguna','uno','divorciado','altos','estudiar'],
+       ['funcionario','dos o más','dos o más','ninguno','divorciado','medios','conceder'],
+       ['funcionario','dos o más','una','uno','viudo','bajos','estudiar'],
+       ['parado','uno','dos o más','ninguno','soltero','altos','estudiar'],
+       ['parado','uno','ninguna','ninguno','divorciado','altos','estudiar'],
+       ['laboral','ninguno','dos o más','ninguno','divorciado','bajos','no conceder'],
+       ['parado','uno','dos o más','dos o más','viudo','bajos','no conceder'],
+       ['laboral','dos o más','ninguna','ninguno','soltero','bajos','estudiar'],
+       ['parado','ninguno','una','uno','soltero','medios','no conceder'],
+       ['parado','dos o más','ninguna','ninguno','viudo','medios','no conceder'],
+       ['laboral','dos o más','una','uno','casado','medios','estudiar'],
+       ['jubilado','dos o más','dos o más','ninguno','soltero','altos','estudiar'],
+       ['jubilado','dos o más','ninguna','dos o más','casado','altos','estudiar'],
+       ['laboral','ninguno','dos o más','ninguno','soltero','bajos','no conceder'],
+       ['funcionario','dos o más','ninguna','uno','divorciado','medios','estudiar'],
+       ['parado','uno','ninguna','ninguno','casado','medios','no conceder'],
+       ['laboral','ninguno','ninguna','ninguno','divorciado','medios','estudiar'],
+       ['laboral','dos o más','una','uno','casado','altos','conceder'],
+       ['parado','ninguno','dos o más','ninguno','casado','medios','conceder'],
+       ['jubilado','dos o más','ninguna','uno','divorciado','medios','no conceder'],
+       ['parado','ninguno','una','ninguno','divorciado','medios','no conceder'],
+       ['laboral','dos o más','una','ninguno','soltero','altos','conceder'],
+       ['jubilado','dos o más','dos o más','dos o más','soltero','altos','estudiar'],
+       ['funcionario','dos o más','una','dos o más','soltero','bajos','estudiar'],
+       ['funcionario','ninguno','una','uno','casado','medios','no conceder'],
+       ['laboral','uno','una','ninguno','casado','medios','estudiar'],
+       ['jubilado','uno','ninguna','dos o más','viudo','medios','no conceder'],
+       ['parado','dos o más','dos o más','ninguno','soltero','altos','estudiar'],
+       ['funcionario','dos o más','dos o más','uno','soltero','altos','conceder'],
+       ['jubilado','uno','ninguna','uno','divorciado','medios','no conceder'],
+       ['funcionario','ninguno','ninguna','uno','soltero','altos','conceder'],
+       ['funcionario','dos o más','dos o más','ninguno','soltero','altos','conceder'],
+       ['jubilado','uno','una','ninguno','viudo','altos','estudiar'],
+       ['laboral','ninguno','ninguna','dos o más','divorciado','medios','estudiar'],
+       ['parado','uno','dos o más','ninguno','viudo','altos','estudiar'],
+       ['laboral','ninguno','una','uno','soltero','medios','no conceder'],
+       ['laboral','uno','una','dos o más','soltero','bajos','no conceder'],
+       ['laboral','dos o más','una','uno','casado','bajos','estudiar'],
+       ['funcionario','uno','una','uno','viudo','altos','conceder'],
+       ['parado','ninguno','dos o más','ninguno','divorciado','bajos','no conceder'],
+       ['laboral','uno','ninguna','ninguno','casado','bajos','no conceder'],
+       ['funcionario','ninguno','dos o más','dos o más','casado','medios','conceder'],
+       ['laboral','uno','dos o más','uno','divorciado','altos','conceder'],
+       ['laboral','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
+       ['funcionario','uno','dos o más','ninguno','viudo','bajos','conceder']]
+
+prueba=[['funcionario','ninguno','dos o más','ninguno','divorciado','medios','conceder'],
+      ['funcionario','uno','dos o más','dos o más','divorciado','bajos','conceder'],
+      ['laboral','dos o más','una','ninguno','casado','medios','estudiar'],
+      ['jubilado','uno','ninguna','ninguno','viudo','bajos','estudiar'],
+      ['laboral','dos o más','dos o más','uno','casado','medios','conceder'],
+      ['laboral','dos o más','dos o más','uno','casado','altos','conceder'],
+      ['parado','ninguno','una','dos o más','divorciado','altos','estudiar'],
+      ['parado','uno','dos o más','uno','casado','medios','conceder'],
+      ['laboral','uno','una','uno','casado','medios','estudiar'],
+      ['laboral','uno','ninguna','dos o más','divorciado','bajos','no conceder'],
+      ['laboral','uno','dos o más','uno','soltero','medios','conceder'],
+      ['jubilado','uno','dos o más','dos o más','casado','medios','conceder'],
+      ['parado','ninguno','una','uno','viudo','bajos','no conceder'],
+      ['parado','dos o más','dos o más','ninguno','viudo','altos','estudiar'],
+      ['funcionario','ninguno','ninguna','ninguno','soltero','medios','estudiar'],
+      ['funcionario','ninguno','una','uno','viudo','bajos','estudiar'],
+      ['funcionario','ninguno','ninguna','ninguno','soltero','bajos','no conceder'],
+      ['jubilado','ninguno','dos o más','ninguno','soltero','bajos','no conceder'],
+      ['parado','ninguno','dos o más','ninguno','divorciado','altos','estudiar'],
+      ['jubilado','dos o más','dos o más','uno','casado','bajos','no conceder'],
+      ['funcionario','uno','ninguna','dos o más','viudo','altos','conceder'],
+      ['laboral','uno','ninguna','ninguno','divorciado','bajos','no conceder'],
+      ['laboral','uno','ninguna','dos o más','soltero','bajos','no conceder'],
+      ['jubilado','ninguno','una','dos o más','soltero','bajos','no conceder'],
+      ['parado','ninguno','ninguna','uno','viudo','bajos','no conceder'],
+      ['funcionario','uno','ninguna','ninguno','viudo','bajos','no conceder'],
+      ['parado','ninguno','dos o más','dos o más','soltero','medios','conceder'],
+      ['parado','ninguno','ninguna','ninguno','soltero','altos','estudiar'],
+      ['parado','ninguno','dos o más','dos o más','viudo','bajos','no conceder'],
+      ['jubilado','ninguno','ninguna','dos o más','soltero','altos','estudiar'],
+      ['jubilado','uno','dos o más','ninguno','soltero','altos','estudiar'],
+      ['parado','ninguno','dos o más','uno','casado','medios','conceder'],
+      ['laboral','ninguno','dos o más','dos o más','casado','altos','conceder'],
+      ['parado','uno','ninguna','uno','soltero','medios','no conceder'],
+      ['laboral','ninguno','dos o más','ninguno','soltero','medios','conceder'],
+      ['funcionario','uno','ninguna','dos o más','casado','altos','conceder'],
+      ['funcionario','dos o más','dos o más','dos o más','divorciado','bajos','conceder'],
+      ['jubilado','ninguno','una','dos o más','divorciado','bajos','no conceder'],
+      ['parado','uno','dos o más','ninguno','soltero','medios','conceder'],
+      ['jubilado','ninguno','ninguna','dos o más','viudo','altos','estudiar'],
+      ['funcionario','dos o más','ninguna','uno','viudo','altos','conceder'],
+      ['parado','ninguno','ninguna','uno','soltero','medios','no conceder'],
+      ['laboral','ninguno','una','uno','soltero','bajos','no conceder'],
+      ['laboral','dos o más','una','dos o más','casado','medios','no conceder'],
+      ['laboral','dos o más','ninguna','ninguno','viudo','medios','estudiar'],
+      ['laboral','uno','dos o más','dos o más','divorciado','bajos','no conceder'],
+      ['funcionario','uno','ninguna','dos o más','soltero','medios','estudiar'],
+      ['jubilado','dos o más','ninguna','ninguno','soltero','bajos','no conceder'],
+      ['jubilado','dos o más','una','ninguno','casado','bajos','no conceder'],
+      ['laboral','ninguno','dos o más','dos o más','soltero','altos','conceder'],
+      ['funcionario','ninguno','dos o más','uno','casado','altos','conceder'],
+      ['laboral','ninguno','ninguna','uno','soltero','medios','estudiar'],
+      ['laboral','uno','ninguna','dos o más','divorciado','medios','estudiar'],
+      ['funcionario','dos o más','una','ninguno','casado','bajos','estudiar'],
+      ['laboral','dos o más','una','ninguno','viudo','bajos','estudiar'],
+      ['laboral','uno','ninguna','uno','casado','altos','conceder'],
+      ['jubilado','ninguno','una','dos o más','divorciado','altos','estudiar'],
+      ['laboral','dos o más','dos o más','ninguno','divorciado','altos','conceder'],
+      ['jubilado','uno','ninguna','ninguno','soltero','altos','estudiar'],
+      ['laboral','ninguno','dos o más','ninguno','soltero','altos','conceder'],
+      ['parado','dos o más','ninguna','uno','soltero','altos','estudiar'],
+      ['parado','dos o más','una','ninguno','casado','medios','estudiar'],
+      ['funcionario','dos o más','dos o más','dos o más','viudo','altos','conceder'],
+      ['jubilado','dos o más','una','dos o más','divorciado','bajos','no conceder'],
+      ['jubilado','dos o más','dos o más','ninguno','casado','medios','conceder'],
+      ['laboral','uno','ninguna','uno','soltero','medios','estudiar'],
+      ['laboral','uno','una','dos o más','soltero','altos','conceder'],
+      ['parado','ninguno','una','ninguno','soltero','medios','estudiar'],
+      ['parado','ninguno','ninguna','dos o más','soltero','medios','no conceder'],
+      ['laboral','dos o más','dos o más','dos o más','viudo','bajos','estudiar'],
+      ['jubilado','dos o más','una','ninguno','viudo','medios','estudiar'],
+      ['funcionario','uno','dos o más','uno','soltero','medios','conceder'],
+      ['jubilado','uno','dos o más','uno','soltero','medios','conceder'],
+      ['parado','ninguno','una','ninguno','viudo','altos','estudiar'],
+      ['parado','dos o más','ninguna','ninguno','divorciado','bajos','no conceder'],
+      ['laboral','ninguno','ninguna','uno','divorciado','medios','estudiar'],
+      ['funcionario','uno','dos o más','uno','divorciado','bajos','conceder'],
+      ['laboral','uno','ninguna','ninguno','soltero','bajos','no conceder'],
+      ['jubilado','dos o más','ninguna','dos o más','viudo','bajos','no conceder'],
+      ['jubilado','ninguno','una','dos o más','casado','bajos','no conceder'],
+      ['laboral','dos o más','dos o más','dos o más','divorciado','bajos','estudiar'],
+      ['parado','dos o más','dos o más','ninguno','divorciado','bajos','no conceder'],
+      ['laboral','dos o más','dos o más','uno','divorciado','medios','conceder'],
+      ['funcionario','uno','una','dos o más','casado','bajos','estudiar'],
+      ['funcionario','uno','dos o más','ninguno','divorciado','bajos','conceder'],
+      ['funcionario','dos o más','ninguna','dos o más','viudo','medios','estudiar'],
+      ['laboral','ninguno','ninguna','ninguno','soltero','altos','conceder'],
+      ['funcionario','ninguno','dos o más','ninguno','divorciado','bajos','conceder'],
+      ['parado','dos o más','dos o más','dos o más','viudo','altos','estudiar'],
+      ['jubilado','dos o más','dos o más','ninguno','casado','altos','estudiar'],
+      ['parado','uno','ninguna','dos o más','viudo','bajos','no conceder'],
+      ['laboral','dos o más','una','uno','viudo','bajos','estudiar'],
+      ['laboral','uno','ninguna','dos o más','viudo','medios','estudiar'],
+      ['jubilado','ninguno','una','ninguno','viudo','medios','no conceder'],
+      ['parado','uno','una','ninguno','casado','bajos','no conceder'],
+      ['funcionario','uno','ninguna','uno','casado','altos','conceder'],
+      ['laboral','ninguno','una','uno','divorciado','altos','conceder'],
+      ['jubilado','uno','ninguna','ninguno','soltero','medios','no conceder'],
+      ['funcionario','ninguno','dos o más','uno','soltero','altos','conceder'],
+      ['laboral','ninguno','una','uno','casado','bajos','no conceder'],
+      ['laboral','dos o más','dos o más','uno','casado','bajos','estudiar'],
+      ['parado','uno','dos o más','ninguno','casado','altos','estudiar'],
+      ['funcionario','dos o más','dos o más','dos o más','divorciado','altos','conceder'],
+      ['jubilado','dos o más','una','uno','viudo','altos','estudiar'],
+      ['laboral','uno','una','ninguno','viudo','bajos','no conceder'],
+      ['funcionario','uno','una','uno','divorciado','altos','conceder'],
+      ['jubilado','uno','ninguna','dos o más','viudo','altos','estudiar'],
+      ['funcionario','ninguno','una','dos o más','soltero','medios','no conceder'],
+      ['jubilado','uno','dos o más','ninguno','divorciado','altos','estudiar'],
+      ['jubilado','ninguno','ninguna','ninguno','casado','medios','no conceder'],
+      ['parado','ninguno','una','uno','divorciado','medios','no conceder'],
+      ['laboral','ninguno','una','dos o más','casado','medios','no conceder'],
+      ['jubilado','uno','dos o más','ninguno','divorciado','medios','conceder'],
+      ['jubilado','ninguno','una','ninguno','soltero','bajos','no conceder'],
+      ['parado','ninguno','una','ninguno','casado','medios','no conceder'],
+      ['parado','uno','ninguna','uno','casado','medios','no conceder'],
+      ['jubilado','uno','una','ninguno','soltero','bajos','no conceder'],
+      ['parado','dos o más','dos o más','dos o más','casado','bajos','no conceder'],
+      ['funcionario','ninguno','una','uno','viudo','medios','no conceder'],
+      ['jubilado','dos o más','ninguna','dos o más','viudo','medios','no conceder'],
+      ['jubilado','dos o más','dos o más','uno','viudo','altos','estudiar'],
+      ['jubilado','dos o más','dos o más','dos o más','soltero','medios','conceder'],
+      ['parado','dos o más','ninguna','uno','divorciado','bajos','no conceder'],
+      ['laboral','dos o más','dos o más','ninguno','soltero','altos','conceder'],
+      ['jubilado','ninguno','dos o más','dos o más','viudo','altos','estudiar'],
+      ['laboral','uno','ninguna','ninguno','soltero','medios','estudiar'],
+      ['jubilado','dos o más','ninguna','ninguno','viudo','medios','no conceder'],
+      ['jubilado','ninguno','dos o más','uno','soltero','altos','estudiar'],
+      ['funcionario','ninguno','ninguna','dos o más','casado','medios','estudiar'],
+      ['jubilado','dos o más','ninguna','ninguno','divorciado','medios','no conceder'],
+      ['parado','dos o más','ninguna','uno','casado','altos','estudiar'],
+      ['jubilado','ninguno','una','uno','viudo','medios','no conceder'],
+      ['parado','dos o más','dos o más','uno','soltero','medios','conceder'],
+      ['jubilado','dos o más','dos o más','ninguno','viudo','medios','conceder'],
+      ['jubilado','dos o más','una','ninguno','casado','medios','estudiar'],
+      ['funcionario','uno','una','ninguno','casado','altos','conceder'],
+      ['funcionario','uno','una','dos o más','casado','altos','conceder'],
+      ['jubilado','ninguno','una','ninguno','casado','altos','estudiar'],
+      ['funcionario','uno','una','ninguno','casado','medios','estudiar'],
+      ['jubilado','uno','ninguna','ninguno','casado','altos','estudiar'],
+      ['laboral','ninguno','una','dos o más','soltero','medios','no conceder'],
+      ['funcionario','dos o más','una','ninguno','soltero','medios','estudiar'],
+      ['parado','dos o más','ninguna','uno','viudo','bajos','no conceder'],
+      ['funcionario','dos o más','una','uno','soltero','bajos','estudiar'],
+      ['jubilado','ninguno','dos o más','dos o más','viudo','medios','conceder'],
+      ['laboral','uno','ninguna','uno','soltero','altos','conceder'],
+      ['laboral','ninguno','una','ninguno','casado','bajos','no conceder'],
+      ['laboral','uno','ninguna','dos o más','viudo','bajos','no conceder'],
+      ['laboral','uno','ninguna','ninguno','divorciado','altos','conceder'],
+      ['parado','uno','dos o más','dos o más','divorciado','bajos','no conceder'],
+      ['laboral','uno','una','uno','divorciado','altos','conceder'],
+      ['funcionario','uno','una','uno','casado','bajos','estudiar'],
+      ['funcionario','ninguno','una','uno','divorciado','bajos','estudiar'],
+      ['laboral','uno','dos o más','dos o más','casado','bajos','no conceder'],
+      ['parado','uno','ninguna','uno','divorciado','medios','no conceder'],
+      ['laboral','uno','ninguna','uno','viudo','altos','conceder'],
+      ['laboral','dos o más','una','ninguno','viudo','medios','estudiar'],
+      ['parado','ninguno','ninguna','uno','soltero','altos','estudiar'],
+      ['jubilado','ninguno','una','uno','casado','bajos','no conceder'],
+      ['jubilado','uno','ninguna','uno','soltero','altos','estudiar'],
+      ['parado','uno','dos o más','ninguno','divorciado','bajos','no conceder'],
+      ['funcionario','uno','dos o más','ninguno','viudo','medios','conceder'],
+      ['funcionario','dos o más','dos o más','dos o más','divorciado','medios','conceder']]
+
+
+
 def calculaNumeroElementos(distribucion):
     numero = 0
     for elem in distribucion.values():
@@ -485,7 +815,6 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
                 #return nodo3
                 
         #print(str(len(dicRamas)))
-        # Es redundante
         if len(dicRamas) > 0:#Nodo interno
             nodo4 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
                                    atributo=indiceMejorAtributo,
@@ -793,27 +1122,28 @@ class Clasificador:
         self.nodoRaiz = aprendizajeArbolesDecision(entrenamiento,atributos,"error", 0,1)
     
     def clasifica(self, ejemplo):
-        pass
-    
+        
+        indiceAtributo = self.nodoRaiz.atributo
+            
+        res = obtenSubnodo(self.nodoRaiz,ejemplo[indiceAtributo],ejemplo)
+        print("Para el ejemplo: " + str(ejemplo) + " el valor de clasificacion es:")
+        
+        print(str(res))
+        
     def evalua(self,prueba):
-        pass
+        aciertos = 0
+        numTotal = len(prueba)
+        for p in prueba:
+            clasificacionArbol = self.clasifica(p)
+            if clasificacionArbol == p[len(p) - 1]:
+                aciertos = aciertos + 1
+        
+        rendimiento = aciertos/numTotal
+        print(rendimiento)
+        return rendimiento
+                
     
     def imprime(self):
-        distr=self.nodoRaiz.distr
-        atributo=self.nodoRaiz.atributo
-        ramas=self.nodoRaiz.ramas
-        clase=self.nodoRaiz.clase
-        
-        ramasKeys = []
-        if ramas != None:
-            ramasKeys= ramas.keys()
-        '''
-        print ("nodo:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramasKeys) + 
-                       " -clase:" + str(clase))
-        '''
-        #print("-----------")
-        #nameAtributo = atributos[atributo][0]
-        #print(str(nameAtributo))
         
         arbol = imprimeRec(self.nodoRaiz,0)
         print(str(arbol))
@@ -854,17 +1184,39 @@ def imprimeDistribucion(distr):
     cadena = cadena + "}"
     cadena = cadena.replace(",}", "}")
     return cadena
+
+def obtenSubnodo(nodo,rama,ejemplo):
+    ramas = nodo.ramas
+    clase = ''
+    
+    indiceAtributo = nodo.atributo
+    valorAtributo = ejemplo[indiceAtributo]
+    if nodo.ramas != None:
+            nuevoNodo = ramas[valorAtributo]
+            
+            indiceNuevoAtributo = nuevoNodo.atributo
+            if indiceNuevoAtributo != None:
+                
+                valorNuevoAtributo = ejemplo[indiceNuevoAtributo]
+                #print(str(indiceNuevoAtributo))
+                clase = obtenSubnodo(nuevoNodo,valorNuevoAtributo,ejemplo)
+                
+            else:
+                #print(clase)
+                clase = clase +  nuevoNodo.clase
+                
         
-'''
-Imprime:
-    Nodo1 : atributo1
-        ramas: nodo2,nodo3
-        
-    NodoRaiz: atributo
-'''
+    else:
+        #print(clase)
+        clase = clase +  nodo.clase
+    #print(clase)
+    return clase
+    
+    
 
         
                   
 clasificador1 = Clasificador("",clases,atributos)
 clasificador1.entrena(entrenamiento)
-clasificador1.imprime()
+#clasificador1.imprime()
+clasificador1.clasifica(['jubilado','ninguno','ninguna','uno','soltero','altos'])
