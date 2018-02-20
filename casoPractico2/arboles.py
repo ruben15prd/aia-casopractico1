@@ -1,4 +1,4 @@
-import prestamos_new
+import prestamos
 import numpy as np
 import math
 
