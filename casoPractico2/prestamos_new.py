@@ -406,10 +406,10 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             ramas=None
             clase=conjuntoInicio[conjuntoActual[0]][len(conjuntoInicio[conjuntoActual[0]])-1]
             
-            
+            '''
             print ("nodo1:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
                        " -clase:" + str(clase))
-            
+            '''
             return nodo1
         else:#Nodo hoja
             nodo2 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
@@ -422,10 +422,10 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             ramas=None
             clase=claseMaxima
             
-            
+            '''
             print ("nodo2:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
                        " -clase:" + str(clase))
-            
+            '''
             return nodo2
             
     else:
@@ -477,16 +477,17 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
                 ramas=None
                 clase=claseMaxima
                 
-                
+                '''
                 print ("nodo3:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
                        " -clase:" + str(clase))
+                '''
                 dicRamas[valor] = nodo3
                 #return nodo3
                 
         #print(str(len(dicRamas)))
         # Es redundante
         if len(dicRamas) > 0:#Nodo interno
-            nodo4 = NodoDT(distr=calculaDistribucion(conjuntoInicio,nuevoConjuntoActual),
+            nodo4 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
                                    atributo=indiceMejorAtributo,
                                    ramas=dicRamas,
                                    clase=None)
@@ -497,9 +498,11 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             clase=None
             
             
-            
+            '''
             print ("nodo4:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
                        " -clase:" + str(clase))
+            '''
+            
             
             return nodo4
             
@@ -801,10 +804,67 @@ class Clasificador:
         ramas=self.nodoRaiz.ramas
         clase=self.nodoRaiz.clase
         
-        print ("nodo:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramas) + 
+        ramasKeys = []
+        if ramas != None:
+            ramasKeys= ramas.keys()
+        '''
+        print ("nodo:" + "distribucion: " + str(distr) + " -atributo: " + str(atributo ) + " -ramas: " + str(ramasKeys) + 
                        " -clase:" + str(clase))
+        '''
+        #print("-----------")
+        #nameAtributo = atributos[atributo][0]
+        #print(str(nameAtributo))
         
-                    
+        arbol = imprimeRec(self.nodoRaiz,0)
+        print(str(arbol))
+    
+def imprimeRec(nodo,contador):
+    arbol = ''
+    ramas = nodo.ramas
+    arbol = arbol + "nodo" + str(contador) + ":" + "\n"
+    contadorCopia = contador + 1
+    
+    if ramas != None:
+        #print(atributos[nodo.atributo][0])
+        arbol = arbol + "           atributo: " + atributos[nodo.atributo][0] +"\n"
+        arbol = arbol + "           distribucion: " + imprimeDistribucion(nodo.distr) +"\n"
+        subArbol = ''
+        for rama in ramas:
+            #print(type(ramas[rama]))
+            
+            nodoSub = ramas[rama]
+            arbol = arbol + subArbol +  "           rama: "+ str(rama) + ",nodo" +str(contadorCopia) + "\n"
+            #print(str(rama))
+            arbol = arbol + subArbol + imprimeRec (nodoSub,contadorCopia)
+            
+            
+    else:
+        #print(str(nodo.clase))
+        arbol = arbol + "           clase: "+  str(nodo.clase) + "\n"
+    #print("-----------")
+    
+    return arbol
+
+
+def imprimeDistribucion(distr):
+    cadena = "{"
+    for d in distr:
+        #print(distr[d])
+        cadena = cadena + str(d) + ":" + str(distr[d])+","
+    cadena = cadena + "}"
+    cadena = cadena.replace(",}", "}")
+    return cadena
+        
+'''
+Imprime:
+    Nodo1 : atributo1
+        ramas: nodo2,nodo3
+        
+    NodoRaiz: atributo
+'''
+
+        
+                  
 clasificador1 = Clasificador("",clases,atributos)
 clasificador1.entrena(entrenamiento)
 clasificador1.imprime()
