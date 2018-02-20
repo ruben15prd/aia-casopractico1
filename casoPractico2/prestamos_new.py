@@ -1129,10 +1129,12 @@ class Clasificador:
         print("Para el ejemplo: " + str(ejemplo) + " el valor de clasificacion es:")
         
         print(str(res))
+        return res
         
     def evalua(self,prueba):
         aciertos = 0
         numTotal = len(prueba)
+        
         for p in prueba:
             clasificacionArbol = self.clasifica(p)
             if clasificacionArbol == p[len(p) - 1]:
@@ -1220,3 +1222,4 @@ clasificador1 = Clasificador("",clases,atributos)
 clasificador1.entrena(entrenamiento)
 #clasificador1.imprime()
 clasificador1.clasifica(['jubilado','ninguno','ninguna','uno','soltero','altos'])
+clasificador1.evalua(prueba)
