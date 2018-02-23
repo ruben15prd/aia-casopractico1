@@ -45,7 +45,7 @@ class Clasificador:
                         clasifica = 0
                     
                 if clasifica == 1:
-                    print("El valor de clasificacion para el ejemplo es: " + str(regla[1]))
+                    #Se obtiene el valor de clasificacion
                     res = 1
                     return regla[1]
                     
@@ -53,9 +53,9 @@ class Clasificador:
             contador += 1 
         
         if res == 0:
-            print("Se asigna el valor de clasificacion dominante: " + str(self.reglas[len(self.reglas)-1][-1][1]))
+            #Se asigna el valor de clasificacion dominante
+            return self.reglas[len(self.reglas)-1][-1][1]
            
-            
         
         
     def evalua(self,prueba):
@@ -69,7 +69,7 @@ class Clasificador:
                 aciertos = aciertos + 1
         
         rendimiento = aciertos/numTotal
-        print(rendimiento)
+        print("El rendimiento es: " + str(rendimiento))
         return rendimiento
         
         
@@ -340,7 +340,8 @@ def aprendeReglaClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrep
 clasificador1 = Clasificador("",prestamos.clases,prestamos.atributos)
 clasificador1.entrena(prestamos.entrenamiento)
 clasificador1.imprime()
-clasificador1.clasifica(['laboral','dos o más','una','uno','soltero','bajos'])
+res = clasificador1.clasifica(['laboral','dos o más','una','uno','soltero','bajos'])
+print("El valor de clasificacion para el ejemplo es: " + str(res))
 
                     
 clasificador1.evalua(prestamos.prueba)
