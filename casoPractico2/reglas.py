@@ -1,6 +1,7 @@
 import prestamos
 import math
-      
+import copy
+  
 class Clasificador:
     def __init__(self,clasificacion,clases,atributos):
         self.clasificacion=clasificacion
@@ -71,7 +72,7 @@ def numeroElementosCubiertosCorrectamente(regla, elementos):
     return numeroCubiertosCorrectamente
     
     
-def aprendeRegla(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
+def aprendeReglaClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
     regla = ([],clase)
     condiciones = []
     
@@ -83,39 +84,91 @@ def aprendeRegla(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
     #['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar']
     frecuenciaRelativaRegla = 0
     while frecuenciaRelativaRegla < umbralPrepoda:
+        print("----------------------------------------")
+        
         for indiceAtributo in indicesAtributos:
-            atr = atributosCopia[indiceAtributo]
-            
-            for valoresAtributo in atr[1]:
+            print("----------------------------------------")
+            print("regla : " + str(regla))
+            atr = atributosCopia[indiceAtributo][1]
+            #print(str(atr))
+            for valorAtributo in atr:
+                #print(str(valorAtributo))
                 condiciones = []
-                valorAtributo = valoresAtributo
                 condiciones.append((indiceAtributo,valorAtributo))
                 
                 frecuenciaRelativaReglaAux = frecuenciaRelativa((condiciones,clase),entrenamientoCopia)
+                print(str((condiciones,clase)))
+                print(str(frecuenciaRelativaReglaAux))
                 if frecuenciaRelativaReglaAux >= frecuenciaRelativaRegla:
                     #Añadimos la condicion a la regla
-                    regla[0].append(condiciones)
+                    [[[regla[0].pop()]if elem[0] == indiceAtributo else ""] for elem in regla[0] ]
+                    regla[0].append((indiceAtributo,valorAtributo))
                     #Borramos el valor del atributo
                     atributosCopia[indiceAtributo][1].remove(valorAtributo)
-                    #Eliminamos del conjunto de entrenamiento los elementos cubiertos
-                    for elem in entrenamientoCopia:
-                        if reglaCubreCorrectamenteElemento((condiciones,clase),elem) == 1:
-                            entrenamientoCopia.remove(elem)
+                    
                     #print(str(atributosCopia[indiceAtributo][1]))
                     #Actualizamos la frecuenciaRelativa
                     frecuenciaRelativaRegla = frecuenciaRelativaReglaAux
                
         #print("atributosCopia:" + str(atributosCopia))
         #print("entrenamientoCopia:" + str(entrenamientoCopia))
+    #Eliminamos del conjunto de entrenamiento los elementos cubiertos
+    #entrenamientoCopia = elementosPorCubrirRegla(regla,entrenamientoCopia)
+    print("----------------------------------------")
     print("regla: " + str(regla))
     print("entrenamientoCopia: " + str(len(entrenamientoCopia)))       
     print("entrenamiento: " + str(len(entrenamiento)))   
     print("atributosCopia: " + str(atributosCopia))              
-    return regla
+    return (entrenamientoCopia,atributosCopia,regla)
+    
+    
+    
+def aprendeReglaClase1(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
+    regla = ([],clase)
+    
+    
+    entrenamientoCopia = entrenamiento[:]
+    atributosCopia = atributos[:]
+   
+    #regla = ([(0,"jubilado")],"estudiar")
+    
+    #['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar']
+    regla_max = ([],clase)
+    valorFrecuenciaRelativaMax = 0.0
+    
+    for indiceAtributo in indicesAtributos:
+            print("----------------------------------------")
+            #print("regla : " + str(regla))
+            atr = atributosCopia[indiceAtributo][1]
+            print(str(atr))
+            for valorAtributo in atr:
+                print(str(valorAtributo))
+                regla_aux = ([],clase)
+                condiciones = []
+                condiciones.append((indiceAtributo,valorAtributo))
+                
+                frecuenciaRelativaReglaAux = frecuenciaRelativa((condiciones,clase),entrenamientoCopia)
+                print(str(frecuenciaRelativaReglaAux))
+                
+                regla_aux[0].append((indiceAtributo,valorAtributo))
+                if frecuenciaRelativaReglaAux >= valorFrecuenciaRelativaMax:
+                    regla_max = regla_aux
+                    valorFrecuenciaRelativaMax = frecuenciaRelativaReglaAux
+                
+    print("regla max: " + str(regla_max))     
+    
+    frecuenciaRelativaRegla = valorFrecuenciaRelativaMax
     
     
     
     
+        
+               
+    print("----------------------------------------")
+    print("valor max: " + str(valorFrecuenciaRelativaMax))
+    print("regla max: " + str(regla_max))      
+    print("atributos: " + str(atributosCopia))    
+    return (entrenamientoCopia,atributosCopia,regla)
     
             
 
@@ -123,8 +176,11 @@ def frecuenciaRelativa(regla,entrenamiento):
     '''
     FR(S,R) = p/t p= numero de ejemplos cubiertos por R de S, t = numero de ejemplos cubiertos correctamente por R de S
     ''' 
-    p = numeroElementosCubiertos(regla,entrenamiento)
-    t = numeroElementosCubiertosCorrectamente(regla,entrenamiento)
+    t = numeroElementosCubiertos(regla,entrenamiento)
+    p = numeroElementosCubiertosCorrectamente(regla,entrenamiento)
+    
+    #print("numerosCubiertosCorrectamente: " + str(p))
+    #print("numerosCubiertos: " + str(t))
     
     if t != 0:
         frecuenciaRelativa = p/t
@@ -150,9 +206,102 @@ def gananciaInformacion(entrenamiento,regla,reglaAmpliada):
     ganancia = p*(math.log((pAmpliada/tAmpliada),2) - math.log((p/t),2))
     
     return ganancia
+'''
+def aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
+    entrenamientoCopia = entrenamiento[:]
+    atributosCopia = atributos[:]
+    reglas = []
+    while len(entrenamientoCopia) > 0:
+        
+        for e in entrenamientoCopia:
+             resultado = aprendeReglaClase(entrenamientoCopia,atributosCopia,indicesAtributos,clase, umbralPrepoda)   
+             entrenamientoCopia1 = resultado[0]
+             atributosCopia1 = resultado[1]
+             reglas.append(resultado[3])
+'''    
+    
+    
+    
+    
+    
+    
+def elementosPorCubrirRegla(regla,elementos):
+    elementosPorCubrir = elementos[:]
+    
+    for e in elementosPorCubrir:
+        if reglaCubreCorrectamenteElemento(regla,e) == 1:
+                elementosPorCubrir = eliminaTodasOcurrenciasLista(elementosPorCubrir,e)
+            
+            
+    return elementosPorCubrir
+    
+def eliminaTodasOcurrenciasLista(lista,elemento):
+    
+    while elemento in lista:
+        lista.remove(elemento)
+    return lista
 #indices = list(range(len(prestamos.entrenamiento)))
 #print(str(indices))
-aprendeRegla(prestamos.entrenamiento,prestamos.atributos,[0,1,2,3,4,5],"conceder",1)    
+    
+def filtraEntrenamientoPorClase(entrenamiento,clase):
+    filtrado = []
+    
+    for e in entrenamiento:
+        if e[len(e) - 1] == clase:
+            filtrado.append(e)
+            
+    return filtrado
+
+
+
+def aprendeReglaClase3(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
+    regla = ([],clase)
+    condiciones = []
+    
+    entrenamientoCopia = entrenamiento[:]
+    atributosCopia = atributos[:]
+   
+    #regla = ([(0,"jubilado")],"estudiar")
+    
+    #['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar']
+    frecuenciaRelativaRegla = 0
+    regla_max = ([],clase)
+    #while frecuenciaRelativaRegla < umbralPrepoda:
+        #print("----------------------------------------")
+        
+    for indiceAtributo in indicesAtributos:
+        print("----------------------------------------")
+        print("regla : " + str(regla))
+        atr = atributosCopia[indiceAtributo][1]
+        print(str(atr))
+            
+        for valorAtributo in atr:
+            print(str(valorAtributo))
+            regla_aux = copy.deepcopy(regla)
+            regla_aux[0].append((indiceAtributo,valorAtributo))
+            print("aux: "+str(regla_aux))
+            frecuenciaRelativaReglaMax = frecuenciaRelativa(regla_aux,entrenamientoCopia)
+            print("freq: "+str(frecuenciaRelativaReglaMax))
+            if frecuenciaRelativaReglaMax >= frecuenciaRelativaRegla:
+                regla_max = copy.deepcopy(regla_aux)
+                frecuenciaRelativaRegla = frecuenciaRelativaReglaMax
+    
+    regla = copy.deepcopy(regla_max)
+    ultimaReglaAñadida = regla[0][-1]
+    indiceUltimaReglaAñadida = ultimaReglaAñadida[0]
+    valorUltimaReglaAñadida = ultimaReglaAñadida[1]
+    atributosCopia[indiceUltimaReglaAñadida][1].remove(valorUltimaReglaAñadida)
+    
+    print("regla ultima: " + str(ultimaReglaAñadida))      
+    print("----------------------------------------")
+    print("regla: " + str(regla))
+    print("entrenamientoCopia: " + str(len(entrenamientoCopia)))       
+    print("entrenamiento: " + str(len(entrenamiento)))   
+    print("atributosCopia: " + str(atributosCopia))              
+    return (entrenamientoCopia,atributosCopia,regla)
+
+aprendeReglaClase3(prestamos.entrenamiento1,prestamos.atributos,[0,1,2,3,4,5],"conceder",1)    
+
 
 '''
 a = numeroElementosCubiertos((([0,"hola"],[1,"adios"]),"si"),[["hola", "adios", "si"],["hola", "adios", "no"]])

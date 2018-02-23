@@ -36,6 +36,23 @@ clasificacion='Préstamo'
 clases=['conceder','no conceder','estudiar']
 
 # Conjuntos de entrenamiento, validación y prueba
+entrenamiento1 = [['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
+      ['funcionario','dos o más','ninguna','uno','viudo','bajos','no conceder'],
+      ['parado','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
+      ['funcionario','dos o más','ninguna','dos o más','divorciado','altos','conceder'],
+      ['funcionario','uno','dos o más','dos o más','soltero','altos','conceder'],
+      ['parado','ninguno','dos o más','dos o más','divorciado','altos','conceder'],
+      ['funcionario','ninguno','ninguna','uno','viudo','altos','conceder'],
+      ['jubilado','ninguno','ninguna','dos o más','divorciado','altos','estudiar'],
+      ['funcionario','ninguno','una','uno','soltero','bajos','estudiar'],
+      ['funcionario','uno','una','ninguno','divorciado','altos','conceder'],
+      ['parado','dos o más','ninguna','uno','casado','bajos','estudiar'],
+      ['funcionario','ninguno','una','ninguno','viudo','bajos','estudiar'],
+      ['funcionario','uno','dos o más','uno','divorciado','medios','conceder'],
+      ['jubilado','dos o más','dos o más','uno','divorciado','medios','no conceder'],
+      ['laboral','uno','dos o más','dos o más','soltero','bajos','no conceder']]
+
+
 entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
       ['funcionario','dos o más','ninguna','uno','viudo','bajos','no conceder'],
       ['parado','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
