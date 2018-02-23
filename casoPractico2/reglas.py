@@ -1,25 +1,41 @@
 import prestamos
 import math
 import copy
-  
+import collections
+
+
 class Clasificador:
     def __init__(self,clasificacion,clases,atributos):
         self.clasificacion=clasificacion
         self.clases=clases
         self.atributos=atributos
+        self.reglas = None
+        self.diccionarioDistribucionClases = None
         
     def entrena(self,entrenamiento,validacion=None):
-        pass
-        
-        
-        
+        self.reglas = aprendeReglasEntrenamiento(entrenamiento,self.atributos,range(len(self.atributos)),self.clases,1)  
+        self.diccionarioDistribucionClases = diccionarioNumeroElementosClase(entrenamiento,self.clases)
         
     def clasifica(self,ejemplo):
         pass
     def evalua(self,prueba):
         pass
     def imprime(self):
-        pass
+        diccionarioDistribucionClasesCopia = copy.deepcopy(self.diccionarioDistribucionClases)
+        contador = 0
+        while len(diccionarioDistribucionClasesCopia) > 0:
+            claveMaxima = obtenClaveMaximaPorValor(diccionarioDistribucionClasesCopia)
+            diccionarioDistribucionClasesCopia.pop(claveMaxima, None)
+            print("Reglas aprendidas para la clase: " +  claveMaxima)
+            print("")
+            reglasClave = self.reglas[contador]
+            print(str(reglasClave))
+            print("")
+            print("")
+            contador += 1 
+            
+        
+        
 
 #Una regla es una lista de tuplas ([(indiceAtributo,valor)] ,clasificacion)
 def reglaCubreElemento(regla,elemento):
@@ -109,27 +125,58 @@ def gananciaInformacion(entrenamiento,regla,reglaAmpliada):
     ganancia = p*(math.log((pAmpliada/tAmpliada),2) - math.log((p/t),2))
     
     return ganancia
-'''
+
 def aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
-    entrenamientoCopia = entrenamiento[:]
-    atributosCopia = atributos[:]
+    entrenamientoCopia = copy.deepcopy(entrenamiento)
+    atributosCopia = copy.deepcopy(atributos)
     reglas = []
     while len(entrenamientoCopia) > 0:
+        #print("-----------------------------------")
+        resultado = aprendeReglaClase(entrenamientoCopia,atributosCopia,indicesAtributos,clase, umbralPrepoda)
+        entrenamientoCopia = copy.deepcopy(resultado[0])
+        #print(str(resultado[1][0]))
+        if len(resultado[1][0]) > 0: 
+            reglas.append(resultado[1])
+        #print(str(resultado[1]))
+    
+    #print(str(reglas))
+    return reglas
+    
+def aprendeReglasEntrenamiento(entrenamiento,atributos,indicesAtributos,clases, umbralPrepoda):
+    diccionarioDistribucionClases = diccionarioNumeroElementosClase(entrenamiento,clases)
+    reglasClases = []
+    
+    while len(diccionarioDistribucionClases) > 0:
+        claveMaxima = obtenClaveMaximaPorValor(diccionarioDistribucionClases)
+        diccionarioDistribucionClases.pop(claveMaxima, None)
+        resultado = aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,claveMaxima, umbralPrepoda)
+        reglasClases.append(resultado)
         
-        for e in entrenamientoCopia:
-             resultado = aprendeReglaClase(entrenamientoCopia,atributosCopia,indicesAtributos,clase, umbralPrepoda)   
-             entrenamientoCopia1 = resultado[0]
-             atributosCopia1 = resultado[1]
-             reglas.append(resultado[3])
-'''    
+    #print(str(reglasClases))
+    return reglasClases
+def obtenClaveMaximaPorValor(diccionarioDistribucionClases): 
+    max_value = None
+    for key in diccionarioDistribucionClases:
+        if max_value is None or max_value < diccionarioDistribucionClases[key]:
+            max_value = diccionarioDistribucionClases[key]
+            max_key = key  
+            
+    return max_key
+
+def diccionarioNumeroElementosClase(entrenamiento,clases):
+    frecuenciaClasificacionClases = {}
     
+    for clase in clases:
+        frecuenciaClasificacionClases[clase] = 0
+        
+    for elem in entrenamiento:
+        claseElemento = elem[len(elem) -1]
+        frecuenciaClasificacionClases[claseElemento] += 1
     
-    
-    
-    
-    
+    return frecuenciaClasificacionClases
+
 def elementosPorCubrirRegla(regla,elementos):
-    elementosPorCubrir = elementos[:]
+    elementosPorCubrir = copy.deepcopy(elementos)
     
     for e in elementosPorCubrir:
         if reglaCubreCorrectamenteElemento(regla,e) == 1:
@@ -160,21 +207,23 @@ def filtraEntrenamientoPorClase(entrenamiento,clase):
 def aprendeReglaClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
     regla = ([],clase)
     
-    entrenamientoCopia = entrenamiento[:]
-    atributosCopia = atributos[:]
+    
+    #print("longitud entrenamiento: " + str(entrenamiento))
+    #print("longitud entrenamiento: " + str(len(entrenamiento)))
+    #print("atributos: " + str(atributos))
+    entrenamientoCopia = copy.deepcopy(entrenamiento)
+    atributosCopia = copy.deepcopy(atributos)
    
     #regla = ([(0,"jubilado")],"estudiar")
     
     #['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar']
     frecuenciaRelativaReglaTotal = 0
+    longitudElementosClase = len(filtraEntrenamientoPorClase(entrenamientoCopia,clase))
     
-    while frecuenciaRelativaReglaTotal < umbralPrepoda:
+    while frecuenciaRelativaReglaTotal < umbralPrepoda and longitudElementosClase > 1:
         
         frecuenciaRelativaReglaActual = 0
         regla_max = ([],clase)
-        #while frecuenciaRelativaRegla < umbralPrepoda:
-            #print("----------------------------------------")
-            
         for indiceAtributo in indicesAtributos:
             #print("----------------------------------------")
             #print("regla : " + str(regla))
@@ -188,7 +237,7 @@ def aprendeReglaClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrep
                 #print("aux: "+str(regla_aux))
                 frecuenciaRelativaReglaMax = frecuenciaRelativa(regla_aux,entrenamientoCopia)
                 #print("freq: "+str(frecuenciaRelativaReglaMax))
-                if frecuenciaRelativaReglaMax > frecuenciaRelativaReglaActual:
+                if frecuenciaRelativaReglaMax >= frecuenciaRelativaReglaActual:
                     regla_max = copy.deepcopy(regla_aux)
                     frecuenciaRelativaReglaActual = frecuenciaRelativaReglaMax
         #print("*******************")
@@ -217,16 +266,20 @@ def aprendeReglaClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrep
     #print("longitud entrenamiento: " + str(len(entrenamiento)))
     #print("longitud entrenamientoCopia: " + str(len(entrenamientoCopia)))
     #print("regla: " + str(regla))
+    return (entrenamientoCopia,regla)
+
+#aprendeReglaClase(prestamos.entrenamiento,prestamos.atributos,[0,1,2,3,4,5],"conceder",1)
     
-    return (entrenamientoCopia,atributosCopia,regla)
-
-aprendeReglaClase(prestamos.entrenamiento,prestamos.atributos,[0,1,2,3,4,5],"conceder",1)    
 
 
-'''
-a = numeroElementosCubiertos((([0,"hola"],[1,"adios"]),"si"),[["hola", "adios", "si"],["hola", "adios", "no"]])
-print(str(a))
-'''
+#res = aprendeConjuntoReglasClase(prestamos.entrenamiento1,prestamos.atributos,[0,1,2,3,4,5],"conceder",1)  
+#hola = aprendeReglasEntrenamiento(prestamos.entrenamiento,prestamos.atributos,[0,1,2,3,4,5],prestamos.clases,1)
+
+clasificador1 = Clasificador("",prestamos.clases,prestamos.atributos)
+clasificador1.entrena(prestamos.entrenamiento)
+clasificador1.imprime()
+#clasificador1.clasifica(['jubilado','ninguno','ninguna','uno','soltero','altos'])
+#clasificador1.evalua(prestamos.prueba)
 
 
 

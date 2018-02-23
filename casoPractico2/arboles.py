@@ -1,6 +1,8 @@
-import prestamos_new
+import prestamos
 import numpy as np
 import math
+
+
 
 def calculaNumeroElementos(distribucion):
     numero = 0
@@ -8,13 +10,13 @@ def calculaNumeroElementos(distribucion):
         numero += elem
     return numero
 
-def aprendizajeArbolesDecision(conjuntoInicio, atributos, funcionClasificacion, cotaMinima=0, cotaMayoria=1):
+def aprendizajeArbolesDecision(conjuntoInicio, atributos,clases, funcionClasificacion, cotaMinima=0, cotaMayoria=1):
     #conjuntoActual y atributosRestantes son listas de indices
     conjuntoActual = list(range(len(conjuntoInicio)))
     atributosRestantes = list(range(len(atributos)))
     
     
-    nodo = aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, conjuntoActual, atributosRestantes)
+    nodo = aprendizajeRecursivo(conjuntoInicio, atributos,clases, cotaMinima, cotaMayoria, funcionClasificacion, conjuntoActual, atributosRestantes)
     
     
            
@@ -22,7 +24,7 @@ def aprendizajeArbolesDecision(conjuntoInicio, atributos, funcionClasificacion, 
     #print(str(numero))
     
     
-def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, conjuntoActual, atributosRestantes):
+def aprendizajeRecursivo(conjuntoInicio, atributos,clases, cotaMinima, cotaMayoria, funcionClasificacion, conjuntoActual, atributosRestantes):
 
     # Crear parametro para almacenar la clase del nodo anterior y pasarsela al nodo hoja cuando no hay mas elementos, compruebaCasoBase=0
     # Si es caso base se construye un nodo hoja
@@ -30,17 +32,17 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
     #print("conjuntoActual: " + str(conjuntoActual))
     #print("atributosRestantes: " + str(atributosRestantes))
     
-    instanciasClaseMaxima = calculaDistribucion(conjuntoInicio, conjuntoActual)
+    instanciasClaseMaxima = calculaDistribucion(conjuntoInicio, conjuntoActual,clases)
     claseMaxima = max(instanciasClaseMaxima, key=instanciasClaseMaxima.get)
-    if compruebaCasoBase(conjuntoInicio, conjuntoActual, atributosRestantes, cotaMinima, cotaMayoria ) == 1:
+    if compruebaCasoBase(clases,conjuntoInicio, conjuntoActual, atributosRestantes, cotaMinima, cotaMayoria ) == 1:
         
         if len(conjuntoActual) == 1:#Nodo hoja
-            nodo1 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
+            nodo1 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual,clases),
                               atributo=None,
                               ramas=None,
                               clase=conjuntoInicio[conjuntoActual[0]][len(conjuntoInicio[conjuntoActual[0]])-1])
             
-            distr=calculaDistribucion(conjuntoInicio,conjuntoActual)
+            distr=calculaDistribucion(conjuntoInicio,conjuntoActual,clases)
             atributo=None
             ramas=None
             clase=conjuntoInicio[conjuntoActual[0]][len(conjuntoInicio[conjuntoActual[0]])-1]
@@ -51,12 +53,12 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             '''
             return nodo1
         else:#Nodo hoja
-            nodo2 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
+            nodo2 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual,clases),
                                    atributo=None,
                                    ramas=None,
                                    clase=claseMaxima)
             
-            distr=calculaDistribucion(conjuntoInicio,conjuntoActual)
+            distr=calculaDistribucion(conjuntoInicio,conjuntoActual,clases)
             atributo=None
             ramas=None
             clase=claseMaxima
@@ -73,7 +75,7 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
         
         # Si no es caso base se elige el mejor atributo atr(mejor atributo) usando la funcion clasifica(funcionClasificacion), dentro se ponen los distintos sumatorios de Entropia y los otros
         
-        indiceMejorAtributo = obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosRestantes, funcionClasificacion)
+        indiceMejorAtributo = obtenMejorAtributo(clases,conjuntoInicio, atributos, conjuntoActual, atributosRestantes, funcionClasificacion)
         #print("indice: " + str(indiceMejorAtributo))
         #Creamos el conjunto actual de cada una de las ramas
         for valor in atributos[indiceMejorAtributo][1]:
@@ -95,7 +97,7 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             #del(atribRestantes[indiceMejorAtributo])
             #print(str(len(nuevoConjuntoActual)))
             if len(nuevoConjuntoActual) > 0:
-                dicRamas[valor] = aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, funcionClasificacion, nuevoConjuntoActual, atribRestantes)
+                dicRamas[valor] = aprendizajeRecursivo(conjuntoInicio, atributos,clases, cotaMinima, cotaMayoria, funcionClasificacion, nuevoConjuntoActual, atribRestantes)
             #print("atributosDespues:" + str(atributosRestantes) )
             #print("atributosRestantesDespues:" + str(atribRestantes) )
         
@@ -106,12 +108,12 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
             # No hacer llamadas recursivas sin ejemplos
             if len(nuevoConjuntoActual) == 0:#Nodo hoja
                 claseMaxima = max(instanciasClaseMaxima, key=instanciasClaseMaxima.get)
-                nodo3 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
+                nodo3 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual,clases),
                                    atributo=None,
                                    ramas=None,
                                    clase=claseMaxima)
                 
-                distr=calculaDistribucion(conjuntoInicio,conjuntoActual)
+                distr=calculaDistribucion(conjuntoInicio,conjuntoActual,clases)
                 atributo=None
                 ramas=None
                 clase=claseMaxima
@@ -125,12 +127,12 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
                 
         #print(str(len(dicRamas)))
         if len(dicRamas) > 0:#Nodo interno
-            nodo4 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual),
+            nodo4 = NodoDT(distr=calculaDistribucion(conjuntoInicio,conjuntoActual,clases),
                                    atributo=indiceMejorAtributo,
                                    ramas=dicRamas,
                                    clase=None)
             
-            distr=calculaDistribucion(conjuntoInicio,conjuntoActual)
+            distr=calculaDistribucion(conjuntoInicio,conjuntoActual,clases)
             atributo=indiceMejorAtributo
             ramas=dicRamas
             clase=None
@@ -159,7 +161,7 @@ def aprendizajeRecursivo(conjuntoInicio, atributos, cotaMinima, cotaMayoria, fun
     #3. ETIQUETAR cada nodo hoja con la clase dominante en los datos de dicho nodo (si no tiene datos, se usa la clase dominante en los datos del nodo padre)
     #4. PODAR nodos para evitar sobreajuste
 
-def compruebaCasoBase(conjuntoInicio, conjuntoActual, atributosRestantes, cotaMinima=0, cotaMayoria=1):
+def compruebaCasoBase(clases,conjuntoInicio, conjuntoActual, atributosRestantes, cotaMinima=0, cotaMayoria=1):
     casoBase = 0
     if len(conjuntoActual) > 0:
         primero = conjuntoInicio[conjuntoActual[0]][len(conjuntoInicio[conjuntoActual[0]])-1]
@@ -185,7 +187,7 @@ def compruebaCasoBase(conjuntoInicio, conjuntoActual, atributosRestantes, cotaMi
         casoBase = 1
     
     #  - Cuando la mayoria sean todos de la misma clase
-    dicClase = calculaDistribucion(conjuntoInicio, conjuntoActual)
+    dicClase = calculaDistribucion(conjuntoInicio, conjuntoActual,clases)
     #print (dicClase)
     
     if len(conjuntoActual) > 0:  
@@ -207,7 +209,7 @@ def compruebaCasoBase(conjuntoInicio, conjuntoActual, atributosRestantes, cotaMi
     
     return casoBase
 
-def calculaDistribucion(conjuntoInicio, conjuntoActual):
+def calculaDistribucion(conjuntoInicio, conjuntoActual,clases):
     dicClases = {}
     for e in clases:
         dicClases[e] = 0
@@ -228,9 +230,9 @@ class NodoDT(object):
         self.ramas=ramas # Diccionario con tantas claves como valores tenga el atributo (valor del atributo: nodo inferior)
         self.clase=clase # Solo para nodos hojas
         
-def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosRestantes, funcionClasificacion):
+def obtenMejorAtributo(clases,conjuntoInicio, atributos, conjuntoActual, atributosRestantes, funcionClasificacion):
     
-    dic = calculaAtributoValores(conjuntoInicio, atributos, conjuntoActual, atributosRestantes)
+    dic = calculaAtributoValores(clases,conjuntoInicio, atributos, conjuntoActual, atributosRestantes)
     #instanciasClaseMaxima = max(calculaDistribucion(conjuntoInicio, conjuntoActual))
     #print ("iteracion: "+str(dic))  
     # Calcular la impureza del nodo padre y restarla al sumatorio de ni/n * impureza de cada valor del atributo
@@ -248,7 +250,7 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
         
         #impurezaPadre = 1 - pd/S
         
-        distribucionClases = calculaDistribucion(conjuntoInicio,conjuntoActual)
+        distribucionClases = calculaDistribucion(conjuntoInicio,conjuntoActual,clases)
         pdPadre = sorted(distribucionClases.values())[len(distribucionClases) - 1]
         
         
@@ -365,11 +367,11 @@ def obtenMejorAtributo(conjuntoInicio, atributos, conjuntoActual, atributosResta
     
 
 
-def calculaAtributoValores(conjuntoInicio, atributos, conjuntoActual, atributosRestantes):
+def calculaAtributoValores(clases,conjuntoInicio, atributos, conjuntoActual, atributosRestantes):
     diccionarioAtributosValores = {}
     contadorPosicion = 0
   
-    dicClases = calculaDistribucion(conjuntoInicio, conjuntoActual)
+    dicClases = calculaDistribucion(conjuntoInicio, conjuntoActual,clases)
   
     claseMaxima = max(dicClases, key=dicClases.get)
   
@@ -428,7 +430,7 @@ class Clasificador:
         self.nodoRaiz=None
         
     def entrena(self,entrenamiento,validacion=None):
-        self.nodoRaiz = aprendizajeArbolesDecision(entrenamiento,atributos,"error", 0,1)
+        self.nodoRaiz = aprendizajeArbolesDecision(entrenamiento,self.atributos,self.clases,"error", 0,1)
     
     def clasifica(self, ejemplo):
         
@@ -456,10 +458,10 @@ class Clasificador:
     
     def imprime(self):
         
-        arbol = imprimeRec(self.nodoRaiz,0)
+        arbol = imprimeRec(self.nodoRaiz,0,self.atributos)
         print(str(arbol))
     
-def imprimeRec(nodo,contador):
+def imprimeRec(nodo,contador,atributos):
     arbol = ''
     ramas = nodo.ramas
     arbol = arbol + "nodo" + str(contador) + ":" + "\n"
@@ -476,7 +478,7 @@ def imprimeRec(nodo,contador):
             nodoSub = ramas[rama]
             arbol = arbol + subArbol +  "           rama: "+ str(rama) + ",nodo" +str(contadorCopia) + "\n"
             #print(str(rama))
-            arbol = arbol + subArbol + imprimeRec (nodoSub,contadorCopia)
+            arbol = arbol + subArbol + imprimeRec (nodoSub,contadorCopia,atributos)
             
             
     else:
@@ -527,8 +529,8 @@ def obtenSubnodo(nodo,rama,ejemplo):
 
         
                   
-clasificador1 = Clasificador("",clases,atributos)
-clasificador1.entrena(entrenamiento)
+clasificador1 = Clasificador("",prestamos.clases,prestamos.atributos)
+clasificador1.entrena(prestamos.entrenamiento)
 clasificador1.imprime()
 clasificador1.clasifica(['jubilado','ninguno','ninguna','uno','soltero','altos'])
-clasificador1.evalua(prueba)
+clasificador1.evalua(prestamos.prueba)
