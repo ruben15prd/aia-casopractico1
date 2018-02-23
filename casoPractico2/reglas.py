@@ -256,7 +256,6 @@ def filtraEntrenamientoPorClase(entrenamiento,clase):
 
 def aprendeReglaClase3(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
     regla = ([],clase)
-    condiciones = []
     
     entrenamientoCopia = entrenamiento[:]
     atributosCopia = atributos[:]
@@ -264,43 +263,61 @@ def aprendeReglaClase3(entrenamiento,atributos,indicesAtributos,clase, umbralPre
     #regla = ([(0,"jubilado")],"estudiar")
     
     #['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar']
-    frecuenciaRelativaRegla = 0
-    regla_max = ([],clase)
-    #while frecuenciaRelativaRegla < umbralPrepoda:
-        #print("----------------------------------------")
+    frecuenciaRelativaReglaTotal = 0
+    
+    while frecuenciaRelativaReglaTotal < umbralPrepoda:
         
-    for indiceAtributo in indicesAtributos:
-        print("----------------------------------------")
-        print("regla : " + str(regla))
-        atr = atributosCopia[indiceAtributo][1]
-        print(str(atr))
+        frecuenciaRelativaReglaActual = 0
+        regla_max = ([],clase)
+        #while frecuenciaRelativaRegla < umbralPrepoda:
+            #print("----------------------------------------")
             
-        for valorAtributo in atr:
-            print(str(valorAtributo))
-            regla_aux = copy.deepcopy(regla)
-            regla_aux[0].append((indiceAtributo,valorAtributo))
-            print("aux: "+str(regla_aux))
-            frecuenciaRelativaReglaMax = frecuenciaRelativa(regla_aux,entrenamientoCopia)
-            print("freq: "+str(frecuenciaRelativaReglaMax))
-            if frecuenciaRelativaReglaMax >= frecuenciaRelativaRegla:
-                regla_max = copy.deepcopy(regla_aux)
-                frecuenciaRelativaRegla = frecuenciaRelativaReglaMax
+        for indiceAtributo in indicesAtributos:
+            #print("----------------------------------------")
+            #print("regla : " + str(regla))
+            atr = atributosCopia[indiceAtributo][1]
+            #print(str(atr))
+                
+            for valorAtributo in atr:
+                #print(str(valorAtributo))
+                regla_aux = copy.deepcopy(regla)
+                regla_aux[0].append((indiceAtributo,valorAtributo))
+                #print("aux: "+str(regla_aux))
+                frecuenciaRelativaReglaMax = frecuenciaRelativa(regla_aux,entrenamientoCopia)
+                #print("freq: "+str(frecuenciaRelativaReglaMax))
+                if frecuenciaRelativaReglaMax > frecuenciaRelativaReglaActual:
+                    regla_max = copy.deepcopy(regla_aux)
+                    frecuenciaRelativaReglaActual = frecuenciaRelativaReglaMax
+        #print("*******************")
+        
+        if frecuenciaRelativaReglaActual > frecuenciaRelativaReglaTotal:
+            #Guardamos en nuestra regla actual la regla con maxima frecuencia
+            regla = copy.deepcopy(regla_max)
+            ultimaReglaAñadida = regla[0][-1]
+            indiceUltimaReglaAñadida = ultimaReglaAñadida[0]
+            valorUltimaReglaAñadida = ultimaReglaAñadida[1]
+            atributosCopia[indiceUltimaReglaAñadida][1].remove(valorUltimaReglaAñadida)
+            frecRegla =  frecuenciaRelativa(regla,entrenamientoCopia)
+            #print("tmp: " + str(frecRegla))
+            frecuenciaRelativaReglaTotal = frecRegla
+                
+            
+            
+            #print("regla ultima: " + str(ultimaReglaAñadida))    
+            #print("atributosCopia: " + str(atributosCopia))
+            
+    #Nos quedamos con los elementos no cubiertos correctamente
+    entrenamientoCopia = elementosPorCubrirRegla(regla,entrenamientoCopia)
     
-    regla = copy.deepcopy(regla_max)
-    ultimaReglaAñadida = regla[0][-1]
-    indiceUltimaReglaAñadida = ultimaReglaAñadida[0]
-    valorUltimaReglaAñadida = ultimaReglaAñadida[1]
-    atributosCopia[indiceUltimaReglaAñadida][1].remove(valorUltimaReglaAñadida)
+    #print("atributosCopia: " + str(atributosCopia))
+    #print("entrenamientoCopia: " + str(entrenamientoCopia))
+    #print("longitud entrenamiento: " + str(len(entrenamiento)))
+    #print("longitud entrenamientoCopia: " + str(len(entrenamientoCopia)))
+    #print("regla: " + str(regla))
     
-    print("regla ultima: " + str(ultimaReglaAñadida))      
-    print("----------------------------------------")
-    print("regla: " + str(regla))
-    print("entrenamientoCopia: " + str(len(entrenamientoCopia)))       
-    print("entrenamiento: " + str(len(entrenamiento)))   
-    print("atributosCopia: " + str(atributosCopia))              
     return (entrenamientoCopia,atributosCopia,regla)
 
-aprendeReglaClase3(prestamos.entrenamiento1,prestamos.atributos,[0,1,2,3,4,5],"conceder",1)    
+aprendeReglaClase3(prestamos.entrenamiento,prestamos.atributos,[0,1,2,3,4,5],"conceder",1)    
 
 
 '''
