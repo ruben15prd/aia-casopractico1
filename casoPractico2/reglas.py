@@ -2,6 +2,7 @@ import prestamos
 import math
 import copy
 import collections
+import sys
 
 
 class Clasificador:
@@ -17,14 +18,67 @@ class Clasificador:
         self.diccionarioDistribucionClases = diccionarioNumeroElementosClase(entrenamiento,self.clases)
         
     def clasifica(self,ejemplo):
-        pass
+        diccionarioDistribucionClasesCopia = copy.deepcopy(self.diccionarioDistribucionClases)
+        #print(diccionarioDistribucionClasesCopia)
+        res = 0
+        contador = 0
+        while len(diccionarioDistribucionClasesCopia) > 0:
+            claveMinima = obtenClaveMinimaPorValor(diccionarioDistribucionClasesCopia)
+            #print(claveMaxima)
+            diccionarioDistribucionClasesCopia.pop(claveMinima, None)
+            
+            reglasClave = self.reglas[contador]
+            
+            
+            for regla in reglasClave:
+                clasifica = 1
+                #print("clasifica: " + str(clasifica))
+                #print("regla: " + str(regla))
+                #print("regla: " + str(regla[0]))
+                
+                for condicion in regla[0]:
+                    indice = condicion[0]
+                    valorRegla = condicion[1]
+                    #print("indice: " + str(condicion[0]) + "valor: " + str(condicion[1]))
+                    #print("ejmplo:"  + str(ejemplo[indice]))
+                    if ejemplo[indice] != valorRegla:
+                        clasifica = 0
+                    
+                if clasifica == 1:
+                    print("El valor de clasificacion para el ejemplo es: " + str(regla[1]))
+                    res = 1
+                    return regla[1]
+                    
+            
+            contador += 1 
+        
+        if res == 0:
+            print("Se asigna el valor de clasificacion dominante: " + str(self.reglas[len(self.reglas)-1][-1][1]))
+           
+            
+        
+        
     def evalua(self,prueba):
-        pass
+        
+        aciertos = 0
+        numTotal = len(prueba)
+        
+        for p in prueba:
+            clasificacionArbol = self.clasifica(p)
+            if clasificacionArbol == p[len(p) - 1]:
+                aciertos = aciertos + 1
+        
+        rendimiento = aciertos/numTotal
+        print(rendimiento)
+        return rendimiento
+        
+        
+        
     def imprime(self):
         diccionarioDistribucionClasesCopia = copy.deepcopy(self.diccionarioDistribucionClases)
         contador = 0
         while len(diccionarioDistribucionClasesCopia) > 0:
-            claveMaxima = obtenClaveMaximaPorValor(diccionarioDistribucionClasesCopia)
+            claveMaxima = obtenClaveMinimaPorValor(diccionarioDistribucionClasesCopia)
             diccionarioDistribucionClasesCopia.pop(claveMaxima, None)
             print("Reglas aprendidas para la clase: " +  claveMaxima)
             print("")
@@ -147,21 +201,22 @@ def aprendeReglasEntrenamiento(entrenamiento,atributos,indicesAtributos,clases, 
     reglasClases = []
     
     while len(diccionarioDistribucionClases) > 0:
-        claveMaxima = obtenClaveMaximaPorValor(diccionarioDistribucionClases)
+        claveMaxima = obtenClaveMinimaPorValor(diccionarioDistribucionClases)
         diccionarioDistribucionClases.pop(claveMaxima, None)
         resultado = aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,claveMaxima, umbralPrepoda)
         reglasClases.append(resultado)
         
     #print(str(reglasClases))
     return reglasClases
-def obtenClaveMaximaPorValor(diccionarioDistribucionClases): 
-    max_value = None
+
+def obtenClaveMinimaPorValor(diccionarioDistribucionClases): 
+    min_value = 9223372036854775807
     for key in diccionarioDistribucionClases:
-        if max_value is None or max_value < diccionarioDistribucionClases[key]:
-            max_value = diccionarioDistribucionClases[key]
-            max_key = key  
+        if min_value is None or min_value > diccionarioDistribucionClases[key]:
+            min_value = diccionarioDistribucionClases[key]
+            min_key = key  
             
-    return max_key
+    return min_key
 
 def diccionarioNumeroElementosClase(entrenamiento,clases):
     frecuenciaClasificacionClases = {}
@@ -205,6 +260,7 @@ def filtraEntrenamientoPorClase(entrenamiento,clase):
 
 
 def aprendeReglaClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
+    '''Metodo que aprende una regla para un conjunto de entrenamiento y para una clase'''
     regla = ([],clase)
     
     
@@ -223,13 +279,15 @@ def aprendeReglaClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrep
     while frecuenciaRelativaReglaTotal < umbralPrepoda and longitudElementosClase > 1:
         
         frecuenciaRelativaReglaActual = 0
-        regla_max = ([],clase)
+        regla_max = ([],clase) # Esta variable nos almacena la regla que mejor frecuencia relativa tiene
+        #en cada iteracion
+        #Iteramos los atributos 
         for indiceAtributo in indicesAtributos:
             #print("----------------------------------------")
             #print("regla : " + str(regla))
             atr = atributosCopia[indiceAtributo][1]
             #print(str(atr))
-                
+            # Iteramos los atributos restantes  
             for valorAtributo in atr:
                 #print(str(valorAtributo))
                 regla_aux = copy.deepcopy(regla)
@@ -238,12 +296,15 @@ def aprendeReglaClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrep
                 frecuenciaRelativaReglaMax = frecuenciaRelativa(regla_aux,entrenamientoCopia)
                 #print("freq: "+str(frecuenciaRelativaReglaMax))
                 if frecuenciaRelativaReglaMax >= frecuenciaRelativaReglaActual:
+                    #Copiamos el valor de la regla_aux a regla_max
                     regla_max = copy.deepcopy(regla_aux)
                     frecuenciaRelativaReglaActual = frecuenciaRelativaReglaMax
         #print("*******************")
-        
+        #Si la reglaMax era mejor que la regla actual se sustituye su valor por la regla con 
+        #nuevas condiciones
         if frecuenciaRelativaReglaActual > frecuenciaRelativaReglaTotal:
             #Guardamos en nuestra regla actual la regla con maxima frecuencia
+            
             regla = copy.deepcopy(regla_max)
             ultimaReglaAñadida = regla[0][-1]
             indiceUltimaReglaAñadida = ultimaReglaAñadida[0]
@@ -251,6 +312,7 @@ def aprendeReglaClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrep
             atributosCopia[indiceUltimaReglaAñadida][1].remove(valorUltimaReglaAñadida)
             frecRegla =  frecuenciaRelativa(regla,entrenamientoCopia)
             #print("tmp: " + str(frecRegla))
+            #Actualizamos la frecuencia relativa total
             frecuenciaRelativaReglaTotal = frecRegla
                 
             
@@ -278,8 +340,10 @@ def aprendeReglaClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrep
 clasificador1 = Clasificador("",prestamos.clases,prestamos.atributos)
 clasificador1.entrena(prestamos.entrenamiento)
 clasificador1.imprime()
-#clasificador1.clasifica(['jubilado','ninguno','ninguna','uno','soltero','altos'])
-#clasificador1.evalua(prestamos.prueba)
+clasificador1.clasifica(['laboral','dos o más','una','uno','soltero','bajos'])
+
+                    
+clasificador1.evalua(prestamos.prueba)
 
 
 
