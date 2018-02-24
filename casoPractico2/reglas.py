@@ -93,7 +93,7 @@ class Clasificador:
 
 #Una regla es una lista de tuplas ([(indiceAtributo,valor)] ,clasificacion)
 def reglaCubreElemento(regla,elemento):
-    
+    '''Metodo que comprueba si una regla cubre a un elemento'''
     cubre = 1
     
     for condicion in regla[0]:
@@ -108,6 +108,7 @@ def reglaCubreElemento(regla,elemento):
 
 
 def reglaCubreCorrectamenteElemento(regla, elemento):
+    '''Metodo que comprueba si una regla cubre correctamente a un elemento'''
     cubre = 1
     for condicion in regla[0]:
         
@@ -124,6 +125,7 @@ def reglaCubreCorrectamenteElemento(regla, elemento):
     return cubre
 
 def numeroElementosCubiertos(regla,elementos): 
+    '''Metodo que devuelve el numero de elementos cubiertos'''
     numeroCubiertos = 0
     
     for e in elementos:
@@ -133,6 +135,7 @@ def numeroElementosCubiertos(regla,elementos):
     return numeroCubiertos
 
 def numeroElementosCubiertosCorrectamente(regla, elementos):
+    '''Metodo que devuelve el numero de elementos cubiertos correctamente'''
     numeroCubiertosCorrectamente = 0
     
     for e in elementos:
@@ -146,6 +149,8 @@ def numeroElementosCubiertosCorrectamente(regla, elementos):
             
 
 def frecuenciaRelativa(regla,entrenamiento):
+    '''Metodo que calcula la frecuencia relativa de una regla en el conjunto de entrenamiento'''
+    
     '''
     FR(S,R) = p/t p= numero de ejemplos cubiertos por R de S, t = numero de ejemplos cubiertos correctamente por R de S
     ''' 
@@ -181,6 +186,7 @@ def gananciaInformacion(entrenamiento,regla,reglaAmpliada):
     return ganancia
 
 def aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
+    '''Metodo que aprende un conjunto de reglas para una clase'''
     entrenamientoCopia = copy.deepcopy(entrenamiento)
     atributosCopia = copy.deepcopy(atributos)
     reglas = []
@@ -197,6 +203,7 @@ def aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,clase, u
     return reglas
     
 def aprendeReglasEntrenamiento(entrenamiento,atributos,indicesAtributos,clases, umbralPrepoda):
+    '''Metodo que aprende las reglas para el conjunto de entrenamiento'''
     diccionarioDistribucionClases = diccionarioNumeroElementosClase(entrenamiento,clases)
     reglasClases = []
     
@@ -209,7 +216,8 @@ def aprendeReglasEntrenamiento(entrenamiento,atributos,indicesAtributos,clases, 
     #print(str(reglasClases))
     return reglasClases
 
-def obtenClaveMinimaPorValor(diccionarioDistribucionClases): 
+def obtenClaveMinimaPorValor(diccionarioDistribucionClases):
+    '''Metodo que obtiene el valor de clasificacion de la clase que menos aparece'''
     min_value = 9223372036854775807
     for key in diccionarioDistribucionClases:
         if min_value is None or min_value > diccionarioDistribucionClases[key]:
@@ -219,6 +227,7 @@ def obtenClaveMinimaPorValor(diccionarioDistribucionClases):
     return min_key
 
 def diccionarioNumeroElementosClase(entrenamiento,clases):
+    '''Metodo que devuelve el numero de elementos de cada clase'''
     frecuenciaClasificacionClases = {}
     
     for clase in clases:
@@ -231,6 +240,7 @@ def diccionarioNumeroElementosClase(entrenamiento,clases):
     return frecuenciaClasificacionClases
 
 def elementosPorCubrirRegla(regla,elementos):
+    '''Metodo que devuelve el numero de elementos que faltan por cubrir dado una regla'''
     elementosPorCubrir = copy.deepcopy(elementos)
     
     for e in elementosPorCubrir:
@@ -241,7 +251,7 @@ def elementosPorCubrirRegla(regla,elementos):
     return elementosPorCubrir
     
 def eliminaTodasOcurrenciasLista(lista,elemento):
-    
+    '''Metodo que elimina todas la ocurrencias de un elemento en una lista'''
     while elemento in lista:
         lista.remove(elemento)
     return lista
@@ -249,6 +259,7 @@ def eliminaTodasOcurrenciasLista(lista,elemento):
 #print(str(indices))
     
 def filtraEntrenamientoPorClase(entrenamiento,clase):
+    '''Metodo que devuelve los elementos que pertecen a una clase'''
     filtrado = []
     
     for e in entrenamiento:
