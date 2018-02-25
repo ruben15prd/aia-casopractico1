@@ -233,6 +233,7 @@ def modificaListaDatos (listaSeparaValores, diccionarioEdades, ciudadOrigenMax, 
 # Crea la lista de atributos
 def listarValoresPorAtributo (listaSeparaValores):
     res = []
+    lista0 = []
     lista1 = []
     lista2 = []
     lista3 = [] 
@@ -250,7 +251,10 @@ def listarValoresPorAtributo (listaSeparaValores):
         
         #Se ha de meter cada elemento en la lista de la posicion de la lista donde corresponda
         for elem in listaSeparaValores[fila]:
-            if posicion == 1 and elem not in lista1 and len(elem) != 0:
+            if posicion == 0 and elem not in lista0 and len(elem) != 0:
+                lista0.append(elem)
+                
+            elif posicion == 1 and elem not in lista1 and len(elem) != 0:
                 lista1.append(elem)
                 
             elif posicion == 2 and elem not in lista2 and len(elem) != 0:
@@ -281,7 +285,8 @@ def listarValoresPorAtributo (listaSeparaValores):
                 lista10.append(elem)
                 
             posicion += 1
-            
+    
+    res.append(lista0)
     res.append(lista1)
     res.append(lista2)
     res.append(lista3)
@@ -298,7 +303,6 @@ def listarValoresPorAtributo (listaSeparaValores):
 
 def obtenerAtributos (textoLista, listaDatosModificada):
     atributos = []
-    resAtributos = []
     nombresAtributos = []
     listas = []
     
@@ -312,20 +316,12 @@ def obtenerAtributos (textoLista, listaDatosModificada):
     #print(str(nombresAtributos))
     
     for i in range(11):
-        if i > 0:
-            tupla = (nombresAtributos[i], listas[i-1])
-            atributos.append(tupla)
+        tupla = (nombresAtributos[i], listas[i])
+        atributos.append(tupla)
             
     #[ print(str(atributo)) for atributo in atributos ] # Lista de todos los atributos
     
-    for atributo in atributos:
-        if (atributo[0] == "pclass") or (atributo[0] == "room") or (atributo[0] == "boat"):
-            resAtributos.append(atributo)
-        elif (atributo[0] == "survived"):
-            clases = atributo[1]
-    #[ print(str(atributo)) for atributo in resAtributos ]
-    
-    return resAtributos, clases
+    return atributos, clases
 
 
 
@@ -408,66 +404,9 @@ prueba = resListas[2]
     
 
 
-if __name__ == "__main__":
-    """print("ATRIBUTOS: " + str(atributos))"""
-    print("CLASES: " + str(clases))
-    """print("ENTRENAMIENTO: " + str(entrenamiento))
-    print("VALIDACION: " + str(validacion))
-    print("PRUEBA: " + str(prueba))"""
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# * Tipo de empleo: funcionario, contrato laboral, parado o jubilado
-# * Productos finacieros contratados en la misma entidad: 0, 1 o más de 2.
-# * Propiedades inmobiliarias: 0,1 o más de 2.
-# * Número de hijos: 0, 1 o más de 2.
-# * Estado civil: soltero, casao, viudo, divorciado. 
-# * Ingresos: bajos, medios, altos
-"""
-atributos=[("Empleo",["parado", "funcionario", "laboral", "jubilado"]),
-           ("Productos",["ninguno", "uno", "dos o más"]),
-           ("Propiedades",["ninguna", "una", "dos o más"]),
-           ("Hijos",["ninguno", "uno", "dos o más"]),
-           ("Estado civil",["soltero", "casado","viudo","divorciado"]),
-           ("Ingresos", ["bajos","medios","altos"])]
-"""     
-
-# El atributo de clasificación indica si se concede o no el préstamo
-# solicitado: 
-"""
-clasificacion='Préstamo'
-
-clases=['conceder','no conceder','estudiar']
-"""
-
-# Conjuntos de entrenamiento, validación y prueba
-"""
-entrenamiento=[['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar'],
-      ['funcionario','dos o más','ninguna','uno','viudo','bajos','no conceder'],
-      ['jubilado','ninguno','dos o más','dos o más','soltero','altos','estudiar'],
-      ['funcionario','ninguno','dos o más','dos o más','viudo','bajos','estudiar'],
-      ['laboral','ninguno','una','dos o más','viudo','altos','conceder'],
-      ['funcionario','uno','una','uno','viudo','medios','estudiar'],
-      ['parado','dos o más','ninguna','uno','casado','medios','no conceder'],
-      ['parado','dos o más','dos o más','uno','divorciado','bajos','estudiar'],
-      ['funcionario','dos o más','ninguna','dos o más','divorciado','altos','conceder'],
-      ['funcionario','uno','dos o más','dos o más','soltero','altos','conceder'],
-      ['parado','ninguno','dos o más','dos o más','divorciado','altos','conceder'],
-      ['funcionario','ninguno','ninguna','uno','viudo','altos','conceder'],
-      ['jubilado','ninguno','ninguna','dos o más','divorciado','altos','estudiar'],
-      ['funcionario','ninguno','una','uno','soltero','bajos','estudiar'],
-      ['funcionario','uno','una','ninguno','divorciado','altos','conceder']]
-"""
+#if __name__ == "__main__":
+    #print("ATRIBUTOS: " + str(atributos))
+    #print("CLASES: " + str(clases))
+    #print("ENTRENAMIENTO: " + str(entrenamiento))
+    #print("VALIDACION: " + str(validacion))
+    #print("PRUEBA: " + str(prueba))
