@@ -316,9 +316,13 @@ def obtenerAtributos (textoLista, listaDatosModificada):
     #print(str(nombresAtributos))
     
     for i in range(11):
-        tupla = (nombresAtributos[i], listas[i])
-        atributos.append(tupla)
-            
+        if i < 10:
+            tupla = (nombresAtributos[i], listas[i])
+            atributos.append(tupla)
+        
+        else:
+            clases = listas[i]
+    
     #[ print(str(atributo)) for atributo in atributos ] # Lista de todos los atributos
     
     return atributos, clases
