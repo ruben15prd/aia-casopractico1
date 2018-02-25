@@ -275,8 +275,9 @@ def listarValoresPorAtributo (listaSeparaValores):
             elif posicion == 7 and elem not in lista7 and len(elem) != 0:
                 lista7.append(elem)
                 
-            elif posicion == 8 and elem not in lista8 and len(elem) > 1:
-                lista8.append(elem)
+            elif posicion == 8 and elem not in lista8 and len(elem) != 0:
+                if elem != ' ':
+                    lista8.append(elem)
                 
             elif posicion == 9 and elem not in lista9 and len(elem) != 0:
                 lista9.append(elem)
@@ -299,6 +300,7 @@ def listarValoresPorAtributo (listaSeparaValores):
     res.append(lista10)
     
     return res
+
 
 
 def obtenerAtributos (textoLista, listaDatosModificada):
