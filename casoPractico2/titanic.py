@@ -315,9 +315,11 @@ def obtenerAtributos (textoLista, listaDatosModificada):
     for atributo in atributos:
         if (atributo[0] == "pclass") or (atributo[0] == "room") or (atributo[0] == "boat"):
             resAtributos.append(atributo)
+        elif (atributo[0] == "survived"):
+            clases = atributo[1]
     #[ print(str(atributo)) for atributo in resAtributos ]
     
-    return resAtributos
+    return resAtributos, clases
 
 
 
@@ -390,12 +392,23 @@ def numVivosFallecidos (listaDatos):
 
 if __name__ == "__main__":
     lista = obtenerDatos()
-    obtenerAtributos(lista[0], lista[1])
-    obtenerListas(lista[1]) # lista[1] contiene la lista de todos los datos
+    
+    resAtr = obtenerAtributos(lista[0], lista[1])
+    atributos = resAtr[0]
+    clases = resAtr[1]
+    
+    resListas = obtenerListas(lista[1]) # lista[1] contiene la lista de todos los datos
+    entrenamiento = resListas[0]
+    validacion = resListas[1]
+    prueba = resListas[2]
 
-
-
-
+    """print("ATRIBUTOS: " + str(atributos))
+    print("CLASES: " + str(clases))
+    print("ENTRENAMIENTO: " + str(entrenamiento))
+    print("VALIDACION: " + str(validacion))
+    print("PRUEBA: " + str(prueba))"""
+    
+    
 
 
 
