@@ -307,7 +307,8 @@ def obtenerAtributos (textoLista, listaDatosModificada):
     #print("listas: " + str(listas))
     
     # Creo la lista de los nombres de los atributos
-    [ [ nombresAtributos.append(atributo[1:-1]) ] for atributo in textoLista[0].split(",") ]
+    [ [ [ nombresAtributos.append(atributo[1:-1]) ]  if atributo[1:-1]!="survived" else "" ] for atributo in textoLista[0].split(",") ]        
+    nombresAtributos.append( textoLista[0].split(",")[2][1:-1] )
     #print(str(nombresAtributos))
     
     for i in range(11):
@@ -395,21 +396,23 @@ def numVivosFallecidos (listaDatos):
 
 
 
-if __name__ == "__main__":
-    lista = obtenerDatos()
-    resAtr = obtenerAtributos(lista[0], lista[1])
-    atributos = resAtr[0]
-    clases = resAtr[1]
+lista = obtenerDatos()
+resAtr = obtenerAtributos(lista[0], lista[1])
+atributos = resAtr[0]
+clases = resAtr[1]
     
-    resListas = obtenerListas(lista[1]) # lista[1] contiene la lista de todos los datos
-    entrenamiento = resListas[0]
-    validacion = resListas[1]
-    prueba = resListas[2]
+resListas = obtenerListas(lista[1]) # lista[1] contiene la lista de todos los datos
+entrenamiento = resListas[0]
+validacion = resListas[1]
+prueba = resListas[2]
+    
 
-    """print("ATRIBUTOS: " + str(atributos))
-    print("CLASES: " + str(clases))"""
-    print("ENTRENAMIENTO: " + str(entrenamiento))
-    """print("VALIDACION: " + str(validacion))
+
+if __name__ == "__main__":
+    """print("ATRIBUTOS: " + str(atributos))"""
+    print("CLASES: " + str(clases))
+    """print("ENTRENAMIENTO: " + str(entrenamiento))
+    print("VALIDACION: " + str(validacion))
     print("PRUEBA: " + str(prueba))"""
     
     
