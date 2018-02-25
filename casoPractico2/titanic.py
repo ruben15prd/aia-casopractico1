@@ -175,6 +175,7 @@ def calculaElementoMaximo (listaSeparaValores, indice):
 # Modifica los valores de edades a niño o adulto e introduce valores en los elementos vacios
 def modificaListaDatos (listaSeparaValores, diccionarioEdades, ciudadOrigenMax, ciudadDestinoMax,
                         camaroteMax, ticketMax, boteMax):
+    
     for fila in range(len(listaSeparaValores)):
         posicion = 0
         
@@ -220,6 +221,10 @@ def modificaListaDatos (listaSeparaValores, diccionarioEdades, ciudadOrigenMax, 
                     listaSeparaValores[fila][9] = boteMax
                 
             posicion += 1
+        
+        superviviencia = listaSeparaValores[fila][2]
+        listaSeparaValores[fila].pop(2)
+        listaSeparaValores[fila].append(superviviencia)
             
     return listaSeparaValores
 
@@ -392,15 +397,14 @@ def numVivosFallecidos (listaDatos):
 
 if __name__ == "__main__":
     lista = obtenerDatos()
-    
-    resAtr = obtenerAtributos(lista[0], lista[1])
+    """resAtr = obtenerAtributos(lista[0], lista[1])
     atributos = resAtr[0]
     clases = resAtr[1]
     
     resListas = obtenerListas(lista[1]) # lista[1] contiene la lista de todos los datos
     entrenamiento = resListas[0]
     validacion = resListas[1]
-    prueba = resListas[2]
+    prueba = resListas[2]"""
 
     """print("ATRIBUTOS: " + str(atributos))
     print("CLASES: " + str(clases))
