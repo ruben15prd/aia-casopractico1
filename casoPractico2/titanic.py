@@ -410,8 +410,8 @@ prueba = resListas[2]
     
 
 
-#if __name__ == "__main__":
-    #print("ATRIBUTOS: " + str(atributos))
+if __name__ == "__main__":
+    print("ATRIBUTOS: " + str(atributos))
     #print("CLASES: " + str(clases))
     #print("ENTRENAMIENTO: " + str(entrenamiento))
     #print("VALIDACION: " + str(validacion))
