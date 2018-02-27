@@ -21,13 +21,12 @@ class Clasificador:
         self.diccionarioDistribucionClases = diccionarioNumeroElementosClase(entrenamiento,self.clases)
         
         
-        print("Reglas antes de la poda:")
-        print( str(self.reglas))
+        #print("Reglas antes de la poda:")
+        #print( str(self.reglas))
         if validacion != None:
-            print("Reglas despues de la pospoda:")
+            #print("Reglas despues de la pospoda:")
             self.reglas = pospoda(self.reglas,validacion,self.diccionarioDistribucionClases)
-        
-        
+            
     def clasifica(self,ejemplo):
         res = clasificaElemento(self.reglas,ejemplo,self.diccionarioDistribucionClases)
         return res
@@ -223,7 +222,6 @@ def obtenClaveMinimaPorValor(diccionarioDistribucionClases):
 def diccionarioNumeroElementosClase(entrenamiento,clases):
     '''Metodo que devuelve el numero de elementos de cada clase'''
     frecuenciaClasificacionClases = {}
-    print("")
     for clase in clases:
         frecuenciaClasificacionClases[clase] = 0
         #print(str(clase))
@@ -244,25 +242,7 @@ def elementosPorCubrirRegla(regla,elementos):
             elementosPorCubrir.append(e)    
             
     return elementosPorCubrir
-'''   
-def eliminaTodasOcurrenciasLista(lista,elemento):
-    Metodo que elimina todas la ocurrencias de un elemento en una lista
-    copiaLista = []
-    elemento  = elemento[0:len(elemento) - 1]
-    for elem in lista:
-        quitaClase = elem[0:len(elem) - 5]
-        copiaLista.append(quitaClase)
-    
-    
-    print("eiii:" + str(elemento))
-    print("wooo2:" + str(lista))
-    while elemento in copiaLista:
-        copiaLista.remove(elemento)
-    
-    return lista
-#indices = list(range(len(prestamos.entrenamiento)))
-#print(str(indices))
-'''
+
 
 
 
@@ -368,6 +348,8 @@ def pospoda(reglas,validacion,diccionarioDistribucionClases):
     
     reglasFinales = podaReglasConjunto(reglasCopia, validacion, diccionarioDistribucionClases)
     
+    
+    
     return reglasFinales 
 
 
@@ -377,8 +359,8 @@ def podaReglasConjunto(reglas, validacion, diccionarioDistribucionClases):
     
     reglasFinales = copy.deepcopy(reglas)
     rendimientoFinal = evaluaPoda(diccionarioDistribucionClases, reglasFinales, validacion) # Evalua el rendimiento antes de la poda
-    
-    # Eliminar una condicion
+    #print("REGLAS FINALES : " + str(reglasFinales))
+    # Eliminar una condicion 
     reglaModificada = None
     for conjuntoReglas in reglasFinales:
         
@@ -387,7 +369,7 @@ def podaReglasConjunto(reglas, validacion, diccionarioDistribucionClases):
             reglaModificada = copy.deepcopy(regla)
             longitud = len(reglaModificada[0]) # Longitud de las condiciones
             if longitud > 1:
-                print("--------------------------")
+                #print("--------------------------")
                 #print("regla antes: "+ str(reglaModificada))
                 reglaModificada = eliminaCondicion(reglaModificada) 
                 #print("regla despues: "+ str(reglaModificada))
@@ -396,31 +378,32 @@ def podaReglasConjunto(reglas, validacion, diccionarioDistribucionClases):
                 #print("CONJUNTO DESPUES:\n"+ str(nuevoConjuntoReglas))
                 rendimiento = evaluaPoda(diccionarioDistribucionClases,nuevoConjuntoReglas,validacion)
                 #print("rendimiento Antes: "+ str(rendimientoFinal))
-                print("rendimiento despues: "+ str(rendimiento))
+                #print("rendimiento despues: "+ str(rendimiento))
                 if rendimiento > rendimientoFinal:
                     reglasFinales = nuevoConjuntoReglas
                     rendimientoFinal = rendimiento
                         
-    '''                   
+                       
     #Eliminar una regla
     for conjuntoReglas in reglasFinales:
         
         for regla in conjuntoReglas:
-            print("conjunto antes: "+ str(conjuntoReglas))
-            nuevoConjuntoReglas = eliminaRegla(reglas,regla)
-            print("conjunto despues: "+ str(nuevoConjuntoReglas))
+            #print("CONJUNTO ANTES:\n"+ str(conjuntoReglas))
+            nuevoConjuntoReglas = eliminaRegla(reglasFinales,regla)
+            #print("CONJUNTO DESPUES:\n"+ str(nuevoConjuntoReglas))
             
-            rendimiento = evaluaAux(diccionarioDistribucionClases,reglas,nuevoConjuntoReglas)
-            print("rendimiento Antes: "+ str(rendimientoFinal))
-            print("rendimiento despues: "+ str(rendimiento))
+            rendimiento = evaluaPoda(diccionarioDistribucionClases,nuevoConjuntoReglas,validacion)
+            #print("rendimiento Antes: "+ str(rendimientoFinal))
+            
             if rendimiento > rendimientoFinal:
                 reglasFinales = nuevoConjuntoReglas
                 rendimientoFinal = rendimiento   
          
-    '''
+    
+    #print("rendimiento despues: "+ str(rendimientoFinal))
+    
     
     return reglasFinales
-
 
 
 def reemplazaRegla(reglas,reglaOriginal, reglaSustitucion):
@@ -428,17 +411,20 @@ def reemplazaRegla(reglas,reglaOriginal, reglaSustitucion):
     copiaReglas = copy.deepcopy(reglas)
     reglasFinal = []
     
-    for conjuntoReglas in copiaReglas:
-        for regla in conjuntoReglas:
+    # Se recorre la lista que contiene las listas de reglas de cada clase
+    for conjuntoReglasClase in copiaReglas:
+        cReglasClase = []
+        for regla in conjuntoReglasClase:
         
-            print("regla: " +str(regla))
+            #print("regla: " +str(regla))
             if compruebaReglasIguales(regla,reglaOriginal) == 1:
-                print("entro en el if")
-                reglasFinal.append(reglaSustitucion)
+                #print("entro en el if")
+                cReglasClase.append(reglaSustitucion)
                 
             else:
-                print("entro en el else")
-                reglasFinal.append(regla)
+                #print("entro en el else")
+                cReglasClase.append(regla)
+        reglasFinal.append(cReglasClase)
     
     return reglasFinal
 
@@ -446,36 +432,21 @@ def reemplazaRegla(reglas,reglaOriginal, reglaSustitucion):
 
 def eliminaRegla(reglas,reglaAEliminar):
     copiaReglas = copy.deepcopy(reglas)
-    copiaReglas.remove(reglaAEliminar)
+    reglasFinal = []
+    
+    
+    # Se recorre la lista que contiene las listas de reglas de cada clase
+    for conjuntoReglasClase in copiaReglas:
+        cReglasClase = []
+        
+        for regla in conjuntoReglasClase:
+            
+            if compruebaReglasIguales(regla,reglaAEliminar) == 0:
+                cReglasClase.append(regla)
+            
+        reglasFinal.append(cReglasClase)     
                
-    return copiaReglas
-
-
-def reemplazaEliminaRegla(reglas,reglaOriginal, reglaSustitucion):
-    '''Metodo que devuelve el conjunto de reglas sustituyendo la reglaOriginal por la reglaSustitucion'''
-    copiaReglas = copy.deepcopy(reglas)
-    #indice = reglas.index(reglaOriginal)
-    
-    if len(reglaSustitucion) > 0:
-        #Si la regla tiene condiciones la sustituimos en el conjunto de reglas
-        for i,v in enumerate(copiaReglas):
-            #print("v:" + str(v) + "reglaoriginal: " + str(reglaOriginal))
-            if compruebaReglasIguales(v,reglaOriginal) == 1:
-                #print("reemplaza")
-                copiaReglas.pop(i)
-                copiaReglas.insert(i, reglaSustitucion)
-    
-    else:
-        #Si la regla no tiene condiciones eliminamos la regla del conjunto
-        for i,v in enumerate(copiaReglas):
-            #print("v:" + str(v) + "reglaoriginal: " + str(reglaOriginal))
-            if compruebaReglasIguales(v,reglaOriginal) == 1:
-                #print("reemplaza")
-                copiaReglas.pop(i)
-    
-    
-    
-    return copiaReglas
+    return reglasFinal
 
 
 
@@ -532,7 +503,7 @@ def clasificaElemento(reglas,ejemplo,diccionarioDistribucionClases):
             #print("regla de 0: " + str(regla[0]))
                 
             for condicion in regla[0]:
-                print("condicion: " + str(condicion))
+                #print("condicion: " + str(condicion))
                 indice = condicion[0]
                 valorRegla = condicion[1]
                 #print("indice: " + str(condicion[0]) + "valor: " + str(condicion[1]))
@@ -577,13 +548,13 @@ def evaluaPoda(diccionarioDistribucionClases,reglas,prueba):
     for p in prueba:
         #print("p: " + str(p[0:len(p)- 1]))
         #print("reglas: " + str(reglas))
-        print("elemento a evaluar: " + str(p[0:len(p)- 1]))
+        #print("elemento a evaluar: " + str(p[0:len(p)- 1]))
         clasificacionArbol = clasificaElemento(reglas,p[0:len(p)- 1],diccionarioDistribucionClases)
         if clasificacionArbol == p[len(p) - 1]:
             aciertos = aciertos + 1
         
     rendimiento = aciertos/numTotal
-    print("El rendimiento es: " + str(rendimiento))
+    #print("El rendimiento es: " + str(rendimiento))
     return rendimiento
 
 
@@ -661,15 +632,16 @@ print("El valor de clasificacion para el ejemplo es: " + str(res))
 clasificador2.evalua(votos.prueba)
 '''
 
-
+'''
 #Prestamos
 print("-------------------")
 clasificador3 = Clasificador("",prestamos.clases,prestamos.atributos)
 clasificador3.entrena(prestamos.entrenamiento,prestamos.validacion,1)
-#clasificador3.imprime()
-#res = clasificador3.clasifica(['jubilado','ninguno','ninguna','uno','soltero','altos'])
-#print("El valor de clasificacion para el ejemplo es: " + str(res))
-#clasificador3.evalua(prestamos.prueba)
+clasificador3.imprime()
+res = clasificador3.clasifica(['jubilado','ninguno','ninguna','uno','soltero','altos'])
+print("El valor de clasificacion para el ejemplo es: " + str(res))
+clasificador3.evalua(prestamos.prueba)
+'''
 
 
 
