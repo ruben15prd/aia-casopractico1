@@ -17,7 +17,6 @@ class Clasificador:
         self.diccionarioDistribucionClases = None
         
     def entrena(self,entrenamiento,validacion=None,prepoda = 1):
-        
         self.reglas = aprendeReglasEntrenamiento(entrenamiento,self.atributos,list(range(len(self.atributos))),self.clases,prepoda)  
         self.diccionarioDistribucionClases = diccionarioNumeroElementosClase(entrenamiento,self.clases)
         
@@ -32,16 +31,10 @@ class Clasificador:
     def clasifica(self,ejemplo):
         res = clasificaElemento(self.reglas,ejemplo,self.diccionarioDistribucionClases)
         return res
-           
-        
         
     def evalua(self,prueba):
-        
         rendimiento = evaluaAux(self.diccionarioDistribucionClases,self.reglas,prueba)
         return rendimiento 
-        
-        
-        
         
     def imprime(self):
         diccionarioDistribucionClasesCopia = copy.deepcopy(self.diccionarioDistribucionClases)
@@ -56,12 +49,11 @@ class Clasificador:
                 print(str(regla))
             print("\n\n")
             contador += 1 
-            
-  
-        
+
+
 
 #Una regla es una lista de tuplas ([(indiceAtributo,valor)] ,clasificacion)
-def reglaCubreElemento(regla,elemento):
+def reglaCubreElemento(regla, elemento):
     '''Metodo que comprueba si una regla cubre a un elemento'''
     cubre = 1
     
@@ -79,6 +71,7 @@ def reglaCubreElemento(regla,elemento):
                 cubre = 0
             
     return cubre
+
 
 
 def reglaCubreCorrectamenteElemento(regla, elemento):
@@ -101,8 +94,11 @@ def reglaCubreCorrectamenteElemento(regla, elemento):
                 cubre = 0
     
     return cubre
+
+
+
 # Eliminamos los elementos cubiertos por la regla
-def numeroElementosCubiertos(regla,elementos): 
+def numeroElementosCubiertos(regla, elementos): 
     '''Metodo que devuelve el numero de elementos cubiertos'''
     numeroCubiertos = 0
     
@@ -121,11 +117,9 @@ def numeroElementosCubiertosCorrectamente(regla, elementos):
             numeroCubiertosCorrectamente += 1
             
     return numeroCubiertosCorrectamente
-    
 
-    
-            
 
+                
 def frecuenciaRelativa(regla,entrenamiento):
     '''Metodo que calcula la frecuencia relativa de una regla en el conjunto de entrenamiento'''
     
@@ -145,6 +139,8 @@ def frecuenciaRelativa(regla,entrenamiento):
     
     return frecuenciaRelativa
 
+
+
 def gananciaInformacion(entrenamiento,regla,reglaAmpliada):
     '''
     La ganancia de informacion de una regla ampliada R+ con respecto a la original R es
@@ -162,6 +158,8 @@ def gananciaInformacion(entrenamiento,regla,reglaAmpliada):
     ganancia = p*(math.log((pAmpliada/tAmpliada),2) - math.log((p/t),2))
     
     return ganancia
+
+
 
 def aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
     '''Metodo que aprende un conjunto de reglas para una clase'''
@@ -191,7 +189,9 @@ def aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,clase, u
         #print("entro :" + str(len(entrenamientoCopia)))
     #print(str(reglas))
     return reglas
-    
+
+
+
 def aprendeReglasEntrenamiento(entrenamiento,atributos,indicesAtributos,clases, umbralPrepoda):
     '''Metodo que aprende las reglas para el conjunto de entrenamiento'''
     diccionarioDistribucionClases = diccionarioNumeroElementosClase(entrenamiento,clases)
@@ -207,6 +207,7 @@ def aprendeReglasEntrenamiento(entrenamiento,atributos,indicesAtributos,clases, 
     return reglasClases
 
 
+
 def obtenClaveMinimaPorValor(diccionarioDistribucionClases):
     '''Metodo que obtiene el valor de clasificacion de la clase que menos aparece'''
     min_value = 9223372036854775807
@@ -216,6 +217,8 @@ def obtenClaveMinimaPorValor(diccionarioDistribucionClases):
             min_key = key  
             
     return min_key
+
+
 
 def diccionarioNumeroElementosClase(entrenamiento,clases):
     '''Metodo que devuelve el numero de elementos de cada clase'''
@@ -229,6 +232,8 @@ def diccionarioNumeroElementosClase(entrenamiento,clases):
         frecuenciaClasificacionClases[claseElemento] += 1
     
     return frecuenciaClasificacionClases
+
+
 
 def elementosPorCubrirRegla(regla,elementos):
     '''Metodo que devuelve el numero de elementos que faltan por cubrir dado una regla'''
@@ -258,6 +263,9 @@ def eliminaTodasOcurrenciasLista(lista,elemento):
 #indices = list(range(len(prestamos.entrenamiento)))
 #print(str(indices))
 '''
+
+
+
 def filtraEntrenamientoPorClase(entrenamiento,clase):
     '''Metodo que devuelve los elementos que pertecen a una clase'''
     filtrado = []
@@ -272,8 +280,6 @@ def filtraEntrenamientoPorClase(entrenamiento,clase):
 
 def aprendeRegla(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
     regla = ([],clase)
-    
-    
     #print("longitud entrenamiento: " + str(entrenamiento))
     #print("longitud entrenamiento: " + str(len(entrenamiento)))
     #print("atributos: " + str(atributos))
@@ -331,8 +337,6 @@ def aprendeRegla(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
             #print("tmp: " + str(frecRegla))
             #Actualizamos la frecuencia relativa total
             frecuenciaRelativaReglaTotal = frecRegla
-                
-            
             
             #print("regla ultima: " + str(ultimaReglaAñadida))    
             #print("atributosCopia: " + str(atributosCopia))
@@ -358,21 +362,22 @@ def aprendeRegla(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
 
 
 
-def pospoda(reglas,validacion,diccionarioDistribucionClases):
+"""def pospoda(reglas,validacion,diccionarioDistribucionClases):
     '''Metodo de poda de reglas'''
     reglasCopia = copy.deepcopy(reglas)
     
-    reglasFinales = podaReglasConjunto(reglasCopia,validacion,diccionarioDistribucionClases)
+    reglasFinales = podaReglasConjunto(reglasCopia, validacion, diccionarioDistribucionClases)
     
-    return reglasFinales   
-        
+    return reglasFinales """  
 
-def podaReglasConjunto(reglas,validacion,diccionarioDistribucionClases):
-    '''Metodo que poda las reglas de un conjunto de reglas'''
+
+
+"""def podaReglasConjunto(reglas, validacion, diccionarioDistribucionClases):
+    '''Metodo que poda una regla de un conjunto de reglas'''
     #copiaReglas = copy.deepcopy(reglas)
     
     reglasFinales = copy.deepcopy(reglas)
-    rendimientoFinal = evaluaAux1(diccionarioDistribucionClases,reglasFinales,validacion)
+    rendimientoFinal = evaluaAux1(diccionarioDistribucionClases, reglasFinales, validacion)
     
     contador = len(reglasFinales) - 1 
     for conjuntoReglas in reversed(reglasFinales):
@@ -398,13 +403,15 @@ def podaReglasConjunto(reglas,validacion,diccionarioDistribucionClases):
                     rendimiento = 0
                     if rendimiento > rendimientoFinal:
                         reglasFinales = nuevoConjuntoReglas
-        contador = contador - 1
+        contador -= 1
     #Devolvemos las reglas finales de menor a mayor frecuencia    
     reglasFinales = reversed(reglasFinales)   
         
-    return reglasFinales
+    return reglasFinales"""
 
-def reemplazaEliminaRegla(reglas,reglaOriginal, reglaSustitucion):
+
+
+"""def reemplazaEliminaRegla(reglas,reglaOriginal, reglaSustitucion):
     '''Metodo que devuelve el conjunto de reglas sustituyendo la reglaOriginal por la reglaSustitucion'''
     copiaReglas = copy.deepcopy(reglas)
     #indice = reglas.index(reglaOriginal)
@@ -428,10 +435,11 @@ def reemplazaEliminaRegla(reglas,reglaOriginal, reglaSustitucion):
     
     
     
-    return copiaReglas
+    return copiaReglas"""
 
 
-def compruebaReglasIguales(regla1,regla2):
+
+"""def compruebaReglasIguales(regla1,regla2):
     '''Comprueba si dos reglas son iguales'''
     contador = 0 
     
@@ -441,13 +449,11 @@ def compruebaReglasIguales(regla1,regla2):
             igual = 0
         contador = contador + 1
     
-    return igual
-    
+    return igual"""
     
     
 
-
-def eliminaCondicion(regla):
+"""def eliminaCondicion(regla):
     '''Elimina una condicion de una regla'''
     reglaModificada = ([],regla[1])
     
@@ -460,9 +466,11 @@ def eliminaCondicion(regla):
     for condicion in condiciones:
         reglaModificada[0].append(condicion)
     
-    return reglaModificada   
+    return reglaModificada"""
 
-def clasificaElemento(reglas,ejemplo,diccionarioDistribucionClases):
+
+
+"""def clasificaElemento(reglas,ejemplo,diccionarioDistribucionClases):
     '''Metodo que clasifica un elemento dado'''
     diccionarioDistribucionClasesCopia = copy.deepcopy(diccionarioDistribucionClases)
     #print("reglas: " + str(reglas))
@@ -504,6 +512,8 @@ def clasificaElemento(reglas,ejemplo,diccionarioDistribucionClases):
         #Se asigna el valor de clasificacion dominante
         return reglas[len(reglas)-1][-1][1]
 
+
+
 def evaluaAux(diccionarioDistribucionClases,reglas,prueba):
     '''Metodo para evaluar'''
     aciertos = 0
@@ -515,9 +525,11 @@ def evaluaAux(diccionarioDistribucionClases,reglas,prueba):
         
     rendimiento = aciertos/numTotal
     print("El rendimiento es: " + str(rendimiento))
-    return rendimiento
+    return rendimiento"""
 
-def evaluaAux1(diccionarioDistribucionClases,reglas,prueba):
+
+
+"""def evaluaAux1(diccionarioDistribucionClases,reglas,prueba):
     '''Metodo para evaluar desde el metodo de la pospoda'''
     aciertos = 0
     numTotal = len(prueba)
@@ -532,7 +544,7 @@ def evaluaAux1(diccionarioDistribucionClases,reglas,prueba):
         
     rendimiento = aciertos/numTotal
     print("El rendimiento es: " + str(rendimiento))
-    return rendimiento
+    return rendimiento"""
 
 
 #res = clasificador1.clasifica(['laboral','dos o más','una','uno','soltero','bajos'])
@@ -575,7 +587,7 @@ print("len entrenamiento: " + str(len(woo)))
 
 
 
-
+'''
 #Titanic
 print("-------------------")
 #indicesAtributosTitanicSeleccionados =  [1,6,8]
@@ -587,7 +599,7 @@ clasificador1.imprime()
 res = clasificador1.clasifica(["1","1st","Cardeza, Mrs James Warburton Martinez (Charlotte Wardle Drake)","adulto","Cherbourg","Germantown, Philadelphia, PA","B-51/3/5","17755 L512 6s","3","female"])
 print("El valor de clasificacion para el ejemplo es: " + str(res))
 clasificador1.evalua(titanic.prueba)
-
+'''
 
 
 '''
