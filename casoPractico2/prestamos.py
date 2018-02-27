@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """
 Created on Sat Feb 17 16:59:51 2018
 
@@ -13,7 +12,6 @@ Created on Sat Feb 17 16:59:51 2018
 
 # Contiene una serie de datos sobre concesión de préstamos en una entidad
 # bancaria, en función de:
-
 # * Tipo de empleo: funcionario, contrato laboral, parado o jubilado
 # * Productos finacieros contratados en la misma entidad: 0, 1 o más de 2.
 # * Propiedades inmobiliarias: 0,1 o más de 2.

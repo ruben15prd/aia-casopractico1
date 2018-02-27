@@ -16,17 +16,22 @@ class Clasificador:
         self.reglas = None
         self.diccionarioDistribucionClases = None
         
-    def entrena(self,entrenamiento,validacion=None,prepoda = 1):
-        self.reglas = aprendeReglasEntrenamiento(entrenamiento,self.atributos,list(range(len(self.atributos))),self.clases,prepoda)  
+    def entrena(self,entrenamiento,validacion=None,prepoda = 1, listaIndicesAtributos = None):
+        
+        if listaIndicesAtributos == None:
+            self.reglas = aprendeReglasEntrenamiento(entrenamiento,self.atributos,list(range(len(self.atributos))),self.clases,prepoda)  
+        else:
+            self.reglas = aprendeReglasEntrenamiento(entrenamiento,self.atributos,listaIndicesAtributos,self.clases,prepoda)  
+            
+        
         self.diccionarioDistribucionClases = diccionarioNumeroElementosClase(entrenamiento,self.clases)
-        
-        
         #print("Reglas antes de la poda:")
         #print( str(self.reglas))
+        
         if validacion != None:
             #print("Reglas despues de la pospoda:")
             self.reglas = pospoda(self.reglas,validacion,self.diccionarioDistribucionClases)
-            
+           
     def clasifica(self,ejemplo):
         res = clasificaElemento(self.reglas,ejemplo,self.diccionarioDistribucionClases)
         return res
@@ -53,7 +58,7 @@ class Clasificador:
 
 #Una regla es una lista de tuplas ([(indiceAtributo,valor)] ,clasificacion)
 def reglaCubreElemento(regla, elemento):
-    '''Metodo que comprueba si una regla cubre a un elemento'''
+    """Metodo que comprueba si una regla cubre a un elemento"""
     cubre = 1
     
     if len(regla[0]) == 0:
@@ -74,7 +79,7 @@ def reglaCubreElemento(regla, elemento):
 
 
 def reglaCubreCorrectamenteElemento(regla, elemento):
-    '''Metodo que comprueba si una regla cubre correctamente a un elemento'''
+    """Metodo que comprueba si una regla cubre correctamente a un elemento"""
     cubre = 1
     
     if len(regla[0]) == 0:
@@ -98,7 +103,7 @@ def reglaCubreCorrectamenteElemento(regla, elemento):
 
 # Eliminamos los elementos cubiertos por la regla
 def numeroElementosCubiertos(regla, elementos): 
-    '''Metodo que devuelve el numero de elementos cubiertos'''
+    """Metodo que devuelve el numero de elementos cubiertos por una regla"""
     numeroCubiertos = 0
     
     for e in elementos:
@@ -108,7 +113,7 @@ def numeroElementosCubiertos(regla, elementos):
     return numeroCubiertos
 
 def numeroElementosCubiertosCorrectamente(regla, elementos):
-    '''Metodo que devuelve el numero de elementos cubiertos correctamente'''
+    """Metodo que devuelve el numero de elementos cubiertos correctamente por una regla"""
     numeroCubiertosCorrectamente = 0
     
     for e in elementos:
@@ -120,7 +125,7 @@ def numeroElementosCubiertosCorrectamente(regla, elementos):
 
                 
 def frecuenciaRelativa(regla,entrenamiento):
-    '''Metodo que calcula la frecuencia relativa de una regla en el conjunto de entrenamiento'''
+    """Metodo que calcula la frecuencia relativa de una regla en el conjunto de entrenamiento"""
     
     '''
     FR(S,R) = p/t p= numero de ejemplos cubiertos por R de S, t = numero de ejemplos cubiertos correctamente por R de S
@@ -140,28 +145,8 @@ def frecuenciaRelativa(regla,entrenamiento):
 
 
 
-def gananciaInformacion(entrenamiento,regla,reglaAmpliada):
-    '''
-    La ganancia de informacion de una regla ampliada R+ con respecto a la original R es
-    G(R; R+; S) = p*(log2(p+/t+) - log2(p/t))
-    
-    donde t (t+) es el numero de ejemplos de S cubiertos por R (R+)
-    y p (p+) es el numero de ejemplos de S correctamente cubiertos
-    por R (R+)
-    '''
-    p = numeroElementosCubiertosCorrectamente(regla,entrenamiento)
-    pAmpliada = numeroElementosCubiertosCorrectamente(reglaAmpliada,entrenamiento)
-    t = numeroElementosCubiertos(regla,entrenamiento)
-    tAmpliada = numeroElementosCubiertos(reglaAmpliada,entrenamiento)
-    
-    ganancia = p*(math.log((pAmpliada/tAmpliada),2) - math.log((p/t),2))
-    
-    return ganancia
-
-
-
 def aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
-    '''Metodo que aprende un conjunto de reglas para una clase'''
+    """Metodo que aprende un conjunto de reglas para una clase"""
     entrenamientoCopia = copy.deepcopy(entrenamiento)
     atributosCopia = copy.deepcopy(atributos)
     reglas = []
@@ -173,10 +158,12 @@ def aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,clase, u
     
     while longitudElementosClase > 0:
         #print("longitud:" + str(longitudElementosClase))
-        
+        #print("-------------------")
+        #print("longitudElementosClase :" + str(longitudElementosClase))
         #print("-----------------------------------")
         resultado = aprendeRegla(entrenamientoCopia,atributosCopia,indicesAtributos,clase, umbralPrepoda)
         #print(str(resultado[1]))
+        #print("regla :" + str(resultado[1]))
         entrenamientoCopia = copy.deepcopy(resultado[0])
         #atributosCopia = copy.deepcopy(resultado[1])
         #print(str(resultado[1][0]))
@@ -192,11 +179,12 @@ def aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,clase, u
 
 
 def aprendeReglasEntrenamiento(entrenamiento,atributos,indicesAtributos,clases, umbralPrepoda):
-    '''Metodo que aprende las reglas para el conjunto de entrenamiento'''
+    """Metodo que aprende las reglas para el conjunto de entrenamiento"""
     diccionarioDistribucionClases = diccionarioNumeroElementosClase(entrenamiento,clases)
     reglasClases = []
     
     while len(diccionarioDistribucionClases) > 0:
+        
         claveMinima = obtenClaveMinimaPorValor(diccionarioDistribucionClases)
         diccionarioDistribucionClases.pop(claveMinima, None)
         resultado = aprendeConjuntoReglasClase(entrenamiento,atributos,indicesAtributos,claveMinima, umbralPrepoda)
@@ -208,7 +196,7 @@ def aprendeReglasEntrenamiento(entrenamiento,atributos,indicesAtributos,clases, 
 
 
 def obtenClaveMinimaPorValor(diccionarioDistribucionClases):
-    '''Metodo que obtiene el valor de clasificacion de la clase que menos aparece'''
+    """Metodo que obtiene el valor de clasificacion de la clase que menos aparece"""
     min_value = 9223372036854775807
     for key in diccionarioDistribucionClases:
         if min_value is None or min_value > diccionarioDistribucionClases[key]:
@@ -220,7 +208,7 @@ def obtenClaveMinimaPorValor(diccionarioDistribucionClases):
 
 
 def diccionarioNumeroElementosClase(entrenamiento,clases):
-    '''Metodo que devuelve el numero de elementos de cada clase'''
+    """Metodo que devuelve el numero de elementos de cada clase"""
     frecuenciaClasificacionClases = {}
     for clase in clases:
         frecuenciaClasificacionClases[clase] = 0
@@ -234,7 +222,7 @@ def diccionarioNumeroElementosClase(entrenamiento,clases):
 
 
 def elementosPorCubrirRegla(regla,elementos):
-    '''Metodo que devuelve el numero de elementos que faltan por cubrir dado una regla'''
+    """Metodo que devuelve el numero de elementos que faltan por cubrir dado una regla"""
     elementosPorCubrir = []
     
     for e in elementos:
@@ -247,7 +235,7 @@ def elementosPorCubrirRegla(regla,elementos):
 
 
 def filtraEntrenamientoPorClase(entrenamiento,clase):
-    '''Metodo que devuelve los elementos que pertecen a una clase'''
+    """Metodo que devuelve las filas de ejemplos que pertecen a una clase"""
     filtrado = []
     
     for e in entrenamiento:
@@ -257,8 +245,8 @@ def filtraEntrenamientoPorClase(entrenamiento,clase):
     return filtrado
 
 
-
 def aprendeRegla(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
+    """Metodo que aprende una regla para una clase"""
     regla = ([],clase)
     #print("longitud entrenamiento: " + str(entrenamiento))
     #print("longitud entrenamiento: " + str(len(entrenamiento)))
@@ -271,9 +259,10 @@ def aprendeRegla(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
     
     #['jubilado','ninguno','ninguna','uno','soltero','altos','estudiar']
     frecuenciaRelativaReglaTotal = 0
+    #print("atr: " + str(atributos))
+    #print("indices antes: " + str(indicesAtributosCopia))
     
-    
-    '''Añadir la condicion que cuando se quede sin atributos devolver la regla'''
+    #Añadir la condicion que cuando se quede sin atributos devolver la regla
     while frecuenciaRelativaReglaTotal < umbralPrepoda and len(indicesAtributosCopia) > 0:
         #print("frecuencia Relativa :" + str(frecuenciaRelativaReglaTotal))
         frecuenciaRelativaReglaActual = 0
@@ -282,31 +271,43 @@ def aprendeRegla(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
         #Iteramos los atributos 
         regla_max = ([],clase)
         #print("indicesAtr: " + str(indicesAtributosCopia))
+        
+        #print("--------------------------------------------------------------------------------------")
+        #print("regla: " + str(regla))
         for indiceAtributo in indicesAtributosCopia:
             #print("----------------------------------------")
             #print("regla : " + str(regla))
             atr = atributosCopia[indiceAtributo][1]
             #print(str(atr))
+            #print("-----------------------------------------------")
+            #print("indices: " + str(indicesAtributosCopia))
             # Iteramos los atributos restantes  
+            #print("-----------------------------------------------")
             for valorAtributo in atr:
                 #print(str(valorAtributo))
                 regla_aux = copy.deepcopy(regla)
                 regla_aux[0].append((indiceAtributo,valorAtributo))
                 #print("aux: "+str(regla_aux))
+                #print("--------------")
+                #print("frecuencia regla total:" + str(frecuenciaRelativaReglaTotal))
+                #print("regla temporal:" + str(regla_aux))
                 frecuenciaRelativaReglaMax = frecuenciaRelativa(regla_aux,entrenamientoCopia)
-                #print("freq: "+str(frecuenciaRelativaReglaMax))
+                #print("frecuencia regla actual: "+str(frecuenciaRelativaReglaMax))
+                #print("frecuencia regla maxima: " + str(frecuenciaRelativaReglaActual))
                 if frecuenciaRelativaReglaMax >= frecuenciaRelativaReglaActual:
                     #Copiamos el valor de la regla_aux a regla_max
+                    #print("Se cambia la regla:" + str(regla_max))
                     regla_max = copy.deepcopy(regla_aux)
                     frecuenciaRelativaReglaActual = frecuenciaRelativaReglaMax
+            #print("frecuencia regla total del atributo " + str(indiceAtributo) + ": " + str(frecuenciaRelativaReglaTotal))
+            #print("-----------------------------------------------")
         #print("*******************")
         #Si la reglaMax era mejor que la regla actual se sustituye su valor por la regla con 
         #nuevas condiciones
         #print(str(regla_max))
-        #print("aqui:" + str(frecuenciaRelativaReglaTotal))
+        
         if frecuenciaRelativaReglaActual > frecuenciaRelativaReglaTotal:
             #Guardamos en nuestra regla actual la regla con maxima frecuencia
-            
             regla = copy.deepcopy(regla_max)
             ultimaReglaAñadida = regla[0][-1]
             indiceUltimaReglaAñadida = ultimaReglaAñadida[0]
@@ -317,6 +318,9 @@ def aprendeRegla(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
             #print("tmp: " + str(frecRegla))
             #Actualizamos la frecuencia relativa total
             frecuenciaRelativaReglaTotal = frecRegla
+            
+        elif frecuenciaRelativaReglaActual == frecuenciaRelativaReglaTotal:
+            indicesAtributosCopia.remove(indiceAtributo)
             
             #print("regla ultima: " + str(ultimaReglaAñadida))    
             #print("atributosCopia: " + str(atributosCopia))
@@ -343,7 +347,7 @@ def aprendeRegla(entrenamiento,atributos,indicesAtributos,clase, umbralPrepoda):
 
 
 def pospoda(reglas,validacion,diccionarioDistribucionClases):
-    '''Metodo de poda de reglas'''
+    """Metodo de poda de reglas"""
     reglasCopia = copy.deepcopy(reglas)
     
     reglasFinales = podaReglasConjunto(reglasCopia, validacion, diccionarioDistribucionClases)
@@ -355,7 +359,7 @@ def pospoda(reglas,validacion,diccionarioDistribucionClases):
 
 
 def podaReglasConjunto(reglas, validacion, diccionarioDistribucionClases):
-    '''Metodo que poda una regla de un conjunto de reglas'''
+    """Metodo que elimina reglas o la ultima condicion de la misma de un conjunto de reglas"""
     
     reglasFinales = copy.deepcopy(reglas)
     rendimientoFinal = evaluaPoda(diccionarioDistribucionClases, reglasFinales, validacion) # Evalua el rendimiento antes de la poda
@@ -407,7 +411,7 @@ def podaReglasConjunto(reglas, validacion, diccionarioDistribucionClases):
 
 
 def reemplazaRegla(reglas,reglaOriginal, reglaSustitucion):
-    '''Metodo que devuelve el conjunto de reglas sustituyendo la reglaOriginal por la reglaSustitucion'''
+    """"Metodo que devuelve el conjunto de reglas sustituyendo la reglaOriginal por la reglaSustitucion"""
     copiaReglas = copy.deepcopy(reglas)
     reglasFinal = []
     
@@ -431,6 +435,7 @@ def reemplazaRegla(reglas,reglaOriginal, reglaSustitucion):
 
 
 def eliminaRegla(reglas,reglaAEliminar):
+    """Elimina una regla del conjunto de reglas"""
     copiaReglas = copy.deepcopy(reglas)
     reglasFinal = []
     
@@ -451,7 +456,7 @@ def eliminaRegla(reglas,reglaAEliminar):
 
 
 def compruebaReglasIguales(regla1,regla2):
-    '''Comprueba si dos reglas son iguales'''
+    """Comprueba si dos reglas son iguales"""
     contador = 0 
     
     igual = 1
@@ -465,7 +470,7 @@ def compruebaReglasIguales(regla1,regla2):
     
 
 def eliminaCondicion(regla):
-    '''Elimina una condicion de una regla'''
+    """Elimina una condicion de una regla"""
     reglaModificada = ([],regla[1])
     
     reglaCopia = copy.deepcopy(regla)
@@ -482,7 +487,7 @@ def eliminaCondicion(regla):
 
 
 def clasificaElemento(reglas,ejemplo,diccionarioDistribucionClases):
-    '''Metodo que clasifica un elemento dado'''
+    """Metodo que clasifica un ejemplo dado"""
     diccionarioDistribucionClasesCopia = copy.deepcopy(diccionarioDistribucionClases)
     #print("reglas: " + str(reglas))
     
@@ -507,7 +512,7 @@ def clasificaElemento(reglas,ejemplo,diccionarioDistribucionClases):
                 indice = condicion[0]
                 valorRegla = condicion[1]
                 #print("indice: " + str(condicion[0]) + "valor: " + str(condicion[1]))
-                #print("ejmplo:"  + str(ejemplo[indice]))
+                #print("ejmplo:"  + str(ejemplo))
                 if ejemplo[indice] != valorRegla:
                     clasifica = 0
                     
@@ -526,7 +531,7 @@ def clasificaElemento(reglas,ejemplo,diccionarioDistribucionClases):
 
 
 def evaluaAux(diccionarioDistribucionClases,reglas,prueba):
-    '''Metodo para evaluar'''
+    """Metodo para evaluar un conjunto de prueba"""
     aciertos = 0
     numTotal = len(prueba)
     for p in prueba:
@@ -535,13 +540,13 @@ def evaluaAux(diccionarioDistribucionClases,reglas,prueba):
             aciertos = aciertos + 1
         
     rendimiento = aciertos/numTotal
-    print("El rendimiento es: " + str(rendimiento))
+    print("El rendimiento es: " + str(rendimiento) + "\n" + "\n")
     return rendimiento
 
 
 
 def evaluaPoda(diccionarioDistribucionClases,reglas,prueba):
-    '''Metodo para evaluar desde el metodo de la pospoda'''
+    """Metodo para evaluar desde el metodo de la pospoda"""
     aciertos = 0
     numTotal = len(prueba)
         
@@ -550,6 +555,8 @@ def evaluaPoda(diccionarioDistribucionClases,reglas,prueba):
         #print("reglas: " + str(reglas))
         #print("elemento a evaluar: " + str(p[0:len(p)- 1]))
         clasificacionArbol = clasificaElemento(reglas,p[0:len(p)- 1],diccionarioDistribucionClases)
+        
+        
         if clasificacionArbol == p[len(p) - 1]:
             aciertos = aciertos + 1
         
@@ -607,41 +614,50 @@ print("len entrenamiento: " + str(len(woo)))
 #res = compruebaReglasIguales(([(0, 'parado'),(5, 'bajos')], 'conceder'),([(0, 'parado')], 'conceder'))
 #print(str(res))
 
-'''
-#Titanic
-print("-------------------")
-#indicesAtributosTitanicSeleccionados =  [1,6,8]
-#atributosSeleccionados = [titanic.atributos[i] for i in indicesAtributosTitanicSeleccionados]
 
-clasificador1 = Clasificador("",titanic.clases,titanic.atributos)
-clasificador1.entrena(titanic.entrenamiento[0:100],titanic.validacion,1)
-clasificador1.imprime()
-res = clasificador1.clasifica(["1","1st","Cardeza, Mrs James Warburton Martinez (Charlotte Wardle Drake)","adulto","Cherbourg","Germantown, Philadelphia, PA","B-51/3/5","17755 L512 6s","3","female"])
-print("El valor de clasificacion para el ejemplo es: " + str(res))
-clasificador1.evalua(titanic.prueba)
-'''
-
-'''
-#Votos
-print("-------------------")
-clasificador2 = Clasificador("",votos.clases,votos.atributos)
-clasificador2.entrena(votos.entrenamiento,1)
-clasificador2.imprime()
-res = clasificador2.clasifica(['n','s','n','s','s','s','n','n','n','s','?','s','s','s','n','s'])
-print("El valor de clasificacion para el ejemplo es: " + str(res))
-clasificador2.evalua(votos.prueba)
-'''
-
-'''
 #Prestamos
-print("-------------------")
+print("*********************************************************")
+print("*-*-*-*-*-*-*-*-*- REGLAS DE PRESTAMOS -*-*-*-*-*-*-*-*-*")
+print("*********************************************************")
 clasificador3 = Clasificador("",prestamos.clases,prestamos.atributos)
 clasificador3.entrena(prestamos.entrenamiento,prestamos.validacion,1)
 clasificador3.imprime()
 res = clasificador3.clasifica(['jubilado','ninguno','ninguna','uno','soltero','altos'])
 print("El valor de clasificacion para el ejemplo es: " + str(res))
 clasificador3.evalua(prestamos.prueba)
-'''
+
+
+
+#Votos
+print("*********************************************************")
+print("*-*-*-*-*-*-*-*-*-*- REGLAS DE VOTOS -*-*-*-*-*-*-*-*-*-*")
+print("*********************************************************")
+clasificador2 = Clasificador("",votos.clases,votos.atributos)
+clasificador2.entrena(votos.entrenamiento,votos.validacion,1)
+clasificador2.imprime()
+res = clasificador2.clasifica(['n','s','n','s','s','s','n','n','n','s','?','s','s','s','n','s'])
+print("El valor de clasificacion para el ejemplo es: " + str(res))
+clasificador2.evalua(votos.prueba)
+
+
+
+#Titanic
+print("*********************************************************")
+print("*-*-*-*-*-*-*-*-*-* REGLAS DE TITANIC *-*-*-*-*-*-*-*-*-*")
+print("*********************************************************")
+indicesAtributosTitanicSeleccionados =  [1,3,9]
+atributosSeleccionados = [titanic.atributos[i] for i in indicesAtributosTitanicSeleccionados]
+
+clasificador1 = Clasificador("",titanic.clases,titanic.atributos)
+clasificador1.entrena(titanic.entrenamiento,titanic.validacion,1,[1,3,9])
+clasificador1.imprime()
+res = clasificador1.clasifica(["1","1st","Cardeza, Mrs James Warburton Martinez (Charlotte Wardle Drake)","adulto","Cherbourg","Germantown, Philadelphia, PA","B-51/3/5","17755 L512 6s","3","female"])
+print("El valor de clasificacion para el ejemplo es: " + str(res))
+clasificador1.evalua(titanic.prueba)
+
+
+
+
 
 
 
