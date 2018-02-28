@@ -443,8 +443,8 @@ class Clasificador:
         self.nodoRaiz=None
         self.atributosSeleccionados = atributosSeleccionados
         
-    def entrena(self,entrenamiento,validacion=None):
-        self.nodoRaiz = aprendizajeArbolesDecision(entrenamiento,self.atributos,self.clases,"error",self.atributosSeleccionados, 0,1)
+    def entrena(self,entrenamiento,cotaMinima=0, cotaMayoria=1,validacion=None):
+        self.nodoRaiz = aprendizajeArbolesDecision(entrenamiento,self.atributos,self.clases,"error",self.atributosSeleccionados, cotaMinima,cotaMayoria)
     
     def clasifica(self, ejemplo):
         
@@ -542,14 +542,14 @@ def obtenSubnodo(nodo,rama,ejemplo):
     #print(clase)
     return clase
     
-    
+ 
 #Titanic
 print("-------------------")
 indicesAtributosTitanicSeleccionados =  [1,6,8]
 atributosSeleccionados = [titanic.atributos[i] for i in indicesAtributosTitanicSeleccionados]
 
 clasificador1 = Clasificador("",titanic.clases,titanic.atributos,[1,6,8])
-clasificador1.entrena(titanic.entrenamiento)
+clasificador1.entrena(titanic.entrenamiento,cotaMinima=0, cotaMayoria=1)
 clasificador1.imprime()
 res = clasificador1.clasifica(["1","1st","Cardeza, Mrs James Warburton Martinez (Charlotte Wardle Drake)","adulto","Cherbourg","Germantown, Philadelphia, PA","B-51/3/5","17755 L512 6s","3","female"])
 print("El valor de clasificacion para el ejemplo es: " + str(res))
@@ -560,7 +560,7 @@ clasificador1.evalua(titanic.prueba)
 #Votos
 print("-------------------")
 clasificador2 = Clasificador("",votos.clases,votos.atributos)
-clasificador2.entrena(votos.entrenamiento)
+clasificador2.entrena(votos.entrenamiento,cotaMinima=0, cotaMayoria=1)
 clasificador2.imprime()
 res = clasificador2.clasifica(['n','s','s','s','s','s','n','n','n','s','s','n','s','s','n','n',])
 print("El valor de clasificacion para el ejemplo es: " + str(res))
@@ -571,7 +571,7 @@ clasificador2.evalua(votos.prueba)
 #Prestamos
 print("-------------------")
 clasificador3 = Clasificador("",prestamos.clases,prestamos.atributos)
-clasificador3.entrena(prestamos.entrenamiento)
+clasificador3.entrena(prestamos.entrenamiento,cotaMinima=0, cotaMayoria=1)
 clasificador3.imprime()
 res = clasificador3.clasifica(['jubilado','ninguno','ninguna','uno','soltero','altos'])
 print("El valor de clasificacion para el ejemplo es: " + str(res))
