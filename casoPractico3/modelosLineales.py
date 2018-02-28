@@ -2,6 +2,8 @@
 import votos
 import random
 import copy
+from random import shuffle
+import random
 
 class clasificador:
     def __init__(self,clases,norm=False): # norm = valor_columna_ejemplo-media_columna/desv. tipica
@@ -51,9 +53,10 @@ def evaluaAux(pesos,prueba,diccionarioMapeoClases,clasesEntrenamiento):
     numTotal = len(prueba)
     contadorEjemplo = 0
     for p in prueba:
+        #print("p: " + str(p))
         clasificacion = clasificaAux(pesos,p,diccionarioMapeoClases)
-        print("clase predecida: " + str(clasificacion))
-        print("clase original: " + str(clasesEntrenamiento[contadorEjemplo]))
+        #print("clase predecida: " + str(clasificacion))
+        #print("clase original: " + str(clasesEntrenamiento[contadorEjemplo]))
         if clasificacion == clasesEntrenamiento[contadorEjemplo]:
             aciertos = aciertos + 1
         contadorEjemplo += 1
@@ -67,14 +70,11 @@ def clasificaAux(pesosFinales,ejemplo,diccionarioMapeoClases):
     suma = 0
     
     ejemploCopia = generaListaElementoX(ejemplo)
-    
     contador = 0
     while contador < len(pesosFinales):
         wi = pesosFinales[contador]
         xi = ejemploCopia[contador]
-        
         suma = suma + (wi*xi)
-        
         
         contador += 1
         
@@ -87,16 +87,20 @@ def clasificaAux(pesosFinales,ejemplo,diccionarioMapeoClases):
 def entrenaAux(entr,clas_entr,n_epochs,rate,clases):
     """Funcion de entrenamiento"""
     pesosW = generaListaPesosAleatoriosW(len(entr[0]) +1)
-        
-          
+    
+    #print("len:"  +str(len(entr)))
+    indicesRestantes = list(range(len(entr)))
+    #print(str(indicesRestantes))
     while n_epochs > 0:
-        contadorEjemplo = 0
-        for ejemplo in entr:
+        while len(indicesRestantes) > 0:
+            indice = random.choice(indicesRestantes)
+            #print("random:" + str(indice))
+            ejemplo = entr[indice]
             ejemploAdd = generaListaElementoX(ejemplo)
                 
-            pesosW = actualizaPesosEjemplo(pesosW,ejemploAdd,rate,clases,clas_entr,contadorEjemplo)
-                
-            contadorEjemplo += 1
+            pesosW = actualizaPesosEjemplo(pesosW,ejemploAdd,rate,clases,clas_entr,indice)
+            
+            indicesRestantes.remove(indice)
         n_epochs -= 1
         
     return pesosW
@@ -183,7 +187,7 @@ def seleccionaClavePorValor(diccionario,valorABuscar):
     return claveBusqueda
 
 clasificador1 = clasificador(votos.votos_clases)
-clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,30000)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,100)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 
