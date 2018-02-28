@@ -1,4 +1,5 @@
 import re
+import random
 
 # ==================================================
 # Conjunto de datos "Titanic"
@@ -225,7 +226,7 @@ def modificaListaDatos (listaSeparaValores, diccionarioEdades, ciudadOrigenMax, 
         superviviencia = listaSeparaValores[fila][2]
         listaSeparaValores[fila].pop(2)
         listaSeparaValores[fila].append(superviviencia)
-            
+        
     return listaSeparaValores
 
 
@@ -332,49 +333,47 @@ def obtenerAtributos (textoLista, listaDatosModificada):
 
 
 def obtenerListas (listaDatos):
+    #copiaDatos = []
     copiaDatos = listaDatos[:]
-    datosEntrenamiento = []
     datosValidacion = []
     datosPrueba = []
     
-    tam = len(listaDatos)
-    numDatosEntrenamiento = int(60*tam/100) # Numero de datos que contendra la lista de entrenamiento
-    numDatosValidacionPrueba = int(20*tam/100) # Numero de datos que contendran las listas de validacion y prueba
-    vivosFallecidos = numVivosFallecidos(listaDatos)
-    #print(str(numDatosEntrenamiento) + " " + str(numDatosValidacionPrueba) + " vivosFallecidos: " + str(vivosFallecidos))
+    '''for persona in listaDatos:
+        datos = []
+        datos.append(persona[1])
+        datos.append(persona[3])
+        datos.append(persona[9])
+        datos.append(persona[10])
+        copiaDatos.append(datos)'''
     
-    contVivos = 0
-    contFallecidos = 0
-    for persona in listaDatos:
-        #print("persona:" + str(persona))
-        if persona[2] == '1':
-            
-            if contVivos < int(numDatosValidacionPrueba/2):# and persona not in copiaDatos:
-                datosValidacion.append(persona)
-                #print("dval:" + str(datosValidacion))
-                copiaDatos.remove(persona)
-                contVivos += 1
-            
-            elif contVivos < int(numDatosValidacionPrueba):# and persona not in copiaDatos:
-                datosPrueba.append(persona)
-                copiaDatos.remove(persona)
-                contVivos += 1
-        
-        else:
-            if contFallecidos < int(numDatosValidacionPrueba/2):# and persona not in copiaDatos:
-                datosValidacion.append(persona)
-                copiaDatos.remove(persona)
-                contFallecidos += 1
-            
-            elif contFallecidos < int(numDatosValidacionPrueba):# and persona not in copiaDatos:
-                datosPrueba.append(persona)
-                copiaDatos.remove(persona)
-                contFallecidos += 1
+    listaVivos = personasVivasFallecidas(copiaDatos)[0]
+    listaFallecidos = personasVivasFallecidas(copiaDatos)[1]
+    random.shuffle(listaVivos)
+    random.shuffle(listaFallecidos)
     
-    datosEntrenamiento = copiaDatos[:]
-    """print("entr: " + str(len(datosEntrenamiento)))
-    print("val:" + str(len(datosValidacion)))
-    print("pr: " + str(len(datosPrueba)))"""
+    # entrenamiento: 60% datos vivos y 60% datos fallecidos
+    numVivosEntrenamiento = int((60*len(listaVivos))/100)
+    numFallecidosEntrenamiento = int((60*len(listaFallecidos))/100)
+    
+    datosEntrenamiento = listaVivos[0:numVivosEntrenamiento]
+    [ datosEntrenamiento.append(valor) for valor in listaFallecidos[0:numFallecidosEntrenamiento] ]
+    
+    
+    # validacion: 20% datos vivos y 20% datos fallecidos
+    numVivosValidacion = numVivosEntrenamiento + int((20*len(listaVivos))/100)
+    numFallecidosValidacion = numFallecidosEntrenamiento + int((20*len(listaFallecidos))/100)
+    
+    datosValidacion = listaVivos[numVivosEntrenamiento:numVivosValidacion]
+    [ datosValidacion.append(valor) for valor in listaFallecidos[numFallecidosEntrenamiento:numFallecidosValidacion] ]
+    
+    
+    # prueba: 20% datos vivos y 20% datos fallecidos
+    numVivosPrueba = numVivosValidacion + int((20*len(listaVivos))/100)
+    numFallecidosPrueba = numFallecidosValidacion + int((20*len(listaFallecidos))/100)
+    
+    datosPrueba = listaVivos[numVivosValidacion:numVivosPrueba]
+    [ datosPrueba.append(valor) for valor in listaFallecidos[numFallecidosValidacion:numFallecidosPrueba] ]
+    
     return [datosEntrenamiento, datosValidacion, datosPrueba]        
 
 
@@ -386,7 +385,7 @@ def numVivosFallecidos (listaDatos):
     fallecidos = 0
     
     for persona in listaDatos:
-        if persona[2] == '1':
+        if persona[len(persona)-1] == '1':
             vivos += 1
         else:
             fallecidos += 1
@@ -395,6 +394,21 @@ def numVivosFallecidos (listaDatos):
     res.append(fallecidos)
     
     return res
+
+
+
+# Lista con una lista de personas vivas y una lista de personas fallecidas
+def personasVivasFallecidas (listaDatos):
+    personasVivas = []
+    personasFallecidas = []
+    
+    for persona in listaDatos:
+        if persona[len(persona)-1] == '1':
+            personasVivas.append(persona)
+        else:
+            personasFallecidas.append(persona)
+    
+    return [personasVivas, personasFallecidas]
 
 
 
@@ -407,11 +421,11 @@ resListas = obtenerListas(lista[1]) # lista[1] contiene la lista de todos los da
 entrenamiento = resListas[0]
 validacion = resListas[1]
 prueba = resListas[2]
-    
 
 
-if __name__ == "__main__":
-    print("ATRIBUTOS: " + str(atributos))
+
+#if __name__ == "__main__":
+    #print("ATRIBUTOS: " + str(atributos))
     #print("CLASES: " + str(clases))
     #print("ENTRENAMIENTO: " + str(entrenamiento))
     #print("VALIDACION: " + str(validacion))
