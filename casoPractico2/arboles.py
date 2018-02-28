@@ -85,7 +85,7 @@ def aprendizajeRecursivo(conjuntoInicio, atributos,clases, cotaMinima, cotaMayor
         
         # Si no es caso base se elige el mejor atributo atr(mejor atributo) usando la funcion clasifica(funcionClasificacion), dentro se ponen los distintos sumatorios de Entropia y los otros
         indiceMejorAtributo = obtenMejorAtributo(clases, conjuntoInicio, atributos, conjuntoActual, atributosRestantes, funcionClasificacion)
-        print("indiceMejor: " + str(indiceMejorAtributo))
+        #print("indiceMejor: " + str(indiceMejorAtributo))
         
          #Creamos el conjunto actual de cada una de las ramas
         for valor in atributos[indiceMejorAtributo][1]:
