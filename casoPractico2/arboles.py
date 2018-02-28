@@ -545,10 +545,11 @@ def obtenSubnodo(nodo,rama,ejemplo):
  
 #Titanic
 print("-------------------")
-indicesAtributosTitanicSeleccionados =  [1,6,8]
-atributosSeleccionados = [titanic.atributos[i] for i in indicesAtributosTitanicSeleccionados]
+#indicesAtributosTitanicSeleccionados =  [1,6,8]
+#atributosSeleccionados = [titanic.atributos[i] for i in indicesAtributosTitanicSeleccionados]
 
-clasificador1 = Clasificador("",titanic.clases,titanic.atributos,[1,6,8])
+#clasificador1 = Clasificador("",titanic.clases,titanic.atributos,[1,6,8])
+clasificador1 = Clasificador("",titanic.clases,titanic.atributos)
 clasificador1.entrena(titanic.entrenamiento,cotaMinima=0, cotaMayoria=1)
 clasificador1.imprime()
 res = clasificador1.clasifica(["1","1st","Cardeza, Mrs James Warburton Martinez (Charlotte Wardle Drake)","adulto","Cherbourg","Germantown, Philadelphia, PA","B-51/3/5","17755 L512 6s","3","female"])

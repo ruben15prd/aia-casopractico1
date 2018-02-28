@@ -7,10 +7,16 @@ class clasificador:
     def __init__(self,clases,norm=False): # norm = valor_columna_ejemplo-media_columna/desv. tipica
         self.clases = clases
         self.norm = norm
+        self.diccionarioMapeoClases = None
+        self.pesosFinales = None
     
     def entrena(self,entr,clas_entr,n_epochs,rate=0.1,pesos_iniciales=None,rate_decay=False):
-        
+        self.clasesEntrenamiento = clas_entr
         pesosW = []
+        
+        
+        self.diccionarioMapeoClases = generaMapeoClases(self.clases)
+        
         if pesos_iniciales == None:
             pesosW = generaListaPesosAleatoriosW(len(entr[0]) +1)
         else:
@@ -19,6 +25,9 @@ class clasificador:
         pesosW = entrenaAux(entr,clas_entr,n_epochs,rate,self.clases)
         
         
+        self.pesosFinales = pesosW
+        
+        print("Los pesos obtenidos son: " + str(self.pesosFinales))
         return pesosW
     
     # Devuelve la probabilidad de pertenecer a la clase 1. No se usa en el perceptrón.
@@ -26,8 +35,54 @@ class clasificador:
         pass
     
     def clasifica(self,ej):
-        pass
+        clasificacion = clasificaAux(self.pesosFinales,ej,self.diccionarioMapeoClases)
+        
+        print("El valor de clasificacion es: " + str(clasificacion))
+        
+        return clasificacion
     
+    def evalua(self,prueba,clasesPrueba):
+        rendimiento = evaluaAux(self.pesosFinales,prueba,self.diccionarioMapeoClases,clasesPrueba)
+        return rendimiento 
+
+def evaluaAux(pesos,prueba,diccionarioMapeoClases,clasesEntrenamiento):
+    """Metodo para evaluar un conjunto de prueba"""
+    aciertos = 0
+    numTotal = len(prueba)
+    contadorEjemplo = 0
+    for p in prueba:
+        clasificacion = clasificaAux(pesos,p,diccionarioMapeoClases)
+        print("clase predecida: " + str(clasificacion))
+        print("clase original: " + str(clasesEntrenamiento[contadorEjemplo]))
+        if clasificacion == clasesEntrenamiento[contadorEjemplo]:
+            aciertos = aciertos + 1
+        contadorEjemplo += 1
+    rendimiento = aciertos/numTotal
+    print("El rendimiento es: " + str(rendimiento) + "\n" + "\n")
+    return rendimiento
+    
+       
+def clasificaAux(pesosFinales,ejemplo,diccionarioMapeoClases):
+    """Funcion de clasificacion auxiliar"""
+    suma = 0
+    
+    ejemploCopia = generaListaElementoX(ejemplo)
+    
+    contador = 0
+    while contador < len(pesosFinales):
+        wi = pesosFinales[contador]
+        xi = ejemploCopia[contador]
+        
+        suma = suma + (wi*xi)
+        
+        
+        contador += 1
+        
+    res = umbral(suma)
+    
+    clasificacion = seleccionaClavePorValor(diccionarioMapeoClases,res)
+    
+    return clasificacion
 
 def entrenaAux(entr,clas_entr,n_epochs,rate,clases):
     """Funcion de entrenamiento"""
@@ -99,7 +154,7 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaEjemplosClase,ind
         WixXi = Xi * Wi
         o = umbral(WixXi)
         
-        WiFinal = Wi + rate*Xi*(y - o)
+        WiFinal = Wi + ((rate*Xi)*(y - o))
         pesosActualizados.append(WiFinal)
             
         contador += 1
@@ -118,9 +173,19 @@ def generaMapeoClases(clases):
     return diccionarioMapeoClases
 
 
+def seleccionaClavePorValor(diccionario,valorABuscar):
+    """Dado un valor de un diccionario obtiene la clave"""
+    claveBusqueda = ""
+    for clave, numero in diccionario.items():    # for name, age in list.items():  (for Python 3.x)
+        if numero == valorABuscar:
+            claveBusqueda = clave
+    
+    return claveBusqueda
+
 clasificador1 = clasificador(votos.votos_clases)
-res = clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,100)
-print(str(res))
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,30000)
+clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
+clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 
 '''
 ejemplo = [-1,1,-1,1,1,1,-1,-1,-1,1,0,1,1,1,-1,1]
