@@ -20,11 +20,11 @@ class clasificador:
         self.diccionarioMapeoClases = generaMapeoClases(self.clases)
         
         if pesos_iniciales == None:
-            pesosW = generaListaPesosAleatoriosW(len(entr[0]) +1)
+            pesosW = generaListaPesosAleatoriosW(len(entr[0]) +1,-1.0,1.0)
         else:
             pesosW = pesos_iniciales
             
-        pesosW = entrenaAux(entr,clas_entr,n_epochs,rate,self.clases)
+        pesosW = entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,self.clases)
         
         
         self.pesosFinales = pesosW
@@ -84,9 +84,8 @@ def clasificaAux(pesosFinales,ejemplo,diccionarioMapeoClases):
     
     return clasificacion
 
-def entrenaAux(entr,clas_entr,n_epochs,rate,clases):
+def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases):
     """Funcion de entrenamiento"""
-    pesosW = generaListaPesosAleatoriosW(len(entr[0]) +1)
     
     #print("len:"  +str(len(entr)))
     indicesRestantes = list(range(len(entr)))
@@ -117,13 +116,13 @@ def umbral(x):
     return resultado
         
 
-def generaListaPesosAleatoriosW(longitud):
-    """Genera la lista W de pesos aleatorios"""
+def generaListaPesosAleatoriosW(longitud,limiteInferior,limiteSuperior):
+    """Genera la lista W de pesos aleatorios entre 2 limites"""
     longitudAGenerar = longitud
     W = []
     
     while longitudAGenerar > 0:
-        aleatorio = random.random()
+        aleatorio = random.uniform(limiteInferior, limiteSuperior)
         
         W.append(aleatorio)
         longitudAGenerar -= 1
