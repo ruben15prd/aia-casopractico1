@@ -68,8 +68,8 @@ def evaluaAux(pesos,prueba,diccionarioMapeoClases,clasesEntrenamiento):
 def clasificaAux(pesosFinales,ejemplo,diccionarioMapeoClases):
     """Funcion de clasificacion auxiliar"""
     suma = 0
-    
-    ejemploCopia = generaListaElementoX(ejemplo)
+    # Añadimos X0 = 1 al ejemplo
+    ejemploCopia = [1] + ejemplo
     contador = 0
     while contador < len(pesosFinales):
         wi = pesosFinales[contador]
