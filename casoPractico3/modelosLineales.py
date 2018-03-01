@@ -9,15 +9,10 @@ class clasificador:
     def __init__(self,clases,norm=False): # norm = valor_columna_ejemplo-media_columna/desv. tipica
         self.clases = clases
         self.norm = norm
-        self.diccionarioMapeoClases = None
         self.pesosFinales = None
     
     def entrena(self,entr,clas_entr,n_epochs,rateInicial=0.1,pesos_iniciales=None,rate_decay=False):
-        self.clasesEntrenamiento = clas_entr
         pesosW = []
-        
-        
-        self.diccionarioMapeoClases = generaMapeoClases(self.clases)
         
         if pesos_iniciales == None:
             pesosW = generaListaPesosAleatoriosW(len(entr[0]) +1,-1.0,1.0)
@@ -37,14 +32,14 @@ class clasificador:
         pass
     
     def clasifica(self,ej):
-        clasificacion = clasificaAux(self.pesosFinales,ej,self.diccionarioMapeoClases)
+        clasificacion = clasificaAux(self.pesosFinales,ej,self.clases)
         
         print("El valor de clasificacion es: " + str(clasificacion))
         
         return clasificacion
     
     def evalua(self,prueba,clasesPrueba):
-        rendimiento = evaluaAux(self.pesosFinales,prueba,self.diccionarioMapeoClases,clasesPrueba)
+        rendimiento = evaluaAux(self.pesosFinales,prueba,self.clases,clasesPrueba)
         return rendimiento 
 
 def evaluaAux(pesos,prueba,diccionarioMapeoClases,clasesEntrenamiento):
@@ -65,7 +60,7 @@ def evaluaAux(pesos,prueba,diccionarioMapeoClases,clasesEntrenamiento):
     return rendimiento
     
        
-def clasificaAux(pesosFinales,ejemplo,diccionarioMapeoClases):
+def clasificaAux(pesosFinales,ejemplo,clases):
     """Funcion de clasificacion auxiliar"""
     suma = 0
     # Añadimos X0 = 1 al ejemplo
@@ -80,8 +75,9 @@ def clasificaAux(pesosFinales,ejemplo,diccionarioMapeoClases):
         
     res = umbral(suma)
     
-    clasificacion = seleccionaClavePorValor(diccionarioMapeoClases,res)
-    
+    #print(str(clases))
+    #Quitar esto, usar las clases del clasificador
+    clasificacion = clases[res]
     return clasificacion
 
 def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay):
@@ -121,7 +117,6 @@ def umbral(x):
         resultado = 0
         
     return resultado
-        
 
 def generaListaPesosAleatoriosW(longitudAGenerar,limiteInferior,limiteSuperior):
     """Genera la lista W de pesos aleatorios entre 2 limites"""
@@ -135,13 +130,13 @@ def generaListaPesosAleatoriosW(longitudAGenerar,limiteInferior,limiteSuperior):
     return W
 
 
-def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaEjemplosClase,indiceEjemplo):
+def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamiento,indiceEjemplo):
     """Actualiza la lista de pesos W, dado un ejemplo(recordar que este ejemplo tiene que incorporar X0)"""
     '''wi = wi + ηxi(y − o)'''
     pesosActualizados=[]
     
     
-    diccionarioClases = generaMapeoClases(clases)
+    #diccionarioClases = generaMapeoClases(clases)
     
     
     longitudEjemplo = len(ejemplo)
@@ -151,8 +146,9 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaEjemplosClase,ind
         Xi = ejemplo[contador]
         Wi = listaPesosW[contador]
             
-        clasificacionEjemplo = listaEjemplosClase[contador]
-        y = diccionarioClases[clasificacionEjemplo]
+        clasificacionEjemplo = listaClasesEntrenamiento[indiceEjemplo]
+        #y = diccionarioClases[clasificacionEjemplo]
+        y = clases.index(clasificacionEjemplo)
         WixXi = Xi * Wi
         o = umbral(WixXi)
         
@@ -162,7 +158,7 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaEjemplosClase,ind
         contador += 1
         
     return pesosActualizados
-
+'''
 def generaMapeoClases(clases):
     """Obtiene un diccionario con el mapeo de clases a digito"""
     diccionarioMapeoClases = {}
@@ -183,14 +179,14 @@ def seleccionaClavePorValor(diccionario,valorABuscar):
             claveBusqueda = clave
     
     return claveBusqueda
-
+'''
 def calculaRaiz(x,raiz):
     result = x**(1.0/float(raiz))
     
     return result
 
 clasificador1 = clasificador(votos.votos_clases)
-clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,10000,rate=0.1,pesos_iniciales=None,rate_decay=True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,1000,rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 
