@@ -136,8 +136,6 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
     pesosActualizados=[]
     
     
-    #diccionarioClases = generaMapeoClases(clases)
-    
     
     longitudEjemplo = len(ejemplo)
     
@@ -150,6 +148,7 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
         #y = diccionarioClases[clasificacionEjemplo]
         y = clases.index(clasificacionEjemplo)
         WixXi = Xi * Wi
+        #print(str(WixXi))
         o = umbral(WixXi)
         
         WiFinal = Wi + ((rate*Xi)*(y - o))
@@ -158,28 +157,7 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
         contador += 1
         
     return pesosActualizados
-'''
-def generaMapeoClases(clases):
-    """Obtiene un diccionario con el mapeo de clases a digito"""
-    diccionarioMapeoClases = {}
-    
-    contador = 0
-    for clase in clases:
-        diccionarioMapeoClases[clase] = contador
-        contador += 1 
 
-    return diccionarioMapeoClases
-
-
-def seleccionaClavePorValor(diccionario,valorABuscar):
-    """Dado un valor de un diccionario obtiene la clave"""
-    claveBusqueda = ""
-    for clave, numero in diccionario.items():    # for name, age in list.items():  (for Python 3.x)
-        if numero == valorABuscar:
-            claveBusqueda = clave
-    
-    return claveBusqueda
-'''
 def calculaRaiz(x,raiz):
     result = x**(1.0/float(raiz))
     
