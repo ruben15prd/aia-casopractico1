@@ -97,8 +97,8 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay):
         while len(indicesRestantes) > 0:
             indice = random.choice(indicesRestantes)
             #print("random:" + str(indice))
-            ejemplo = entr[indice]
-            ejemploAdd = generaListaElementoX(ejemplo)
+            # Añadimos X0 = 1 al ejemplo
+            ejemploAdd = [1] + entr[indice]
                 
             pesosW = actualizaPesosEjemplo(pesosW,ejemploAdd,rateActual,clases,clas_entr,indice)
             
@@ -133,13 +133,6 @@ def generaListaPesosAleatoriosW(longitudAGenerar,limiteInferior,limiteSuperior):
         W.append(aleatorio)
         longitudAGenerar -= 1
     return W
-
-def generaListaElementoX(ejemplo):
-    """Dado un ejemplo le concatena el X0"""
-    X0 = 1
-    ejemplo = [X0] + ejemplo
-    
-    return ejemplo
 
 
 def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaEjemplosClase,indiceEjemplo):
