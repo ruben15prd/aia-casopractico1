@@ -24,7 +24,7 @@ class clasificador:
         else:
             pesosW = pesos_iniciales
             
-        pesosW = entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,self.clases)
+        pesosW = entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,self.clases,rate_decay)
         
         
         self.pesosFinales = pesosW
@@ -84,23 +84,30 @@ def clasificaAux(pesosFinales,ejemplo,diccionarioMapeoClases):
     
     return clasificacion
 
-def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases):
+def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay):
     """Funcion de entrenamiento"""
     
     #print("len:"  +str(len(entr)))
     indicesRestantes = list(range(len(entr)))
     #print(str(indicesRestantes))
-    while n_epochs > 0:
+    rateActual = rate
+    contadorNumEpochs = 0
+    while contadorNumEpochs < n_epochs:
+        
         while len(indicesRestantes) > 0:
             indice = random.choice(indicesRestantes)
             #print("random:" + str(indice))
             ejemplo = entr[indice]
             ejemploAdd = generaListaElementoX(ejemplo)
                 
-            pesosW = actualizaPesosEjemplo(pesosW,ejemploAdd,rate,clases,clas_entr,indice)
+            pesosW = actualizaPesosEjemplo(pesosW,ejemploAdd,rateActual,clases,clas_entr,indice)
             
             indicesRestantes.remove(indice)
-        n_epochs -= 1
+        contadorNumEpochs += 1
+        
+        #Disminuimos el rate si nos indican rateDecay = 1
+        if rateDecay == True:
+            rateActual = rate + (2/(calculaRaiz(contadorNumEpochs**2,3)))
         
     return pesosW
 
@@ -116,9 +123,8 @@ def umbral(x):
     return resultado
         
 
-def generaListaPesosAleatoriosW(longitud,limiteInferior,limiteSuperior):
+def generaListaPesosAleatoriosW(longitudAGenerar,limiteInferior,limiteSuperior):
     """Genera la lista W de pesos aleatorios entre 2 limites"""
-    longitudAGenerar = longitud
     W = []
     
     while longitudAGenerar > 0:
@@ -185,8 +191,13 @@ def seleccionaClavePorValor(diccionario,valorABuscar):
     
     return claveBusqueda
 
+def calculaRaiz(x,raiz):
+    result = x**(1.0/float(raiz))
+    
+    return result
+
 clasificador1 = clasificador(votos.votos_clases)
-clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,100)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,100,rate=0.1,pesos_iniciales=None,rate_decay=True)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 
