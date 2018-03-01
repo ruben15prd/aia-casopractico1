@@ -12,7 +12,7 @@ class clasificador:
         self.diccionarioMapeoClases = None
         self.pesosFinales = None
     
-    def entrena(self,entr,clas_entr,n_epochs,rate=0.1,pesos_iniciales=None,rate_decay=False):
+    def entrena(self,entr,clas_entr,n_epochs,rateInicial=0.1,pesos_iniciales=None,rate_decay=False):
         self.clasesEntrenamiento = clas_entr
         pesosW = []
         
@@ -24,7 +24,7 @@ class clasificador:
         else:
             pesosW = pesos_iniciales
             
-        pesosW = entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,self.clases,rate_decay)
+        pesosW = entrenaAux(pesosW,entr,clas_entr,n_epochs,rateInicial,self.clases,rate_decay)
         
         
         self.pesosFinales = pesosW
@@ -190,7 +190,7 @@ def calculaRaiz(x,raiz):
     return result
 
 clasificador1 = clasificador(votos.votos_clases)
-clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,100,rate=0.1,pesos_iniciales=None,rate_decay=True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,10000,rate=0.1,pesos_iniciales=None,rate_decay=True)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 
