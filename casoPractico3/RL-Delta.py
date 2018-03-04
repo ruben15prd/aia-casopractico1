@@ -43,7 +43,11 @@ class clasificador:
     
     # Devuelve la probabilidad de pertenecer a la clase 1. No se usa en el perceptrón.
     def clasifica_prob(self,ej):
-        pass
+        res = clasifica_probAux(ej,self.pesosFinales,self.norm)
+        
+        print("La probabilidad de que el ejemplo pertenezca a la clase 1 es: " + str(1 - res))
+
+        return res
     
     def clasifica(self,ej):
         clasificacion = clasificaAux(self.pesosFinales,ej,self.clases,self.norm)
@@ -55,8 +59,63 @@ class clasificador:
     def evalua(self,prueba,clasesPrueba):
         rendimiento = evaluaAux(self.pesosFinales,prueba,self.clases,clasesPrueba,self.norm)
         return rendimiento 
-
-
+    
+    def oneVsRest(self,entr,clas_entr,n_epochs,ejemplo,rateInicial=0.1,pesos_iniciales=None,rate_decay=False):
+        listaPesosClasesOneRest = [] 
+        
+        for elem in self.clases:
+            
+            entrenamientoClasesCopia = copy.deepcopy(clas_entr)
+            numeroClase = self.clases.index(elem)
+            
+            for idx, item in enumerate(clas_entr):
+                if item == elem:
+                    entrenamientoClasesCopia[idx] = numeroClase
+                    # Asignamos una clase que no exista por ejemplo el 10000
+                else:
+                    entrenamientoClasesCopia[idx] = 10000
+            # Llamamos al metodo entrena para cada una de las clases
+            listaPesos = self.entrena(entr,clas_entr,n_epochs,rateInicial,pesos_iniciales,rate_decay)
+            listaPesosClasesOneRest.append(listaPesos)
+            
+        # Ahora nos quedamos con la clasificacion que nos dee una mayor probabilidad
+        
+        indiceMaximo = 0
+        probabilidadMaxima = 0
+        for idx, pesos in enumerate(listaPesosClasesOneRest):
+            probabilidad = clasifica_probAux(ejemplo,pesos,self.norm)
+            
+            if probabilidad >= probabilidadMaxima:
+                indiceMaximo = idx
+                probabilidadMaxima = probabilidad
+        
+        claseElegida = self.clases[indiceMaximo]
+        
+        print("El valor de clasificacion para One VS Rest es: " + str(claseElegida))
+        return claseElegida
+        
+def clasifica_probAux(ej,pesosFinales,norm):
+    suma = 0
+    # Añadimos X0 = 1 al ejemplo
+    ejemploCopia = [1] + ej
+    
+    if norm == True:
+        ejemploCopia = normalizaEntrenamiento(ejemploCopia)
+    
+    contador = 0
+    while contador < len(pesosFinales):
+        wi = pesosFinales[contador]
+        xi = ejemploCopia[contador]
+        suma = suma + (wi*xi)
+        
+        contador += 1
+        
+    res = sigma(suma)
+    #print(str(res))
+    #res = 1 - res
+        
+    
+    return res
 def normalizaEntrenamiento(entr):
     """Funcion usada para normalizar el conjunto de entrenamiento"""
     
@@ -208,6 +267,8 @@ clasificador1 = clasificador(votos.votos_clases,False)
 clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,1000,rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
+clasificador1.clasifica_prob([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
+clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,1000,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
 
 
 #res = normalizaEntrenamiento(votos.votos_entr)
