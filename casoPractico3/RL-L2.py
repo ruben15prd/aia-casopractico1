@@ -23,6 +23,10 @@ class clasificador:
     def entrena(self,entr,clas_entr,n_epochs,rateInicial=0.1,pesos_iniciales=None,rate_decay=False):
         pesosW = []
         
+        
+        if self.norm == True:
+            entr = normalizaEntrenamiento(entr)
+        
         if pesos_iniciales == None:
             pesosW = generaListaPesosAleatoriosW(len(entr[0]) +1,-1.0,1.0)
         else:
@@ -41,24 +45,40 @@ class clasificador:
         pass
     
     def clasifica(self,ej):
-        clasificacion = clasificaAux(self.pesosFinales,ej,self.clases)
+        clasificacion = clasificaAux(self.pesosFinales,ej,self.clases,self.norm)
         
         print("El valor de clasificacion es: " + str(clasificacion))
         
         return clasificacion
     
     def evalua(self,prueba,clasesPrueba):
-        rendimiento = evaluaAux(self.pesosFinales,prueba,self.clases,clasesPrueba)
+        rendimiento = evaluaAux(self.pesosFinales,prueba,self.clases,clasesPrueba,self.norm)
         return rendimiento 
 
-def evaluaAux(pesos,prueba,diccionarioMapeoClases,clasesEntrenamiento):
+
+def normalizaEntrenamiento(entr):
+    """Funcion usada para normalizar el conjunto de entrenamiento"""
+    
+    #Calculamos las medias
+    medias = np.mean(entr, axis=0)
+    #Calculamos las desviaciones tipicas
+    desviacionTipica = np.std(entr, axis=0)
+    
+    #Restamos las medias al conjunto de entrenamiento
+    conjuntoResta = np.subtract(entr[0:2], medias)
+    #Dividimos por las desviaciones tipicas
+    conjuntoDivision = np.divide(conjuntoResta, desviacionTipica)
+    
+    return conjuntoDivision
+
+def evaluaAux(pesos,prueba,diccionarioMapeoClases,clasesEntrenamiento,norm):
     """Metodo para evaluar un conjunto de prueba"""
     aciertos = 0
     numTotal = len(prueba)
     contadorEjemplo = 0
     for p in prueba:
         #print("p: " + str(p))
-        clasificacion = clasificaAux(pesos,p,diccionarioMapeoClases)
+        clasificacion = clasificaAux(pesos,p,diccionarioMapeoClases,norm)
         #print("clase predecida: " + str(clasificacion))
         #print("clase original: " + str(clasesEntrenamiento[contadorEjemplo]))
         if clasificacion == clasesEntrenamiento[contadorEjemplo]:
@@ -69,11 +89,15 @@ def evaluaAux(pesos,prueba,diccionarioMapeoClases,clasesEntrenamiento):
     return rendimiento
     
        
-def clasificaAux(pesosFinales,ejemplo,clases):
+def clasificaAux(pesosFinales,ejemplo,clases,norm):
     """Funcion de clasificacion auxiliar"""
     suma = 0
     # Añadimos X0 = 1 al ejemplo
     ejemploCopia = [1] + ejemplo
+    
+    if norm == True:
+        ejemploCopia = normalizaEntrenamiento(ejemploCopia)
+    
     contador = 0
     while contador < len(pesosFinales):
         wi = pesosFinales[contador]
