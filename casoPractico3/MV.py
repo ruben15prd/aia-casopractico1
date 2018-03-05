@@ -258,7 +258,7 @@ def generaListaPesosAleatoriosW(longitudAGenerar,limiteInferior,limiteSuperior):
 
 def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamiento,indiceEjemplo):
     """Actualiza la lista de pesos W, dado un ejemplo(recordar que este ejemplo tiene que incorporar X0)"""
-    '''wi = wi + η *sum*(xi(y-o)*o*(1-o))'''
+    '''wi = wi + η* sum*((y - o)*Xi)'''
     pesosActualizados=[]
     
     clasificacionEjemplo = listaClasesEntrenamiento[indiceEjemplo]
@@ -276,7 +276,7 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
     while contador < longitudEjemplo:
         Xi = ejemplo[contador]
       
-        WiFinal = Xi*(y - o)*o*(1 - o)
+        WiFinal = (y - o)*Xi
         pesosActualizados.append(WiFinal)
             
         contador += 1

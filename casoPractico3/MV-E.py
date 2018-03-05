@@ -195,11 +195,6 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
     #print("len:"  +str(len(entr)))
     #indicesRestantes = list(range(len(entr)))
     #print(str(indicesRestantes))
-    
-    pesosIteracion = np.zeros((len(entr[0]) +1,), dtype=int)
-    
-    #pesosIteracion = copy.deepcopy(pesosW)
-    
     rateActual = rate
     contadorNumEpochs = 0
     while contadorNumEpochs < n_epochs:
@@ -210,8 +205,7 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
             # Añadimos X0 = 1 al ejemplo
             ejemploAdd = [1] + entr[indice]
                 
-            pesosEjemplo = actualizaPesosEjemplo(pesosW,ejemploAdd,rateActual,clases,clas_entr,indice)
-            pesosIteracion = np.sum([pesosIteracion, pesosEjemplo], axis=0)
+            pesosW = actualizaPesosEjemplo(pesosW,ejemploAdd,rateActual,clases,clas_entr,indice)
             #print("pesosW: ", pesosW)
             indicesRestantes.remove(indice)
         contadorNumEpochs += 1
@@ -219,13 +213,6 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
         #Disminuimos el rate si nos indican rateDecay = 1
         if rateDecay == True:
             rateActual = rate + (2/(calculaRaiz(contadorNumEpochs**2,3)))
-            
-        multiplicacion = np.multiply(rate, pesosIteracion)
-        
-        res = np.sum([pesosIteracion, multiplicacion], axis=0) 
-        
-        pesosW = np.sum([res, pesosIteracion], axis=0) 
-            
         rendimiento = evaluaAux(pesosW,entr,clases,clas_entr,norm)
         
         #print("RENDIMIENTO PRUEBA: " +str(rendimiento))
@@ -258,7 +245,7 @@ def generaListaPesosAleatoriosW(longitudAGenerar,limiteInferior,limiteSuperior):
 
 def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamiento,indiceEjemplo):
     """Actualiza la lista de pesos W, dado un ejemplo(recordar que este ejemplo tiene que incorporar X0)"""
-    '''wi = wi + η *sum*(xi(y-o)*o*(1-o))'''
+    '''wi = wi + η*(y - o)*Xi'''
     pesosActualizados=[]
     
     clasificacionEjemplo = listaClasesEntrenamiento[indiceEjemplo]
@@ -275,8 +262,9 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
     contador = 0
     while contador < longitudEjemplo:
         Xi = ejemplo[contador]
+        Wi = listaPesosW[contador]
       
-        WiFinal = Xi*(y - o)*o*(1 - o)
+        WiFinal = Wi + rate*(y - o)*Xi
         pesosActualizados.append(WiFinal)
             
         contador += 1
