@@ -196,9 +196,9 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
     #indicesRestantes = list(range(len(entr)))
     #print(str(indicesRestantes))
     
-    #pesosIteracion = np.zeros((len(entr[0]) +1,), dtype=int)
+    pesosIteracion = np.zeros((len(entr[0]) +1,), dtype=int)
     
-    pesosIteracion = copy.deepcopy(pesosW)
+    #pesosIteracion = copy.deepcopy(pesosW)
     
     rateActual = rate
     contadorNumEpochs = 0
@@ -222,7 +222,9 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
             
         multiplicacion = np.multiply(rate, pesosIteracion)
         
-        pesosW = np.sum([pesosIteracion, multiplicacion], axis=0)    
+        pesosWoo = np.sum([pesosIteracion, multiplicacion], axis=0) 
+        
+        pesosW = np.sum([pesosWoo, pesosIteracion], axis=0) 
             
         rendimiento = evaluaAux(pesosW,entr,clases,clas_entr,norm)
         

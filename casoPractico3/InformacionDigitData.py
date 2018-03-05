@@ -30,7 +30,7 @@ def obtenNumeros(nombreFichero):
     actual = []
     for elem in ficheroCodificado:
         
-        a = checkEqual(elem)
+        lineaVacia = checkEqual(elem)
         if a == False:
             #print(elem)
             actual = actual + elem 
