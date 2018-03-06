@@ -87,11 +87,11 @@ class clasificador:
         # Ahora nos quedamos con la clasificacion que nos dee una mayor probabilidad
         
         indiceMaximo = 0
-        probabilidadMaxima = 0
+        probabilidadMaxima = 1
         for idx, pesos in enumerate(listaPesosClasesOneRest):
             probabilidad = clasifica_probAux(ejemplo,pesos,self.norm)
             
-            if probabilidad >= probabilidadMaxima:
+            if probabilidad <= probabilidadMaxima:
                 indiceMaximo = idx
                 probabilidadMaxima = probabilidad
         
@@ -204,12 +204,13 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
     contadorNumEpochs = 0
     while contadorNumEpochs < n_epochs:
         indicesRestantes = list(range(len(entr)))
+        pesosIteracion = np.zeros((len(entr[0]) +1,), dtype=int)
         while len(indicesRestantes) > 0:
             indice = random.choice(indicesRestantes)
             #print("random:" + str(indice))
             # Añadimos X0 = 1 al ejemplo
             ejemploAdd = [1] + entr[indice]
-                
+            #print("pesos ", pesosW)
             pesosEjemplo = actualizaPesosEjemplo(pesosW,ejemploAdd,rateActual,clases,clas_entr,indice)
             pesosIteracion = np.sum([pesosIteracion, pesosEjemplo], axis=0)
             #print("pesosW: ", pesosW)
@@ -231,8 +232,6 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
         #print("RENDIMIENTO PRUEBA: " +str(rendimiento))
         
         erroresGrafica.append(1-rendimiento)
-    
-    
         
     return pesosW,erroresGrafica
 
@@ -297,11 +296,11 @@ def imprimeGrafica(errores):
     plt.show()
 
 clasificador1 = clasificador(votos.votos_clases,False)
-clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,1000,rateInicial=0.1,rate_decay=True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,100,rateInicial=0.1,rate_decay=True)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 clasificador1.clasifica_prob([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
-clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,1000,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
+clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,100,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
 
 
 #res = normalizaEntrenamiento(votos.votos_entr)

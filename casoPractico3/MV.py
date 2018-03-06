@@ -87,11 +87,11 @@ class clasificador:
         # Ahora nos quedamos con la clasificacion que nos dee una mayor probabilidad
         
         indiceMaximo = 0
-        probabilidadMaxima = 0
+        probabilidadMaxima = 1
         for idx, pesos in enumerate(listaPesosClasesOneRest):
             probabilidad = clasifica_probAux(ejemplo,pesos,self.norm)
             
-            if probabilidad >= probabilidadMaxima:
+            if probabilidad <= probabilidadMaxima:
                 indiceMaximo = idx
                 probabilidadMaxima = probabilidad
         
@@ -225,7 +225,7 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
         res = np.sum([pesosIteracion, multiplicacion], axis=0) 
         
         pesosW = np.sum([res, pesosIteracion], axis=0) 
-            
+        
         rendimiento = evaluaAux(pesosW,entr,clases,clas_entr,norm)
         
         #print("RENDIMIENTO PRUEBA: " +str(rendimiento))
@@ -258,7 +258,7 @@ def generaListaPesosAleatoriosW(longitudAGenerar,limiteInferior,limiteSuperior):
 
 def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamiento,indiceEjemplo):
     """Actualiza la lista de pesos W, dado un ejemplo(recordar que este ejemplo tiene que incorporar X0)"""
-    '''wi = wi + η* sum*((y - o)*Xi)'''
+    '''wi = wi + η *sum*((y-o)*Xi)'''
     pesosActualizados=[]
     
     clasificacionEjemplo = listaClasesEntrenamiento[indiceEjemplo]
@@ -276,7 +276,7 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
     while contador < longitudEjemplo:
         Xi = ejemplo[contador]
       
-        WiFinal = (y - o)*Xi
+        WiFinal = Xi*(y - o)
         pesosActualizados.append(WiFinal)
             
         contador += 1

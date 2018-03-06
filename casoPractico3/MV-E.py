@@ -87,11 +87,11 @@ class clasificador:
         # Ahora nos quedamos con la clasificacion que nos dee una mayor probabilidad
         
         indiceMaximo = 0
-        probabilidadMaxima = 0
+        probabilidadMaxima = 1
         for idx, pesos in enumerate(listaPesosClasesOneRest):
             probabilidad = clasifica_probAux(ejemplo,pesos,self.norm)
             
-            if probabilidad >= probabilidadMaxima:
+            if probabilidad <= probabilidadMaxima:
                 indiceMaximo = idx
                 probabilidadMaxima = probabilidad
         
@@ -285,11 +285,11 @@ def imprimeGrafica(errores):
     plt.show()
 
 clasificador1 = clasificador(votos.votos_clases,False)
-clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,1000,rateInicial=0.1,rate_decay=True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,10,rateInicial=0.1,rate_decay=True)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 clasificador1.clasifica_prob([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
-clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,1000,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
+clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,10,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
 
 
 #res = normalizaEntrenamiento(votos.votos_entr)
