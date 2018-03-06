@@ -27,19 +27,20 @@ def obtenNumeros(nombreFichero):
         
     ficheroFinal = []
     actual = []
+    
+    contador = 1
     for elem in ficheroCodificado:
         
-        lineaVacia = checkEqual(elem)
-        #print("vacia ", lineaVacia)
-        if lineaVacia == False:
-            #print(elem)
-            actual = actual + elem 
-            
+        if contador < 28:
+            actual.append(elem)
         else:
-            if len(actual) > 0:
-                ficheroFinal.append(actual)
-            actual = [] 
-            
+            ficheroFinal.append(actual)
+            actual = []
+            contador = 0
+        
+        contador += 1
+        
+
     return ficheroFinal
 
 def obtenValoresClasificacion(nombreFichero):

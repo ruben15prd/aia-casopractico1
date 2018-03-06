@@ -69,10 +69,12 @@ class clasificador:
     def oneVsRest(self,entr,clas_entr,n_epochs,ejemplo,rateInicial=0.1,pesos_iniciales=None,rate_decay=False):
         listaPesosClasesOneRest = [] 
         
-        for elem in self.clases:
+        clasesCopia = copy.deepcopy(self.clases)
+        
+        for elem in clasesCopia:
             
             entrenamientoClasesCopia = copy.deepcopy(clas_entr)
-            numeroClase = self.clases.index(elem)
+            numeroClase = clasesCopia.index(elem)
             
             for idx, item in enumerate(clas_entr):
                 if item == elem:
@@ -81,7 +83,10 @@ class clasificador:
                 else:
                     entrenamientoClasesCopia[idx] = 10000
             # Llamamos al metodo entrena para cada una de las clases
-            listaPesos = self.entrena(entr,clas_entr,n_epochs,rateInicial,pesos_iniciales,rate_decay)
+            #Cambiarr clas_entr por entrenamientoClasesCopia
+            #print(clas_entr)
+            self.clases = [numeroClase,10000]
+            listaPesos = self.entrena(entr,entrenamientoClasesCopia,n_epochs,rateInicial,pesos_iniciales,rate_decay)
             listaPesosClasesOneRest.append(listaPesos[0])
             
         # Ahora nos quedamos con la clasificacion que nos dee una mayor probabilidad
@@ -94,7 +99,7 @@ class clasificador:
             if probabilidad <= probabilidadMaxima:
                 indiceMaximo = idx
                 probabilidadMaxima = probabilidad
-        
+        self.clases = clasesCopia
         claseElegida = self.clases[indiceMaximo]
         
         print("El valor de clasificacion para One VS Rest es: " + str(claseElegida))
@@ -301,6 +306,6 @@ clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,10,rateInicial=0.1,
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 clasificador1.clasifica_prob([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
-#clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,100,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
+clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,10,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
 
 
