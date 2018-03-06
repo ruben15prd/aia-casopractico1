@@ -14,6 +14,8 @@ import random
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import InformacionDigitData
+
 
 class clasificador:
     def __init__(self,clases,norm=False): # norm = valor_columna_ejemplo-media_columna/desv. tipica
@@ -24,16 +26,16 @@ class clasificador:
     def entrena(self,entr,clas_entr,n_epochs,rateInicial=0.1,pesos_iniciales=None,rate_decay=False):
         pesosW = []
         
-        
         if self.norm == True:
             entr = normalizaEntrenamiento(entr)
-        
-        
+            
         if pesos_iniciales == None:
-            pesosW = generaListaPesosAleatoriosW(len(entr[0]) +1,-1.0,1.0)
+            pesosW = generaListaPesosAleatoriosW(len(entr[0])+1,-1.0,1.0)
         else:
             pesosW = pesos_iniciales
-            
+        
+        
+        
         pesosW = entrenaAux(pesosW,entr,clas_entr,n_epochs,rateInicial,self.clases,rate_decay,self.norm)
         
         
@@ -135,7 +137,8 @@ def normalizaEntrenamiento(entr):
     #Dividimos por las desviaciones tipicas
     conjuntoDivision = np.divide(conjuntoResta, desviacionTipica)
     
-    return conjuntoDivision
+    
+    return conjuntoDivision.tolist()
     
     
 
@@ -195,16 +198,18 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
     #print("len:"  +str(len(entr)))
     #indicesRestantes = list(range(len(entr)))
     #print(str(indicesRestantes))
+    
+    
     rateActual = rate
     contadorNumEpochs = 0
     while contadorNumEpochs < n_epochs:
         indicesRestantes = list(range(len(entr)))
         while len(indicesRestantes) > 0:
             indice = random.choice(indicesRestantes)
+            
             #print("random:" + str(indice))
             # Añadimos X0 = 1 al ejemplo
             ejemploAdd = [1] + entr[indice]
-                
             pesosW = actualizaPesosEjemplo(pesosW,ejemploAdd,rateActual,clases,clas_entr,indice)
             #print("pesosW: ", pesosW)
             indicesRestantes.remove(indice)
@@ -254,7 +259,8 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
     
     W = np.array(listaPesosW)
     X = np.array(ejemplo)
-        
+    
+
     o = sigma(sum(W*X))
         
     
@@ -292,22 +298,15 @@ clasificador1.clasifica_prob([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,10,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
 
 
-#res = normalizaEntrenamiento(votos.votos_entr)
+
+"""
+clasificador1 = clasificador(InformacionDigitData.clases,False)
+clasificador1.entrena(InformacionDigitData.trainingNumbers,InformacionDigitData.trainingLabels,10,rateInicial=0.1,rate_decay=True)
+clasificador1.oneVsRest(InformacionDigitData.trainingNumbers,InformacionDigitData.trainingLabels,10,[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
 
 
 
-'''
-ejemplo = [-1,1,-1,1,1,1,-1,-1,-1,1,0,1,1,1,-1,1]
-print("ejemplo a pelo: "  + str(ejemplo))
-ejemploAdd = generaListaElementoX(ejemplo)
-print("ejemplo add: "  + str(ejemploAdd))
-print("len ejemplo add: "  + str(len(ejemploAdd)))
-
-listaPesosAleatoria = generaListaPesosAleatoriosW(len(ejemploAdd))
-print("listaPesosAleatoria: "  + str(listaPesosAleatoria))
-print("len lista pesos aleatoria: "  + str(len(listaPesosAleatoria)))
+"""
 
 
-res = actualizaPesosEjemplo(listaPesosAleatoria,ejemploAdd,0.1,votos.votos_clases,votos.votos_entr_clas,1)
-print("resutlado : " + str(res))
-'''
+

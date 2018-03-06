@@ -20,9 +20,9 @@ def generacionDatosAleatorios(rango,dimension,tamañoConjunto,separables=True):
         plano.append(aleatorio)
     
     
-    for i in range(tamañoConjunto):
+    for j in range(tamañoConjunto):
         elemento = []
-        for i in range(dimension):
+        for k in range(dimension):
             aleatorio = np.random.randint(-rango, rango)
             elemento.append(aleatorio)
         conjunto.append(elemento) 
@@ -45,7 +45,7 @@ def generacionDatosAleatorios(rango,dimension,tamañoConjunto,separables=True):
         else:
             clasesConjunto.append(1)
     
-
+    
     return conjunto,clasesConjunto   
 
 

@@ -25,12 +25,12 @@ def obtenNumeros(nombreFichero):
         ficheroCodificado.append(lineaCodificada)
                 
         
-    #print(str(ficheroCodificado))  
     ficheroFinal = []
     actual = []
     for elem in ficheroCodificado:
         
         lineaVacia = checkEqual(elem)
+        #print("vacia ", lineaVacia)
         if lineaVacia == False:
             #print(elem)
             actual = actual + elem 
@@ -38,11 +38,11 @@ def obtenNumeros(nombreFichero):
         else:
             if len(actual) > 0:
                 ficheroFinal.append(actual)
-            actual = []
-    
+            actual = [] 
+            
     return ficheroFinal
 
-def obtenClases(nombreFichero):
+def obtenValoresClasificacion(nombreFichero):
     """Metodo que obtiene los valores de clasificacion"""
     labels = []
     
@@ -61,13 +61,31 @@ def checkEqual(iterator):
     except StopIteration:
         return True
     return all(first == rest for rest in iterator)
+  
     
+def obtenClases():
+    valoresClasificacion = obtenValoresClasificacion("traininglabels")
+    
+    sinRepetidos = []
+    for i in valoresClasificacion:
+        if i not in sinRepetidos:
+            sinRepetidos.append(i)
+    
+    clasesOrdenadas = sorted(sinRepetidos)
+    
+    return clasesOrdenadas
+
+
+#Extraemos las clases
+clases = obtenClases()
+
+
 #Extraemos los valores de clasificacion para el conjunto de entrenamiento
-trainingLabels = obtenClases("traininglabels")
+trainingLabels = obtenValoresClasificacion("traininglabels")
 #Extraemos los valores de clasificacion para el conjunto de validacion     
-validationLabels = obtenClases("validationlabels")
+validationLabels = obtenValoresClasificacion("validationlabels")
 #Extraemos los valores de clasificacion para el conjunto de test 
-testLabels = obtenClases("testlabels")
+testLabels = obtenValoresClasificacion("testlabels")
   
 #Extraemos los numeros del conjunto de entrenamiento
 trainingNumbers = obtenNumeros("trainingimages")
@@ -75,6 +93,7 @@ trainingNumbers = obtenNumeros("trainingimages")
 validationNumbers = obtenNumeros("validationimages")
 #Extraemos los numeros del conjunto de entrenamiento
 testNumbers = obtenNumeros("testimages")
+
 
 """
 print("Training images: " + str(trainingNumbers))

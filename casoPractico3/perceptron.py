@@ -64,7 +64,7 @@ def normalizaEntrenamiento(entr):
     #Dividimos por las desviaciones tipicas
     conjuntoDivision = np.divide(conjuntoResta, desviacionTipica)
     
-    return conjuntoDivision
+    return conjuntoDivision.tolist()
 
 
 def evaluaAux(pesos,prueba,clases,clasesEntrenamiento,norm):
@@ -202,23 +202,8 @@ def imprimeGrafica(errores):
     plt.ylabel('Porcentaje de errores')
     plt.show()
 
-clasificador1 = clasificador(votos.votos_clases)
+clasificador1 = clasificador(votos.votos_clases,False)
 clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,1000,rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 
-'''
-ejemplo = [-1,1,-1,1,1,1,-1,-1,-1,1,0,1,1,1,-1,1]
-print("ejemplo a pelo: "  + str(ejemplo))
-ejemploAdd = generaListaElementoX(ejemplo)
-print("ejemplo add: "  + str(ejemploAdd))
-print("len ejemplo add: "  + str(len(ejemploAdd)))
-
-listaPesosAleatoria = generaListaPesosAleatoriosW(len(ejemploAdd))
-print("listaPesosAleatoria: "  + str(listaPesosAleatoria))
-print("len lista pesos aleatoria: "  + str(len(listaPesosAleatoria)))
-
-
-res = actualizaPesosEjemplo(listaPesosAleatoria,ejemploAdd,0.1,votos.votos_clases,votos.votos_entr_clas,1)
-print("resutlado : " + str(res))
-'''
