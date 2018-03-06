@@ -176,7 +176,8 @@ def clasificaAux(pesosFinales,ejemplo,clases,norm):
         suma = suma + (wi*xi)
         
         contador += 1
-        
+    #print("suma ", suma)   
+    
     res = sigma(suma)
     
     
@@ -196,20 +197,21 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
     #indicesRestantes = list(range(len(entr)))
     #print(str(indicesRestantes))
     
-    pesosIteracion = np.zeros((len(entr[0]) +1,), dtype=int)
     
-    #pesosIteracion = copy.deepcopy(pesosW)
+    
+    pesosIteracion = copy.deepcopy(pesosW)
     
     rateActual = rate
     contadorNumEpochs = 0
     while contadorNumEpochs < n_epochs:
         indicesRestantes = list(range(len(entr)))
+        pesosIteracion = np.zeros((len(entr[0]) +1,), dtype=int)
         while len(indicesRestantes) > 0:
             indice = random.choice(indicesRestantes)
             #print("random:" + str(indice))
             # Añadimos X0 = 1 al ejemplo
             ejemploAdd = [1] + entr[indice]
-                
+            #print("pesos ", pesosW)
             pesosEjemplo = actualizaPesosEjemplo(pesosW,ejemploAdd,rateActual,clases,clas_entr,indice)
             pesosIteracion = np.sum([pesosIteracion, pesosEjemplo], axis=0)
             #print("pesosW: ", pesosW)
@@ -222,17 +224,15 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
             
         multiplicacion = np.multiply(rate, pesosIteracion)
         
-        res = np.sum([pesosIteracion, multiplicacion], axis=0) 
+        #res = np.sum([pesosIteracion, multiplicacion], axis=0) 
         
-        pesosW = np.sum([res, pesosIteracion], axis=0) 
-        
+        pesosW = np.sum([pesosW, multiplicacion], axis=0) 
+        #print("pesos " , pesosW)  
         rendimiento = evaluaAux(pesosW,entr,clases,clas_entr,norm)
         
         #print("RENDIMIENTO PRUEBA: " +str(rendimiento))
         
         erroresGrafica.append(1-rendimiento)
-    
-    
         
     return pesosW,erroresGrafica
 
@@ -258,7 +258,7 @@ def generaListaPesosAleatoriosW(longitudAGenerar,limiteInferior,limiteSuperior):
 
 def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamiento,indiceEjemplo):
     """Actualiza la lista de pesos W, dado un ejemplo(recordar que este ejemplo tiene que incorporar X0)"""
-    '''wi = wi + η *sum*((y-o)*Xi)'''
+    '''wi = wi + η *sum*((y - o)*Xi)'''
     pesosActualizados=[]
     
     clasificacionEjemplo = listaClasesEntrenamiento[indiceEjemplo]
@@ -276,7 +276,7 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
     while contador < longitudEjemplo:
         Xi = ejemplo[contador]
       
-        WiFinal = Xi*(y - o)
+        WiFinal = (y - o) * Xi
         pesosActualizados.append(WiFinal)
             
         contador += 1
@@ -297,11 +297,11 @@ def imprimeGrafica(errores):
     plt.show()
 
 clasificador1 = clasificador(votos.votos_clases,False)
-clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,1000,rateInicial=0.1,rate_decay=True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,10,rateInicial=0.1,rate_decay=True)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 clasificador1.clasifica_prob([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
-clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,1000,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
+#clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,100,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
 
 
 #res = normalizaEntrenamiento(votos.votos_entr)

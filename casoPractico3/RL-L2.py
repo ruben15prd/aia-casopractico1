@@ -176,7 +176,8 @@ def clasificaAux(pesosFinales,ejemplo,clases,norm):
         suma = suma + (wi*xi)
         
         contador += 1
-        
+    #print("suma ", suma)   
+    
     res = sigma(suma)
     
     
@@ -196,9 +197,9 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
     #indicesRestantes = list(range(len(entr)))
     #print(str(indicesRestantes))
     
-    pesosIteracion = np.zeros((len(entr[0]) +1,), dtype=int)
     
-    #pesosIteracion = copy.deepcopy(pesosW)
+    
+    pesosIteracion = copy.deepcopy(pesosW)
     
     rateActual = rate
     contadorNumEpochs = 0
@@ -223,10 +224,10 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
             
         multiplicacion = np.multiply(rate, pesosIteracion)
         
-        res = np.sum([pesosIteracion, multiplicacion], axis=0) 
+        #res = np.sum([pesosIteracion, multiplicacion], axis=0) 
         
-        pesosW = np.sum([res, pesosIteracion], axis=0) 
-            
+        pesosW = np.sum([pesosW, multiplicacion], axis=0) 
+        #print("pesos " , pesosW)  
         rendimiento = evaluaAux(pesosW,entr,clases,clas_entr,norm)
         
         #print("RENDIMIENTO PRUEBA: " +str(rendimiento))
@@ -296,11 +297,11 @@ def imprimeGrafica(errores):
     plt.show()
 
 clasificador1 = clasificador(votos.votos_clases,False)
-clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,100,rateInicial=0.1,rate_decay=True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,10,rateInicial=0.1,rate_decay=True)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 clasificador1.clasifica_prob([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
-clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,100,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
+#clasificador1.oneVsRest(votos.votos_entr,votos.votos_entr_clas,100,[-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0],rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
 
 
 #res = normalizaEntrenamiento(votos.votos_entr)
