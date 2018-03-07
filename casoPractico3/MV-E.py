@@ -42,6 +42,7 @@ class clasificador:
         self.pesosFinales = pesosW[0]
         
         imprimeGrafica(pesosW[1], 'Epochs', 'Porcentaje de errores')
+        imprimeGrafica(pesosW[2], 'Epochs', 'Verosimilitud')
         
         print("Los pesos obtenidos son: " + str(self.pesosFinales))
         return pesosW
@@ -198,6 +199,7 @@ def clasificaAux(pesosFinales,ejemplo,clases,norm):
 def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
     """Funcion de entrenamiento"""
     erroresGrafica = []
+    verosimilitudes = []
     
     #print("len:"  +str(len(entr)))
     #indicesRestantes = list(range(len(entr)))
@@ -206,13 +208,17 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
     contadorNumEpochs = 0
     while contadorNumEpochs < n_epochs:
         indicesRestantes = list(range(len(entr)))
+        verosimilitud = 0.0
         while len(indicesRestantes) > 0:
             indice = random.choice(indicesRestantes)
             #print("random:" + str(indice))
             # Añadimos X0 = 1 al ejemplo
             ejemploAdd = [1] + entr[indice]
                 
-            pesosW = actualizaPesosEjemplo(pesosW,ejemploAdd,rateActual,clases,clas_entr,indice)
+            res = actualizaPesosEjemplo(pesosW,ejemploAdd,rateActual,clases,clas_entr,indice)
+            
+            pesosW = res[0]
+            verosimilitud += res[1]
             #print("pesosW: ", pesosW)
             indicesRestantes.remove(indice)
         contadorNumEpochs += 1
@@ -225,15 +231,19 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
         #print("RENDIMIENTO PRUEBA: " +str(rendimiento))
         
         erroresGrafica.append(1-rendimiento)
+        verosimilitudes.append(verosimilitud)
     
     
         
-    return pesosW,erroresGrafica
+    return pesosW,erroresGrafica,verosimilitudes
 
     
 def sigma(x):
-    """Funcion umbral"""
-    resultado = 1/(1 + math.exp(-x))
+    """Funcion sigma"""
+    try:
+        resultado = 1/(1 + math.exp(-x))
+    except OverflowError:
+        resultado = 1
         
     return resultado
 
@@ -254,6 +264,7 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
     """Actualiza la lista de pesos W, dado un ejemplo(recordar que este ejemplo tiene que incorporar X0)"""
     '''wi = wi + η*(y - o)*Xi'''
     pesosActualizados=[]
+    verosimilitudEjemplo = 0.0
     
     clasificacionEjemplo = listaClasesEntrenamiento[indiceEjemplo]
     #y = diccionarioClases[clasificacionEjemplo]
@@ -273,10 +284,27 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
       
         WiFinal = Wi + rate*(y - o)*Xi
         pesosActualizados.append(WiFinal)
+        
+        Wi = listaPesosW[contador]
+        
+        # Calculamos la verosimilitud
+        WixXi = Wi * Xi
+        try:
+            exponencialNegativa = math.exp(-1 * WixXi)
+        except OverflowError:
+            exponencialNegativa = 1
+            
+        try:
+            exponencialPositiva =  math.exp(WixXi)
+        except OverflowError:
+            exponencialPositiva = 1
+        
+        
+        verosimilitudEjemplo -= math.log(1 + exponencialNegativa) - math.log(1 + exponencialPositiva) 
             
         contador += 1
         
-    return pesosActualizados
+    return pesosActualizados,verosimilitudEjemplo
 
 def calculaRaiz(x,raiz):
     """Metodo para calcular raices"""
@@ -287,8 +315,8 @@ def calculaRaiz(x,raiz):
 def imprimeGrafica(valores,xlabel,ylabel):
     """Grafica para imprimir los errores"""
     plt.plot(range(1,len(valores)+1),valores,marker='o')
-    plt.xlabel('Epochs')
-    plt.ylabel('Porcentaje de errores')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.show()
 
 print("-----------------------------")

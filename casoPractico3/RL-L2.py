@@ -42,6 +42,8 @@ class clasificador:
         self.pesosFinales = pesosW[0]
         
         imprimeGrafica(pesosW[1], 'Epochs', 'Porcentaje de errores')
+        imprimeGrafica(pesosW[2], 'Epochs', 'Error cuadrático')
+        
         
         print("Los pesos obtenidos son: " + str(self.pesosFinales))
         return pesosW
@@ -199,7 +201,7 @@ def clasificaAux(pesosFinales,ejemplo,clases,norm):
 def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
     """Funcion de entrenamiento"""
     erroresGrafica = []
-    
+    erroresCuadraticos = []
     #print("len:"  +str(len(entr)))
     #indicesRestantes = list(range(len(entr)))
     #print(str(indicesRestantes))
@@ -213,14 +215,20 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
     while contadorNumEpochs < n_epochs:
         indicesRestantes = list(range(len(entr)))
         pesosIteracion = np.zeros((len(entr[0]) +1,), dtype=int)
+        errorCuadratico = 0.0
         while len(indicesRestantes) > 0:
             indice = random.choice(indicesRestantes)
             #print("random:" + str(indice))
             # Añadimos X0 = 1 al ejemplo
             ejemploAdd = [1] + entr[indice]
             #print("pesos ", pesosW)
-            pesosEjemplo = actualizaPesosEjemplo(pesosW,ejemploAdd,rateActual,clases,clas_entr,indice)
+            res = actualizaPesosEjemplo(pesosW,ejemploAdd,rateActual,clases,clas_entr,indice)
+            
+            pesosEjemplo = res[0]
+            errorCuadratico += res[1]
             pesosIteracion = np.sum([pesosIteracion, pesosEjemplo], axis=0)
+            
+            
             #print("pesosW: ", pesosW)
             indicesRestantes.remove(indice)
         contadorNumEpochs += 1
@@ -240,13 +248,17 @@ def entrenaAux(pesosW,entr,clas_entr,n_epochs,rate,clases,rateDecay,norm):
         #print("RENDIMIENTO PRUEBA: " +str(rendimiento))
         
         erroresGrafica.append(1-rendimiento)
+        erroresCuadraticos.append(errorCuadratico)
         
-    return pesosW,erroresGrafica
+    return pesosW,erroresGrafica,erroresCuadraticos
 
     
 def sigma(x):
-    """Funcion umbral"""
-    resultado = 1/(1 + math.exp(-x))
+    """Funcion sigma"""
+    try:
+        resultado = 1/(1 + math.exp(-x))
+    except OverflowError:
+        resultado = 1
         
     return resultado
 
@@ -267,6 +279,7 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
     """Actualiza la lista de pesos W, dado un ejemplo(recordar que este ejemplo tiene que incorporar X0)"""
     '''wi = wi + η *sum*(xi(y-o)*o*(1-o))'''
     pesosActualizados=[]
+    errorCuadraticoEjemplo = 0.0
     
     clasificacionEjemplo = listaClasesEntrenamiento[indiceEjemplo]
     #y = diccionarioClases[clasificacionEjemplo]
@@ -285,10 +298,12 @@ def actualizaPesosEjemplo(listaPesosW,ejemplo,rate,clases,listaClasesEntrenamien
       
         WiFinal = Xi*(y - o)*o*(1 - o)
         pesosActualizados.append(WiFinal)
-            
+        
+        
+        errorCuadraticoEjemplo += (y - o)**2
         contador += 1
         
-    return pesosActualizados
+    return pesosActualizados,errorCuadraticoEjemplo
 
 def calculaRaiz(x,raiz):
     """Metodo para calcular raices"""
@@ -299,8 +314,8 @@ def calculaRaiz(x,raiz):
 def imprimeGrafica(valores,xlabel,ylabel):
     """Grafica para imprimir los errores"""
     plt.plot(range(1,len(valores)+1),valores,marker='o')
-    plt.xlabel('Epochs')
-    plt.ylabel('Porcentaje de errores')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.show()
     
 print("-----------------------------")

@@ -198,8 +198,8 @@ def calculaRaiz(x,raiz):
 def imprimeGrafica(valores,xlabel,ylabel):
     """Grafica para imprimir los errores"""
     plt.plot(range(1,len(valores)+1),valores,marker='o')
-    plt.xlabel('Epochs')
-    plt.ylabel('Porcentaje de errores')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.show()
 
 clasificador1 = clasificador(votos.votos_clases,False)
