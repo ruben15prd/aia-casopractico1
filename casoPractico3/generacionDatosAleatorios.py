@@ -6,24 +6,24 @@ from random import shuffle
 import random
 import numpy as np
 
-def generacionDatosAleatorios(rango,dimension,tamañoConjunto,separables=True):
+def generaDatosAleatorios(rango,dimension,tamañoConjunto,separables=True):
     """Funcion que genera datos aleatorios"""
     plano = []
     conjunto = []
     clasesConjunto = []
     porcentajeNoSeparable = 0.1 #Porcentaje cuando queremos que el conjunto sea no separable
-    
+    clases = [0,1]
     
     #Construimos la ecuacion del plano
     for i in range(dimension):
-        aleatorio = np.random.randint(-rango, rango)
+        aleatorio = np.random.randint(-rango, rango + 1)
         plano.append(aleatorio)
     
     
     for j in range(tamañoConjunto):
         elemento = []
         for k in range(dimension):
-            aleatorio = np.random.randint(-rango, rango)
+            aleatorio = np.random.randint(-rango, rango + 1)
             elemento.append(aleatorio)
         conjunto.append(elemento) 
         #Generamos la clase
@@ -45,8 +45,9 @@ def generacionDatosAleatorios(rango,dimension,tamañoConjunto,separables=True):
         else:
             clasesConjunto.append(1)
     
-    
-    return conjunto,clasesConjunto   
+    #print(conjunto)
+    #print(clasesConjunto)
+    return conjunto,clasesConjunto,clases
 
 
-#res = generacionDatosAleatorios(3,10,20,False)
+res = generaDatosAleatorios(1,10,200,separables=True)

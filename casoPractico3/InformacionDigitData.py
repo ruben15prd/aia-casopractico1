@@ -32,7 +32,8 @@ def obtenNumeros(nombreFichero):
     for elem in ficheroCodificado:
         
         if contador < 28:
-            actual.append(elem)
+            #actual.append(elem)
+            actual = actual + elem
         else:
             ficheroFinal.append(actual)
             actual = []
@@ -94,7 +95,6 @@ trainingNumbers = obtenNumeros("trainingimages")
 validationNumbers = obtenNumeros("validationimages")
 #Extraemos los numeros del conjunto de entrenamiento
 testNumbers = obtenNumeros("testimages")
-
 
 """
 print("Training images: " + str(trainingNumbers))

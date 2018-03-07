@@ -29,7 +29,7 @@ class clasificador:
         
         self.pesosFinales = pesosW[0]
         
-        imprimeGrafica(pesosW[1])
+        imprimeGrafica(pesosW[1], 'Epochs', 'Porcentaje de errores')
         
         print("Los pesos obtenidos son: " + str(self.pesosFinales))
         return pesosW
@@ -195,9 +195,9 @@ def calculaRaiz(x,raiz):
     
     return result
 
-def imprimeGrafica(errores):
-    
-    plt.plot(range(1,len(errores)+1),errores,marker='o')
+def imprimeGrafica(valores,xlabel,ylabel):
+    """Grafica para imprimir los errores"""
+    plt.plot(range(1,len(valores)+1),valores,marker='o')
     plt.xlabel('Epochs')
     plt.ylabel('Porcentaje de errores')
     plt.show()
