@@ -202,8 +202,23 @@ def imprimeGrafica(valores,xlabel,ylabel):
     plt.ylabel(ylabel)
     plt.show()
 
+print("----------------------------------")
+print("Prueba 1 - Votos:")
 clasificador1 = clasificador(votos.votos_clases,False)
-clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,1000,rateInicial=0.1,pesos_iniciales=None,rate_decay=True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,10,rateInicial=0.5,pesos_iniciales=None,rate_decay=False)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
+
+# Se obtiene un 89% con estos parámetros
+
+print("----------------------------------")
+print("Prueba 2 - Votos:")
+clasificador2 = clasificador(votos.votos_clases,True)
+clasificador2.entrena(votos.votos_entr,votos.votos_entr_clas,100,rateInicial=0.01,pesos_iniciales=None,rate_decay=True)
+clasificador2.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
+clasificador2.evalua(votos.votos_test,votos.votos_test_clas)
+
+# Se obtiene un 90% con estos parámetros, a pesar de usar normalización, un mayor número de iteraciones, un menor rate, y usar el rate decay, con el
+# perceptrón la mejora no es muy notable
+
 

@@ -28,6 +28,7 @@ def representacion_grafica (datos, caracteristicas, objetivo, clases, c1, c2):
 # Datos y clases de iris
 iris = load_iris()
 datos_iris, clases_iris = iris.data, iris.target
+
 nombre_columnas, nombre_clases = iris.feature_names, iris.target_names
 #representacion_grafica(datos_iris, nombre_columnas, clases_iris, nombre_clases, 0, 1)
 
@@ -49,7 +50,7 @@ datos_train, datos_test, clases_train, clases_test = train_test_split(datos_iris
 #representacion_grafica(datosN_train, nombre_columnas, clases_train, nombre_clases, 0, 1)
 
 
-
+"""
 print("***********************************************\n"
       + "********************  KNN  ********************\n"
       + "***********************************************")
@@ -111,3 +112,4 @@ print("clasifica SGDC: ", clasificaSGDC)
 
 rendimientoSGDC = sgdc.score(datosN_test, clases_test) 
 print("rendimiento SGDC: ", rendimientoSGDC)
+"""
