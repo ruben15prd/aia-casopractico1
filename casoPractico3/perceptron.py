@@ -6,6 +6,7 @@ from random import shuffle
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+import generacionDatosAleatorios
 
 class clasificador:
     def __init__(self,clases,norm=False): # norm = valor_columna_ejemplo-media_columna/desv. tipica
@@ -202,23 +203,153 @@ def imprimeGrafica(valores,xlabel,ylabel):
     plt.ylabel(ylabel)
     plt.show()
 
+
+"""
+Bateria de tests:
+    Normalización: True
+    N_epochs: 50-80-100
+    rateInicial = 0.2-0.05
+    rate_decay = True
+
+Para reducir el número de combinaciones hemos realizado algunas pruebas previas con la normalización
+y el rate_decay. Se obtiene mejor resultado con ambos a True aunque a veces la mejora no es muy notable,
+en todas las pruebas pondremos ambos valores a True.
+
+Para las pruebas con el conjunto aleatorio se realizarán con conjuntos no separables, ya que para los separables
+con un número grande de épocas se podría fácilmente encontrar un hiperplano que nos delimite los valores de
+clasificación. Por lo tanto, con un número elevado de épocas se obtendría un alto valor de rendimiento o incluso
+un 100%.
+
+Para el conjunto de dígitos sólo hemos hecho una prueba con los siguientes parámetros:
+    Normalización: True
+    N_epochs: 10
+    rateInicial = 0.05
+    rate_decay = True
+
+"""
 print("----------------------------------")
 print("Prueba 1 - Votos:")
-clasificador1 = clasificador(votos.votos_clases,False)
-clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,10,rateInicial=0.5,pesos_iniciales=None,rate_decay=False)
+clasificador1 = clasificador(votos.votos_clases,True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,50,rateInicial=0.2,pesos_iniciales=None,rate_decay=False)
 clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
 clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 
-# Se obtiene un 89% con estos parámetros
-
 print("----------------------------------")
 print("Prueba 2 - Votos:")
-clasificador2 = clasificador(votos.votos_clases,True)
-clasificador2.entrena(votos.votos_entr,votos.votos_entr_clas,100,rateInicial=0.01,pesos_iniciales=None,rate_decay=True)
-clasificador2.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
-clasificador2.evalua(votos.votos_test,votos.votos_test_clas)
+clasificador1 = clasificador(votos.votos_clases,True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,80,rateInicial=0.2,pesos_iniciales=None,rate_decay=False)
+clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
+clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 
-# Se obtiene un 90% con estos parámetros, a pesar de usar normalización, un mayor número de iteraciones, un menor rate, y usar el rate decay, con el
-# perceptrón la mejora no es muy notable
+print("----------------------------------")
+print("Prueba 3 - Votos:")
+clasificador1 = clasificador(votos.votos_clases,True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,100,rateInicial=0.2,pesos_iniciales=None,rate_decay=False)
+clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
+clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
 
+print("----------------------------------")
+print("Prueba 4 - Votos:")
+clasificador1 = clasificador(votos.votos_clases,True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,50,rateInicial=0.05,pesos_iniciales=None,rate_decay=False)
+clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
+clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
+
+print("----------------------------------")
+print("Prueba 5 - Votos:")
+clasificador1 = clasificador(votos.votos_clases,True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,80,rateInicial=0.05,pesos_iniciales=None,rate_decay=False)
+clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
+clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
+
+print("----------------------------------")
+print("Prueba 6 - Votos:")
+clasificador1 = clasificador(votos.votos_clases,True)
+clasificador1.entrena(votos.votos_entr,votos.votos_entr_clas,100,rateInicial=0.05,pesos_iniciales=None,rate_decay=False)
+clasificador1.clasifica([-1,1,-1,1,1,1,-1,-1,-1,-1,-1,1,1,1,-1,0])
+clasificador1.evalua(votos.votos_test,votos.votos_test_clas)
+
+
+print("----------------------------------")
+
+
+print("-----------------------------")
+print("Prueba 1 - Numeros aleatorios")
+datosAleatorios = generacionDatosAleatorios.generaDatosAleatorios(1,5,200,separables=False)
+datosAleatoriosEntrenamiento = datosAleatorios[0][0:150]
+datosAleatoriosClasesEntrenamiento = datosAleatorios[1][0:150]
+datosAleatoriosTest = datosAleatorios[0][150:]
+datosAleatoriosClasesTest = datosAleatorios[1][150:]
+
+clasificador3 = clasificador(datosAleatorios[2],False)
+clasificador3.entrena(datosAleatoriosEntrenamiento,datosAleatoriosClasesEntrenamiento,50,rateInicial=0.2,rate_decay=True)
+clasificador3.clasifica([-1,1,-1,1,1])
+clasificador3.evalua(datosAleatoriosTest,datosAleatoriosClasesTest)
+
+print("-----------------------------")
+print("Prueba 2 - Numeros aleatorios")
+datosAleatorios = generacionDatosAleatorios.generaDatosAleatorios(1,5,200,separables=False)
+datosAleatoriosEntrenamiento = datosAleatorios[0][0:150]
+datosAleatoriosClasesEntrenamiento = datosAleatorios[1][0:150]
+datosAleatoriosTest = datosAleatorios[0][150:]
+datosAleatoriosClasesTest = datosAleatorios[1][150:]
+
+clasificador3 = clasificador(datosAleatorios[2],False)
+clasificador3.entrena(datosAleatoriosEntrenamiento,datosAleatoriosClasesEntrenamiento,80,rateInicial=0.2,rate_decay=True)
+clasificador3.clasifica([-1,1,-1,1,1])
+clasificador3.evalua(datosAleatoriosTest,datosAleatoriosClasesTest)
+
+
+print("-----------------------------")
+print("Prueba 3 - Numeros aleatorios")
+datosAleatorios = generacionDatosAleatorios.generaDatosAleatorios(1,5,200,separables=False)
+datosAleatoriosEntrenamiento = datosAleatorios[0][0:150]
+datosAleatoriosClasesEntrenamiento = datosAleatorios[1][0:150]
+datosAleatoriosTest = datosAleatorios[0][150:]
+datosAleatoriosClasesTest = datosAleatorios[1][150:]
+
+clasificador3 = clasificador(datosAleatorios[2],False)
+clasificador3.entrena(datosAleatoriosEntrenamiento,datosAleatoriosClasesEntrenamiento,100,rateInicial=0.2,rate_decay=True)
+clasificador3.clasifica([-1,1,-1,1,1])
+clasificador3.evalua(datosAleatoriosTest,datosAleatoriosClasesTest)
+
+
+print("-----------------------------")
+print("Prueba 4 - Numeros aleatorios")
+datosAleatorios = generacionDatosAleatorios.generaDatosAleatorios(1,5,200,separables=False)
+datosAleatoriosEntrenamiento = datosAleatorios[0][0:150]
+datosAleatoriosClasesEntrenamiento = datosAleatorios[1][0:150]
+datosAleatoriosTest = datosAleatorios[0][150:]
+datosAleatoriosClasesTest = datosAleatorios[1][150:]
+
+clasificador3 = clasificador(datosAleatorios[2],False)
+clasificador3.entrena(datosAleatoriosEntrenamiento,datosAleatoriosClasesEntrenamiento,50,rateInicial=0.05,rate_decay=True)
+clasificador3.clasifica([-1,1,-1,1,1])
+clasificador3.evalua(datosAleatoriosTest,datosAleatoriosClasesTest)
+
+print("-----------------------------")
+print("Prueba 5 - Numeros aleatorios")
+datosAleatorios = generacionDatosAleatorios.generaDatosAleatorios(1,5,200,separables=False)
+datosAleatoriosEntrenamiento = datosAleatorios[0][0:150]
+datosAleatoriosClasesEntrenamiento = datosAleatorios[1][0:150]
+datosAleatoriosTest = datosAleatorios[0][150:]
+datosAleatoriosClasesTest = datosAleatorios[1][150:]
+
+clasificador3 = clasificador(datosAleatorios[2],False)
+clasificador3.entrena(datosAleatoriosEntrenamiento,datosAleatoriosClasesEntrenamiento,80,rateInicial=0.05,rate_decay=True)
+clasificador3.clasifica([-1,1,-1,1,1])
+clasificador3.evalua(datosAleatoriosTest,datosAleatoriosClasesTest)
+
+print("-----------------------------")
+print("Prueba 6 - Numeros aleatorios")
+datosAleatorios = generacionDatosAleatorios.generaDatosAleatorios(1,5,200,separables=False)
+datosAleatoriosEntrenamiento = datosAleatorios[0][0:150]
+datosAleatoriosClasesEntrenamiento = datosAleatorios[1][0:150]
+datosAleatoriosTest = datosAleatorios[0][150:]
+datosAleatoriosClasesTest = datosAleatorios[1][150:]
+
+clasificador3 = clasificador(datosAleatorios[2],False)
+clasificador3.entrena(datosAleatoriosEntrenamiento,datosAleatoriosClasesEntrenamiento,100,rateInicial=0.05,rate_decay=True)
+clasificador3.clasifica([-1,1,-1,1,1])
+clasificador3.evalua(datosAleatoriosTest,datosAleatoriosClasesTest)
 

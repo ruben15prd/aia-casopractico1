@@ -50,4 +50,4 @@ def generaDatosAleatorios(rango,dimension,tamañoConjunto,separables=True):
     return conjunto,clasesConjunto,clases
 
 
-res = generaDatosAleatorios(1,10,200,separables=True)
+#res = generaDatosAleatorios(1,10,200,separables=True)
