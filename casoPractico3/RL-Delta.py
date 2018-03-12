@@ -333,6 +333,8 @@ Para el conjunto de dígitos sólo hemos hecho una prueba con los siguientes par
     N_epochs: 10
     rateInicial = 0.05
     rate_decay = True
+    
+Para el conjunto de dígitos aleatorios se generan 200 ejemplos (150 entrenamiento, 50 test)
 
 """
 print("----------------------------------")
