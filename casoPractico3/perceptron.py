@@ -212,8 +212,7 @@ Bateria de tests:
     rate_decay = True
 
 Para reducir el número de combinaciones hemos realizado algunas pruebas previas con la normalización
-y el rate_decay. Se obtiene mejor resultado con ambos a True aunque a veces la mejora no es muy notable,
-en todas las pruebas pondremos ambos valores a True.
+y el rate_decay. Se obtiene mejor resultado con ambos a True aunque a veces la mejora no es muy notable.
 
 Para las pruebas con el conjunto aleatorio se realizarán con conjuntos no separables, ya que para los separables
 con un número grande de épocas se podría fácilmente encontrar un hiperplano que nos delimite los valores de
@@ -221,7 +220,7 @@ clasificación. Por lo tanto, con un número elevado de épocas se obtendría un
 un 100%.
 
 Para el conjunto de dígitos sólo hemos hecho una prueba con los siguientes parámetros:
-    Normalización: True
+    Normalización: True(Para votos y dígitos), False para el conjunto de números aleatorios
     N_epochs: 10
     rateInicial = 0.05
     rate_decay = True
