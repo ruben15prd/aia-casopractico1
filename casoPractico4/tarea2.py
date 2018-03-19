@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 Created on Wed Mar 14 12:51:38 2018
 
@@ -11,7 +12,7 @@ import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
 
 #print(news.head())
-
+"""
 noticias = []
 
 try:
@@ -28,5 +29,20 @@ try:
         noticias.append(noticia)
 except:
     print("Error")
-    
-    
+"""    
+
+titularesDeportes = []
+titularesPolitica = []
+titularesSociedad = []
+
+# Saco los datos de los archivos txt y los almaceno en variables
+[ [ [ titularesDeportes.append(line[:-1]) ] if line[-1]=='\n' else titularesDeportes.append(line) ] for line in open("deportes.txt", 'r') ]
+[ [ [ titularesPolitica.append(line[:-1]) ] if line[-1]=='\n' else titularesPolitica.append(line) ] for line in open("politica.txt", 'r') ]
+[ [ [ titularesSociedad.append(line[:-1]) ] if line[-1]=='\n' else titularesSociedad.append(line) ] for line in open("sociedad.txt", 'r') ]
+
+titularesDeportes = titularesDeportes[0].split(". ")
+titularesPolitica = titularesPolitica[0].split(". ")
+titularesSociedad = titularesSociedad[0].split(". ")
+print("\n\n", len(titularesSociedad))
+print("\n\n", titularesSociedad[3])
+
