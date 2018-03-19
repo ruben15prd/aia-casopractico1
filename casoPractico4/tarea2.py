@@ -36,9 +36,9 @@ titularesPolitica = []
 titularesSociedad = []
 
 # Saco los datos de los archivos txt y los almaceno en variables
-[ [ [ titularesDeportes.append(line[:-1]) ] if line[-1]=='\n' else titularesDeportes.append(line) ] for line in open("deportes.txt", 'r') ]
-[ [ [ titularesPolitica.append(line[:-1]) ] if line[-1]=='\n' else titularesPolitica.append(line) ] for line in open("politica.txt", 'r') ]
-[ [ [ titularesSociedad.append(line[:-1]) ] if line[-1]=='\n' else titularesSociedad.append(line) ] for line in open("sociedad.txt", 'r') ]
+[ [ [ titularesDeportes.append(line[:-1]) ] if line[-1]=='\n' else titularesDeportes.append(line) ] for line in open("deportes.txt", 'r', encoding="utf8") ]
+[ [ [ titularesPolitica.append(line[:-1]) ] if line[-1]=='\n' else titularesPolitica.append(line) ] for line in open("politica.txt", 'r', encoding="utf8") ]
+[ [ [ titularesSociedad.append(line[:-1]) ] if line[-1]=='\n' else titularesSociedad.append(line) ] for line in open("sociedad.txt", 'r', encoding="utf8") ]
 
 titularesDeportes = titularesDeportes[0].split(". ")
 titularesPolitica = titularesPolitica[0].split(". ")
