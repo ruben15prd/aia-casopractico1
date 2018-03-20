@@ -16,6 +16,7 @@ import string
 from nltk.stem.porter import PorterStemmer
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 
 def imprime_textos(elementosCercanosCentro):
@@ -126,7 +127,6 @@ vectorsTestArray = vectorTest.toarray().astype(int)
 # Realizamos predict para ver a que cluster pertenece
 predicciones = kmeans.predict(vectorsTestArray)# Obtenemos la prediccion del primer elemento
 prediccion = predicciones[0]
-
 
 print("Las predicciones para los datos de tests son: ",predicciones)
 
