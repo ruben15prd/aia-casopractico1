@@ -18,66 +18,44 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 
-def imprime_textos(mapeoElementosCercanos):
+def imprime_textos(elementosCercanosCentro):
     """Muestra los textos por pantalla"""
-    contador = 1
-    for elem in mapeoElementosCercanos:
-        print("Los 10 elementos más cercanos al centro ",contador)
-        print("")
-        for e in elem:
-            print(e)
-            print("")
-        contador += 1
-
-def mapeo_textos(elementosCentros,bagOfWords):
-    """Obtiene las palabras para cada vectorCount"""
-    mapeoElementosCercanos = []  
-    for elcs in elementosCentros:
-        mapeoElementosCercanosActual = []
-        for elementoCentro in elcs:
-        
-            elemento = []
-            #print("-----------------------------------")
-            contador = 0
-            for e in elementoCentro:
-                #print(e)
-                palabra = bagOfWords[contador]
-                if e != 0:
-                    elemento.append(palabra)
-                
-                contador += 1
-            mapeoElementosCercanosActual.append(elemento)
-        mapeoElementosCercanos.append(mapeoElementosCercanosActual)
-    return mapeoElementosCercanos
-
-def obtiene_textos_mas_cercanos_centros(datos,n_centros, n_elementos_mas_cercanos):
     
+    print("Los 10 elementos más cercanos al centro :")
+    print("")
+    for elem in elementosCercanosCentro:
+        print("----------------------------------------------------")
+        print(elem)
+    
+
+def obtiene_elementos_mas_cercanos_centro(datos_vectores, datos_originales,n_centro, n_elementos_mas_cercanos):
+    """Obtiene los elementos más cercanos a los centros"""
     elementosCentros = []
     # Para el número de clusters que hemos definido, obtenemos los 10 textos más cernanos al centro
-    for cont in range(n_centros): 
-        d = kmeans.transform(datosN_train)[:, cont]
-        # Nos quedamos con los indices de los 10 elementos más cercanos de cada centro
-        ind = np.argsort(d)[::-1][:n_elementos_mas_cercanos]
+    
+    d = kmeans.transform(datos_vectores)[:, n_centro]
+    #print(d)
+    # Nos quedamos con los indices de los 10 elementos más cercanos de cada centro
+    ind = np.argsort(d)[::-1][:n_elementos_mas_cercanos]
+    #ind = np.argsort(d)[-3:][::-1]
+    #print(ind)
+    
+    for elem in ind:
+        #print(datos[elem])
+        elementosCentros.append(datos_originales[elem])
         
-        #print("Los 10 elementos más cercanos al centro ",cont)
-        
-        elementosActual = []
-        
-        for elem in ind:
-            #print(datosN_train[elem])
-            elementosActual.append(datosN_train[elem])
-            
-        elementosCentros.append(elementosActual)
     return elementosCentros
 
-def obten_datos_corpus(datos):
+def aplica_stop_words_stemming(datos):
+    """Obtiene datos del corpus aplicando stemming y eliminando stop words"""
     corpus = []
     
-    for elem in datos[0:90]:
+    for elem in datos:
         
         #Eliminamos caracteres especiales
         table = str.maketrans('', '', string.punctuation)
         stripped = [w.translate(table) for w in elem]
+
         # Comprobamos que no sean caracteres especiales y pasamos las palabras a minusculas
         filtrado = [i for i in word_tokenize(elem.lower()) if i not in stripped] 
         
@@ -94,7 +72,6 @@ def obten_datos_corpus(datos):
         corpus.append(stemmed)
         
     
-    
     # Pasamos a lista de strings
     textosCorpus = []
     for textoLista in corpus:
@@ -105,6 +82,7 @@ def obten_datos_corpus(datos):
 
 cats = ['comp.graphics', 'comp.os.ms-windows.misc','comp.sys.ibm.pc.hardware','comp.sys.mac.hardware', 'comp.windows.x', 'sci.space' ]
 newsgroups_train = fetch_20newsgroups(subset='train', categories=cats)
+newsgroups_test = fetch_20newsgroups(subset='test', categories=cats)
 
 pprint(list(newsgroups_train.target_names))
 
@@ -112,11 +90,15 @@ pprint(list(newsgroups_train.target_names))
 #nltk.download()
 
 
-textosCorpus = obten_datos_corpus(newsgroups_train.data)
+textosCorpus = aplica_stop_words_stemming(newsgroups_train.data)
 # Vectorizamos los elementos del corpus
 vectorizer = CountVectorizer()
-vectors = vectorizer.fit_transform(textosCorpus)
+
+vectorizerFit = vectorizer.fit(textosCorpus)
+vectors = vectorizer.transform(textosCorpus)
+
 vectorsArray = vectors.toarray().astype(int)
+
 
 # Imprimimos la bolsa de palabras para saber qué palabra es cada posición del array
 
@@ -124,9 +106,6 @@ bagOfWords = vectorizer.get_feature_names()
 #print("La bolsa de palabras es:")
 #print(bagOfWords)
 
-#Normalizamos los datos entrenamiento
-#normalizador = StandardScaler().fit(vectorsArray) # Se ajusta el modelo al conjunto de entrenamiento
-#datosN_vectores = normalizador.transform(vectorsArray)
 
 datosN_train, datosN_test = train_test_split(vectorsArray, test_size = 0.25)
 
@@ -135,12 +114,23 @@ kmeans = KMeans(n_clusters=2, init='k-means++', n_init=10, max_iter=300, tol=0.0
 
 kmeans.fit(datosN_train) # Equivalente a Entrena
 
+# Clasificamos el primer elemento de nuestro conjunto de tests, le aplicamos stop words, stemming y vectorizamos
 
-#print(kmeans.cluster_centers_)
+# Aplicamos stop words y stemming al elemento de nuestro conjunto de tests
+textoTest = aplica_stop_words_stemming([newsgroups_test.data[0]])
 
-# Obtenemos los elementos mas cercanos a los centros
-elementosCentros = obtiene_textos_mas_cercanos_centros(datosN_train,2,10)
-# Obtenemos las palabras del texto de la bolsa de palabras para cada vector
-mapeoElementosCercanos = mapeo_textos(elementosCentros,bagOfWords)
-# Imprimimos el contenido de los textos
-imprime_textos(mapeoElementosCercanos)
+# Vectorizamos
+vectorTest = vectorizer.transform(textoTest)
+vectorsTestArray = vectorTest.toarray().astype(int)
+
+# Realizamos predict para ver a que cluster pertenece
+predicciones = kmeans.predict(vectorsTestArray)# Obtenemos la prediccion del primer elemento
+prediccion = predicciones[0]
+
+
+print("Las predicciones para los datos de tests son: ",predicciones)
+
+#Obtnenemos los elementos más cercanos
+elementos_mas_cercanos = obtiene_elementos_mas_cercanos_centro(datosN_train,newsgroups_train.data,prediccion, 10)
+# Imprimimos los textos más cercanos
+imprime_textos(elementos_mas_cercanos)
