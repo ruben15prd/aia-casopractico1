@@ -5,36 +5,27 @@ Created on Wed Mar 14 12:51:38 2018
 
 @author: Ruben
 """
-from sklearn.datasets import fetch_20newsgroups
 from pprint import pprint
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
-import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 import string
 from nltk.stem.porter import PorterStemmer
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import CountVectorizer
-import numpy as np
 from sklearn.naive_bayes import MultinomialNB
-from sklearn import metrics
-from sklearn.metrics import precision_recall_curve
-import matplotlib.pyplot as plt
-from sklearn.metrics import average_precision_score
+from sklearn.model_selection import GridSearchCV
+from sklearn.pipeline import Pipeline
+import nltk
 
 def aplica_stop_words_stemming(datos):
     """Obtiene datos del corpus aplicando stemming y eliminando stop words"""
-    corpus = []
+    res = []
     
-    for elem in datos:
-        #print("---------------------")
-        #print(elem)
+    for elem in datos[0:90]:
+        
         #Eliminamos caracteres especiales
         table = str.maketrans('', '', string.punctuation)
         stripped = [w.translate(table) for w in elem]
-
+        
         # Comprobamos que no sean caracteres especiales y pasamos las palabras a minusculas
         filtrado = [i for i in word_tokenize(elem.lower()) if i not in stripped] 
         
@@ -48,9 +39,16 @@ def aplica_stop_words_stemming(datos):
         stemmed = [porter.stem(word) for word in words]
         
         #print(stemmed)
-        corpus.append(stemmed)
+        res.append(stemmed)
+        
     
-    return corpus
+    # Pasamos a lista de strings
+    textosRes = []
+    for textoLista in res:
+        texto = ''.join(str(e) + ' ' for e in textoLista)
+        texto = texto.rstrip()
+        textosRes.append(texto)
+    return textosRes
 
 def obten_datos(nombre_fichero):
     """Obtenemos datos del fichero"""
@@ -75,11 +73,10 @@ def obten_datos(nombre_fichero):
 # Obtenemos los datos
 opiniones,clasificaciones = obten_datos("movie_data.csv")
 
-# Aplicamos stop words y stemming
-#opiniones_procesadas = aplica_stop_words_stemming(opiniones[0:100])
-
-# Vectorizamos
-
+opiniones_procesadas = aplica_stop_words_stemming(opiniones[0:90])
+print(opiniones_procesadas[0])
+print("------")
+print(opiniones[0])
 # Parámetros TfidfVectorizer
 # ngram_range: Número de ngrams mínimos y máximos a ser extraídos
 # stop_words: Elimina las stop words
@@ -89,31 +86,43 @@ opiniones,clasificaciones = obten_datos("movie_data.csv")
 # binary: Si es verdadero, todos los recuentos de términos distintos de cero se establecen en 1. Esto no significa que los resultados tendrán solo valores de 0/1, solo que el término tf en tf-idf es binario. (Establezca idf y normalización en False para obtener 0/1 salidas).
 
 
-
-
-
-vectorizer = TfidfVectorizer(ngram_range=(1, 3), stop_words='english', smooth_idf=True, use_idf=True, sublinear_tf=True, binary=False)
-
-vectorizerFit = vectorizer.fit(opiniones[0:100])
-vectors = vectorizer.transform(opiniones[0:100])
-
-vectorsArray = vectors.toarray().astype(int)
-
-#Separamos los datos
-datos_train, datos_test, clases_train, clases_test = train_test_split(vectorsArray, clasificaciones[0:100], test_size = 0.25)
-
 #Parámetros MultinomialNB
 # alpha: Parámetro de suavizado aditivo de Laplace
-clasificador = MultinomialNB(alpha=1.0)
-clasificador.fit(datos_train,clases_train)
 
-predicciones = clasificador.predict(datos_test)
+
+
+
+# Hay que indeicarle el tipo de stem a usar y stop words
+pipeline = Pipeline([('tfidf', TfidfVectorizer()), ('clf', MultinomialNB())])
+parameters = {  
+'tfidf__ngram_range': [(1,3),(1,4),(2,3)],  
+#'tfidf__smooth_idf': (True, False),  
+#'tfidf__use_idf': (True, False),  
+#'tfidf__sublinear_tf': (True, False),  
+#'tfidf__binary': (True, False),  
+'tfidf__min_df': (0.1,0.5),  
+'tfidf__max_df': (0.6,0.9),  
+'clf__alpha': [0.5,1.0]
+}  
+
+grid_search = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=3)
+grid_search.fit(opiniones_procesadas[0:90], clasificaciones[0:90]) 
+
+best_parameters = grid_search.best_estimator_.get_params()  
+print()
+print("Los mejores parámetros son: ")
+print()
+print(best_parameters)
+print()
+pprint(grid_search.grid_scores_)
+print()
 
 # Comparamos los valores de clasificacion del conjunto de test, con los valores predichos por BinomialNB para el conjunto de test
+"""
 print("Rendimiento: ")
 print(metrics.accuracy_score(clases_test,predicciones))
 print("Precisión, exhaustividad y media armónica: ")
 print(metrics.classification_report(clases_test,predicciones))
 print("Matriz de confusión: ")  #resumen de los aciertos y errores en la clasificación de un conjunto de instancias
 print(metrics.confusion_matrix(clases_test,predicciones))
-
+"""

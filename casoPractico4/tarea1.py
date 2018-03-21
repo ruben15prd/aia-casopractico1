@@ -6,9 +6,7 @@ Created on Tue Mar 13 18:03:07 2018
 """
 from sklearn.datasets import fetch_20newsgroups
 from pprint import pprint
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
 import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
@@ -16,14 +14,11 @@ import string
 from nltk.stem.porter import PorterStemmer
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 
 def imprime_textos(elementosCercanosCentro):
     """Muestra los textos por pantalla"""
-    
-    print("Los 10 elementos más cercanos al centro :")
-    print("")
+
     for elem in elementosCercanosCentro:
         print("----------------------------------------------------")
         print(elem)
@@ -49,14 +44,14 @@ def obtiene_elementos_mas_cercanos_centro(datos_vectores, datos_originales,n_cen
 
 def aplica_stop_words_stemming(datos):
     """Obtiene datos del corpus aplicando stemming y eliminando stop words"""
-    corpus = []
+    res = []
     
-    for elem in datos:
+    for elem in datos[0:90]:
         
         #Eliminamos caracteres especiales
         table = str.maketrans('', '', string.punctuation)
         stripped = [w.translate(table) for w in elem]
-
+        
         # Comprobamos que no sean caracteres especiales y pasamos las palabras a minusculas
         filtrado = [i for i in word_tokenize(elem.lower()) if i not in stripped] 
         
@@ -70,16 +65,16 @@ def aplica_stop_words_stemming(datos):
         stemmed = [porter.stem(word) for word in words]
         
         #print(stemmed)
-        corpus.append(stemmed)
+        res.append(stemmed)
         
     
     # Pasamos a lista de strings
-    textosCorpus = []
-    for textoLista in corpus:
+    textosRes = []
+    for textoLista in res:
         texto = ''.join(str(e) + ' ' for e in textoLista)
         texto = texto.rstrip()
-        textosCorpus.append(texto)
-    return textosCorpus
+        textosRes.append(texto)
+    return textosRes
 
 cats = ['comp.graphics', 'comp.os.ms-windows.misc','comp.sys.ibm.pc.hardware','comp.sys.mac.hardware', 'comp.windows.x', 'sci.space' ]
 newsgroups_train = fetch_20newsgroups(subset='train', categories=cats)
@@ -89,7 +84,6 @@ pprint(list(newsgroups_train.target_names))
 
 # Comando que sirve para descargar las dependencias de nltk
 #nltk.download()
-
 
 textosCorpus = aplica_stop_words_stemming(newsgroups_train.data)
 # Vectorizamos los elementos del corpus
@@ -118,6 +112,7 @@ kmeans.fit(datosN_train) # Equivalente a Entrena
 # Clasificamos el primer elemento de nuestro conjunto de tests, le aplicamos stop words, stemming y vectorizamos
 
 # Aplicamos stop words y stemming al elemento de nuestro conjunto de tests
+
 textoTest = aplica_stop_words_stemming([newsgroups_test.data[0]])
 
 # Vectorizamos
@@ -128,9 +123,11 @@ vectorsTestArray = vectorTest.toarray().astype(int)
 predicciones = kmeans.predict(vectorsTestArray)# Obtenemos la prediccion del primer elemento
 prediccion = predicciones[0]
 
-print("Las predicciones para los datos de tests son: ",predicciones)
+print("Las predicciones para los datos de tests son para el clúster: ",prediccion)
 
-#Obtnenemos los elementos más cercanos
-elementos_mas_cercanos = obtiene_elementos_mas_cercanos_centro(datosN_train,newsgroups_train.data,prediccion, 10)
+#Obtenemos los elementos más cercanos
+elementos_mas_cercanos = obtiene_elementos_mas_cercanos_centro(datosN_train,newsgroups_train.data,prediccion, 3)
 # Imprimimos los textos más cercanos
 imprime_textos(elementos_mas_cercanos)
+
+
