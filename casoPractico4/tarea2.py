@@ -1,18 +1,8 @@
 # -*- coding: utf-8 -*-
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-
-from sklearn.datasets import fetch_20newsgroups
-from pprint import pprint
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
-import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 import string
 from nltk.stem.porter import PorterStemmer
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 import math
 import copy
@@ -57,6 +47,7 @@ print("tamaño clasificaciones prueba: ", len(clasificacionesPrueba))
 
 def aplica_stop_words_stemming(datos):
    """Obtiene datos de los titulares aplicando stemming y eliminando stop words"""
+   
    noticias = []
    
    for elem in datos:
@@ -99,6 +90,7 @@ titularesPrueba = aplica_stop_words_stemming(titularesPrueba)
 
 def entrena (titularesDeportes, titularesPolitica, titularesSociedad):
     """Función que realiza el entrenamiento con los tres conjuntos de datos (deportes, politica y sociedad)"""
+    
     dic_palabras_deportes = {}
     dic_palabras_politica = {}
     dic_palabras_sociedad = {}
@@ -260,7 +252,6 @@ def clasifica (titularesPrueba, k):
 
 
 
-# clasificacion contiene las clases predichas del conjunto de prueba
 def rendimiento (clasificacion, titularesPrueba, clasificacionesPrueba):
     """Función que mide el rendimiento del modelo"""
     
