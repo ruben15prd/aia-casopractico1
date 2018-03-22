@@ -15,38 +15,43 @@ from nltk.stem.porter import PorterStemmer
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
+import math
 
-def imprime_textos(elementosCercanosCentro):
+def imprime_textos(indices_elementos_mas_cercanos_centro,datos):
     """Muestra los textos por pantalla"""
 
-    for elem in elementosCercanosCentro:
+    for idx in indices_elementos_mas_cercanos_centro:
         print("----------------------------------------------------")
-        print(elem)
+        print(datos[idx])
     
 
-def obtiene_elementos_mas_cercanos_centro(datos_vectores, datos_originales,n_centro, n_elementos_mas_cercanos):
-    """Obtiene los elementos más cercanos a los centros"""
-    elementosCentros = []
-    # Para el número de clusters que hemos definido, obtenemos los 10 textos más cernanos al centro
+def similitud(v,w):
+    """Similitud entre 2 vectores"""
+    #Dividendo
+    dividendo = np.multiply(v,w)
+    dividendo = np.sum(dividendo)
     
-    d = kmeans.transform(datos_vectores)[:, n_centro]
-    #print(d)
-    # Nos quedamos con los indices de los 10 elementos más cercanos de cada centro
-    ind = np.argsort(d)[::-1][:n_elementos_mas_cercanos]
-    #ind = np.argsort(d)[-3:][::-1]
-    #print(ind)
+    #Divisor
+    #Para la v
+    divisor_v = v**2
+    divisor_v = np.sum(divisor_v)
+    divisor_v = math.sqrt(divisor_v)
+    #Para la w
+    divisor_w = w**2
+    divisor_w = np.sum(divisor_w)
+    divisor_w = math.sqrt(divisor_w)
     
-    for elem in ind:
-        #print(datos[elem])
-        elementosCentros.append(datos_originales[elem])
-        
-    return elementosCentros
+    divisor = divisor_v * divisor_w
+    
+    res = dividendo/divisor
+    
+    return res
 
 def aplica_stop_words_stemming(datos):
     """Obtiene datos del corpus aplicando stemming y eliminando stop words"""
     res = []
     
-    for elem in datos[0:90]:
+    for elem in datos:
         
         #Eliminamos caracteres especiales
         table = str.maketrans('', '', string.punctuation)
@@ -76,6 +81,32 @@ def aplica_stop_words_stemming(datos):
         textosRes.append(texto)
     return textosRes
 
+def obtiene_elementos_mas_cercanos_centro(datos_vector, datos_originales,n_centro, n_elementos_mas_cercanos,kmeans):
+    # Inicializamos las mejores similitudes a 0
+    best_sim = np.full(n_elementos_mas_cercanos, 0.0)
+    # Inicializamos los mejores indices a 0
+    best_index = np.full(n_elementos_mas_cercanos, -1)
+    
+    
+    
+    contador = 0
+    for elem in kmeans.labels_:
+        if elem == n_centro:
+            sim = similitud(datos_vector,datos_originales[contador])
+            #print(sim)
+            valor_menor = min(best_sim)
+            indice_menor = np.argmin(best_sim)
+            
+            if sim >= valor_menor:
+                best_sim[indice_menor] = sim
+                best_index[indice_menor] = contador   
+    
+        contador += 1
+        
+        
+    return best_index
+
+#Obtenemos los datos
 cats = ['comp.graphics', 'comp.os.ms-windows.misc','comp.sys.ibm.pc.hardware','comp.sys.mac.hardware', 'comp.windows.x', 'sci.space' ]
 newsgroups_train = fetch_20newsgroups(subset='train', categories=cats)
 newsgroups_test = fetch_20newsgroups(subset='test', categories=cats)
@@ -123,11 +154,18 @@ vectorsTestArray = vectorTest.toarray().astype(int)
 predicciones = kmeans.predict(vectorsTestArray)# Obtenemos la prediccion del primer elemento
 prediccion = predicciones[0]
 
+print("Texto introducido: ")
+print(newsgroups_test.data[0])
+
+
 print("Las predicciones para los datos de tests son para el clúster: ",prediccion)
 
 #Obtenemos los elementos más cercanos
-elementos_mas_cercanos = obtiene_elementos_mas_cercanos_centro(datosN_train,newsgroups_train.data,prediccion, 3)
+indices_elementos_mas_cercanos = obtiene_elementos_mas_cercanos_centro(datosN_test[0], datosN_train,prediccion, 3,kmeans )  
 # Imprimimos los textos más cercanos
-imprime_textos(elementos_mas_cercanos)
+imprime_textos(indices_elementos_mas_cercanos,newsgroups_train.data)
 
 
+
+
+     

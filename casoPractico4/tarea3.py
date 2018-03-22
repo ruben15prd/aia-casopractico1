@@ -20,7 +20,7 @@ def aplica_stop_words_stemming(datos):
     """Obtiene datos del corpus aplicando stemming y eliminando stop words"""
     res = []
     
-    for elem in datos[0:90]:
+    for elem in datos:
         
         #Eliminamos caracteres especiales
         table = str.maketrans('', '', string.punctuation)
@@ -73,10 +73,8 @@ def obten_datos(nombre_fichero):
 # Obtenemos los datos
 opiniones,clasificaciones = obten_datos("movie_data.csv")
 
-opiniones_procesadas = aplica_stop_words_stemming(opiniones[0:90])
-print(opiniones_procesadas[0])
-print("------")
-print(opiniones[0])
+opiniones_procesadas = aplica_stop_words_stemming(opiniones)
+
 # Parámetros TfidfVectorizer
 # ngram_range: Número de ngrams mínimos y máximos a ser extraídos
 # stop_words: Elimina las stop words
@@ -88,9 +86,6 @@ print(opiniones[0])
 
 #Parámetros MultinomialNB
 # alpha: Parámetro de suavizado aditivo de Laplace
-
-
-
 
 # Hay que indeicarle el tipo de stem a usar y stop words
 pipeline = Pipeline([('tfidf', TfidfVectorizer()), ('clf', MultinomialNB())])
@@ -106,7 +101,7 @@ parameters = {
 }  
 
 grid_search = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=3)
-grid_search.fit(opiniones_procesadas[0:90], clasificaciones[0:90]) 
+grid_search.fit(opiniones_procesadas, clasificaciones) 
 
 best_parameters = grid_search.best_estimator_.get_params()  
 print()
@@ -117,12 +112,4 @@ print()
 pprint(grid_search.grid_scores_)
 print()
 
-# Comparamos los valores de clasificacion del conjunto de test, con los valores predichos por BinomialNB para el conjunto de test
-"""
-print("Rendimiento: ")
-print(metrics.accuracy_score(clases_test,predicciones))
-print("Precisión, exhaustividad y media armónica: ")
-print(metrics.classification_report(clases_test,predicciones))
-print("Matriz de confusión: ")  #resumen de los aciertos y errores en la clasificación de un conjunto de instancias
-print(metrics.confusion_matrix(clases_test,predicciones))
-"""
+
