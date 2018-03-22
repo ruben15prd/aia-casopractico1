@@ -58,7 +58,6 @@ def obten_datos(nombre_fichero):
     for line in open(nombre_fichero, 'r', encoding="utf8"):
         split = line.rsplit(',', 1)
         
-        
         opinion = split[0]
         clase = split[1]
         

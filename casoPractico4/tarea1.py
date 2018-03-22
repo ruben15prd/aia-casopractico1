@@ -87,8 +87,6 @@ def obtiene_elementos_mas_cercanos_centro(datos_vector, datos_originales,n_centr
     # Inicializamos los mejores indices a 0
     best_index = np.full(n_elementos_mas_cercanos, -1)
     
-    
-    
     contador = 0
     for elem in kmeans.labels_:
         if elem == n_centro:
@@ -144,6 +142,7 @@ kmeans.fit(datosN_train) # Equivalente a Entrena
 
 # Aplicamos stop words y stemming al elemento de nuestro conjunto de tests
 
+# Si queremos añadir un texto escrito por nosotros, sustituir newsgroups_test.data[0] por el texto que nosotros queramos
 textoTest = aplica_stop_words_stemming([newsgroups_test.data[0]])
 
 # Vectorizamos
